@@ -62,5 +62,5 @@ MINOR = _version_minor
 MICRO = _version_micro
 VERSION = __version__
 PACKAGE_DATA = {'vasp_dos': [pjoin('data', '*'),pjoin('data', '*','*')]}
-REQUIRES = ["numpy", "matplotlib", "os", "pkg_resources"]
+REQUIRES = ["numpy", "matplotlib", "os", "pkg_resources", "ase"]
 PYTHON_REQUIRES = ">= 3.5"
