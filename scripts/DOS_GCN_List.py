@@ -13,6 +13,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import trapz
 from matplotlib import rcParams
+from vasp_dos import VASP_DOS
 import os
 rcParams['lines.markersize'] = 10
 NumPt = [147,19,44,79,6]
@@ -30,13 +31,12 @@ for i in NumPt:
     folder = os.path.expanduser('C:/Users/lansf/Documents/Data/DOS/spin/Pt'+str(i) + '/')
     nanoparticle = read(folder+'CONTCAR')
     # read and return densityofstates object
-    dos = dosread(folder + 'DOSCAR', posfile=folder + 'CONTCAR')
-    dos.spin
+    dos = VASP_DOS(folder + 'DOSCAR')
     # Get energy grid
-    energies = dos.energies
-    energies[np.isnan(energies)==True]=0
-    fermi = dos.efermi
+    energies = dos.get_energies()
+    fermi = dos.e_fermi
     #why cutting off at energies+fermi
+    #might not need to add back eferim
     idx = (np.abs(energies+fermi)).argmin()
     #idx = len(energies)
     CN = Coordination(nanoparticle,cutoff=1.25)
@@ -47,22 +47,11 @@ for i in NumPt:
         else:
             SurfaceAtom.append('bulk')
         GCNList.append(CN.get_gcn([Atomindex]))
-        Atom = 'Pt' + str(Atomindex)
-        d_atom = dos.get_atom_dos(Atom)
-        d = (dos.get_total_dos())[1]
-        if dos.spin == True:
-            d = np.sum(d,axis=1)
-            s = d_atom[:,0] + d_atom[:,1]
-            p = d_atom[:,2] + d_atom[:,3]
-            dband = d_atom[:,4] + d_atom[:,5]
-        if dos.spin == False:
-            s = d_atom[:,0]
-            p = d_atom[:,1]
-            dband = d_atom[:,2]
-        s[np.isnan(s)==True]=0
-        p[np.isnan(p)==True]=0
-        d[np.isnan(d)==True]=0
-        dband[np.isnan(dband)==True]=0
+        d_atom = dos.get_atom_dos(Atomindex)
+        d_atom = dos.get_site_dos(Atomindex,['s','p','d'], sum_density=True)
+        s = d_atom[0]
+        p = d_atom[1]
+        dband = d_atom[3]
         Energy = trapz(dband[0:idx]*energies[0:idx],energies[0:idx])
         d_filling = trapz(dband[0:idx],energies[0:idx])
         Ed = Energy/d_filling
@@ -97,12 +86,9 @@ for i in NumPt:
     folder = os.path.expanduser('C:/Users/lansf/Documents/Data/DOS/spin/Pt'+str(i) + '/')
     nanoparticle = read(folder+'CONTCAR')
     # read and return densityofstates object
-    dos = dosread(folder + 'DOSCAR', posfile=folder + 'CONTCAR')
-    dos.spin
     # Get energy grid
     energies = dos.energies
-    energies[np.isnan(energies)==True]=0
-    fermi = dos.efermi
+    fermi = dos.e_fermi
     idx = (np.abs(energies)).argmin()
     CN = Coordination(nanoparticle,cutoff=1.25)
     CN.get_coordination_numbers()
@@ -112,22 +98,11 @@ for i in NumPt:
         else:
             SurfaceAtom.append('bulk')
         GCNList.append(CN.get_gcn([Atomindex]))
-        Atom = 'Pt' + str(Atomindex)
-        d_atom = dos.get_atom_dos(Atom)
-        d = (dos.get_total_dos())[1]
-        if dos.spin == True:
-            d = np.sum(d,axis=1)
-            s = d_atom[:,0] + d_atom[:,1]
-            p = d_atom[:,2] + d_atom[:,3]
-            dband = d_atom[:,4] + d_atom[:,5]
-        if dos.spin == False:
-            s = d_atom[:,0]
-            p = d_atom[:,1]
-            dband = d_atom[:,2]
-        s[np.isnan(s)==True]=0
-        p[np.isnan(p)==True]=0
-        d[np.isnan(d)==True]=0
-        dband[np.isnan(dband)==True]=0
+        d_atom = dos.get_atom_dos(Atomindex)
+        d_atom = dos.get_site_dos(Atomindex,['s','p','d'], sum_density=True)
+        s = d_atom[0]
+        p = d_atom[1]
+        dband = d_atom[3]
         Energy = trapz(dband[0:idx]*energies[0:idx],energies[0:idx])
         d_filling = trapz(dband[0:idx],energies[0:idx])
         Ed = Energy/d_filling

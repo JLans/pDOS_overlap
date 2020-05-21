@@ -233,7 +233,47 @@ class VASP_DOS:
         return new_orbital_list, projected_density
         
     def _read_doscar(self, file_name="DOSCAR"):
-        """Read a VASP DOSCAR file"""
+        """Read VASP DOSCAR and extract projected densities
+        Parameters
+        ----------
+        file_name: str
+            file location of the DOSCAR file
+            
+        Attributes
+        ----------
+        _total_dos : numpy.array
+            numpy array that contains the energy of the orbitals and the
+            total projected and integrated density
+            
+        _site_dos : numpy.array
+            numpy array that contains the energy of the orbitals and the
+            site and orbital projected density of states. Only available if a
+            site projected calculation was performed.
+            
+        Returns
+        -------
+        emax : float
+            maximum energy level
+            
+        emin : float
+            minimum energy level
+            
+        ndos : int
+            number of descritized energy levels
+            
+        e_fermi: float
+            highest occupied energy level
+            
+        is_spin: bool
+            indicates if projected density is spin resolved
+            
+        m_projected: bool
+            indicates if projected density is orbital resolved
+            
+        orbital_dictionary: dict
+            dictionary that maps resolved sublevels/orbitals to indices
+
+        """
         #Accepts a file and reads through to get the density of states
         def get_dos(f, ndos):
             #get first line of density
@@ -250,10 +290,10 @@ class VASP_DOS:
         [f.readline() for lines in range(4)]  # Skip next 4 lines.
         # First we have a block with total and total integrated DOS
         descriptive_line = f.readline().split()
-        emax = descriptive_line[0]
-        emin = descriptive_line[1]
+        emax = float(descriptive_line[0])
+        emin = float(descriptive_line[1])
         ndos = int(descriptive_line[2])
-        e_fermi = descriptive_line[3]
+        e_fermi = float(descriptive_line[3])
         dos = get_dos(f,ndos)
         self._total_dos = dos
         # Next we have one block per atom, if INCAR contains the stuff
