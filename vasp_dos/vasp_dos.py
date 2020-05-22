@@ -52,8 +52,35 @@ def get_all_VASP_files(directory):
     CONTCAR_files = [os.path.join(d,'CONTCAR') for d in DOSCAR_directories]
     return DOSCAR_files, CONTCAR_files
 
+def get_band_center(energies, densities, max_energy=float('inf'), axis=-1):
+        """ Get band center given energies and densities
+        Parameters
+        ----------
+        energies : numpy.array
+            discretized orbital energies
+        
+        densities : numpy.array
+            projected state densities
+            
+        max_energy : float
+            cutoff energy (often the fermi energy)
+            
+        axis : int
+            axis of densities on which to integrate
+        
+        Returns
+        -------
+        band_center : float or numpy.array
+            center of the band(s) up to max_energy
+        """
+        idx = (np.abs(energies-max_energy)).argmin()
+        Integrated_Energy = np.trapz(densities[0:idx]*energies[0:idx], energies[0:idx], axis=axis)
+        Integrated_Filling = np.trapz(densities[0:idx], energies[0:idx], axis=axis)
+        band_center = Integrated_Energy/Integrated_Filling
+        return band_center
+
 class VASP_DOS:
-    """Class for generating complex synthetic IR spectra"""
+    """Class for extracting projected density of states from VASP"""
     def __init__(self, file_name="DOSCAR"):
         """ 
         Parameters
@@ -94,6 +121,37 @@ class VASP_DOS:
         self.is_spin = is_spin
         self.m_projected = m_projected
         self.orbital_dictionary = orbital_dictionary
+        
+    def get_band_center(self, atom, orbital_list, sum_density=False, max_energy=float('inf'), axis=-1):
+        """ Get band center for a given atom and list of orbitals
+        Parameters
+        ----------
+        atom: int
+            Atom index
+            
+        orbital_list: list[str]
+            Which orbitals to return
+            
+        sum_density: bool
+            if a sub-level is provided instead of an orbital, sum_density
+            indicates if the individual sub-level densities should be summed
+            
+        max_energy : float
+            cutoff energy (often the fermi energy)
+            
+        axis : int
+            axis of densities on which to integrate
+        
+        Returns
+        -------
+        band_center : float or numpy.array
+            center of the band(s) up to max_energy
+        """
+        energies = self.get_energies()
+        get_site_dos = self.get_site_dos
+        orbitals, density = get_site_dos(atom,orbital_list, sum_density=sum_density)
+        band_center = get_band_center(energies, density, max_energy=max_energy, axis=-1)
+        return band_center
         
     def get_energies(self):
         """ method for obtaining energy levels

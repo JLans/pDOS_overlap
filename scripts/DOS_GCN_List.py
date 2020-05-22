@@ -15,6 +15,11 @@ from scipy.integrate import trapz
 from matplotlib import rcParams
 from vasp_dos import VASP_DOS
 import os
+
+# trapezoidal rule is better for narrow gaussian peaks and for "rough" functions
+# https://doi.org/10.1016/j.chemolab.2018.06.001
+# http://emis.icm.edu.pl/journals/JIPAM/v3n4/031_02.html
+
 rcParams['lines.markersize'] = 10
 NumPt = [147,19,44,79,6]
 GCNList = []
@@ -47,29 +52,28 @@ for i in NumPt:
         else:
             SurfaceAtom.append('bulk')
         GCNList.append(CN.get_gcn([Atomindex]))
-        d_atom = dos.get_atom_dos(Atomindex)
-        d_atom = dos.get_site_dos(Atomindex,['s','p','d'], sum_density=True)
+        orbitals, d_atom = dos.get_site_dos(Atomindex,['s','p','d'], sum_density=True)
         s = d_atom[0]
         p = d_atom[1]
-        dband = d_atom[3]
-        Energy = trapz(dband[0:idx]*energies[0:idx],energies[0:idx])
-        d_filling = trapz(dband[0:idx],energies[0:idx])
+        dband = d_atom[2]
+        Energy = trapz(dband*energies,energies)
+        d_filling = trapz(dband,energies)
         Ed = Energy/d_filling
         EdList.append(Ed)
         dfillingList.append(d_filling)
-        Energy = trapz(s[0:idx]*energies[0:idx],energies[0:idx])
-        s_filling = trapz(s[0:idx],energies[0:idx])
+        Energy = trapz(s*energies,energies)
+        s_filling = trapz(s,energies)
         Es = Energy/s_filling
         EsList.append(Es)
         sfillingList.append(s_filling)
-        Energy = trapz(p[0:idx]*energies[0:idx],energies[0:idx])
-        p_filling = trapz(p[0:idx],energies[0:idx])
+        Energy = trapz(p*energies,energies)
+        p_filling = trapz(p,energies)
         Ep = Energy/p_filling
         EpList.append(Ep)
         pfillingList.append(p_filling)
         
-        Energy = trapz((s[0:idx]+p[0:idx])*energies[0:idx],energies[0:idx])
-        sp_filling = trapz((s[0:idx]+p[0:idx]),energies[0:idx])
+        Energy = trapz((s+p)*energies,energies)
+        sp_filling = trapz((s+p),energies)
         Esp = Energy/sp_filling
         EspList.append(Esp)
         spfillingList.append(sp_filling)
@@ -86,10 +90,11 @@ for i in NumPt:
     folder = os.path.expanduser('C:/Users/lansf/Documents/Data/DOS/spin/Pt'+str(i) + '/')
     nanoparticle = read(folder+'CONTCAR')
     # read and return densityofstates object
+    dos = VASP_DOS(folder + 'DOSCAR')
     # Get energy grid
-    energies = dos.energies
+    energies = dos.get_energies()
     fermi = dos.e_fermi
-    idx = (np.abs(energies)).argmin()
+    idx = (np.abs(energies-fermi)).argmin()
     CN = Coordination(nanoparticle,cutoff=1.25)
     CN.get_coordination_numbers()
     for Atomindex in range(i):
@@ -98,11 +103,10 @@ for i in NumPt:
         else:
             SurfaceAtom.append('bulk')
         GCNList.append(CN.get_gcn([Atomindex]))
-        d_atom = dos.get_atom_dos(Atomindex)
-        d_atom = dos.get_site_dos(Atomindex,['s','p','d'], sum_density=True)
+        orbitals, d_atom = dos.get_site_dos(Atomindex,['s','p','d'], sum_density=True)
         s = d_atom[0]
         p = d_atom[1]
-        dband = d_atom[3]
+        dband = d_atom[2]
         Energy = trapz(dband[0:idx]*energies[0:idx],energies[0:idx])
         d_filling = trapz(dband[0:idx],energies[0:idx])
         Ed = Energy/d_filling
@@ -151,8 +155,8 @@ plt.gcf().subplots_adjust(bottom=0.15)
 plt.gcf().subplots_adjust(top=0.99)
 plt.gcf().subplots_adjust(left=0.12)
 plt.gcf().subplots_adjust(right=0.99)
-plt.xlim([1,12.5])
-plt.ylim([-6,1.5])
+#plt.xlim([1,12.5])
+#plt.ylim([-6,1.5])
 
 plt.figure(1,figsize=(7,5))
 EsfitS = np.polyfit(GCNList[SurfaceAtom=='surface'], EsList[SurfaceAtom=='surface'], 1)
@@ -173,8 +177,8 @@ plt.gcf().subplots_adjust(bottom=0.15)
 plt.gcf().subplots_adjust(top=0.99)
 plt.gcf().subplots_adjust(left=0.12)
 plt.gcf().subplots_adjust(right=0.99)
-plt.xlim([1,7])
-plt.ylim([-5,1.5])
+#plt.xlim([1,7])
+#plt.ylim([-5,1.5])
 
 plt.figure(5,figsize=(7,5))
 EsfitS = np.polyfit(GCNList[SurfaceAtom=='surface'], EsList[SurfaceAtom=='surface'], 1)
@@ -195,8 +199,8 @@ plt.gcf().subplots_adjust(bottom=0.15)
 plt.gcf().subplots_adjust(top=0.99)
 plt.gcf().subplots_adjust(left=0.12)
 plt.gcf().subplots_adjust(right=0.99)
-plt.xlim([1,7])
-plt.ylim([-5,1.5])
+#plt.xlim([1,7])
+#plt.ylim([-5,1.5])
 
 plt.figure(2,figsize=(9,5))
 rcParams['lines.markersize'] = 8
