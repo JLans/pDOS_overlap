@@ -218,10 +218,10 @@
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        energies : numpy.array</span>
+<span class="sd">        energies : numpy.ndarray</span>
 <span class="sd">            discretized orbital energies</span>
 <span class="sd">        </span>
-<span class="sd">        densities : numpy.array</span>
+<span class="sd">        densities : numpy.ndarray</span>
 <span class="sd">            projected state densities</span>
 <span class="sd">            </span>
 <span class="sd">        max_energy : float</span>
@@ -336,7 +336,7 @@
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        energies : numpy.array</span>
+<span class="sd">        energies : numpy.ndarray</span>
 <span class="sd">            1-D array of energies</span>
 <span class="sd">            </span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -349,7 +349,7 @@
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        total_dos : numpy.array</span>
+<span class="sd">        total_dos : numpy.ndarray</span>
 <span class="sd">            1-D or 2-D array of state densities   </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         
@@ -364,7 +364,7 @@
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        integrated_dos : numpy.array</span>
+<span class="sd">        integrated_dos : numpy.ndarray</span>
 <span class="sd">            1-D or 2-D array of state integrated densities  </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         
@@ -485,11 +485,11 @@
 <span class="sd">            </span>
 <span class="sd">        Attributes</span>
 <span class="sd">        ----------</span>
-<span class="sd">        _total_dos : numpy.array</span>
+<span class="sd">        _total_dos : numpy.ndarray</span>
 <span class="sd">            numpy array that contains the energy of the orbitals and the</span>
 <span class="sd">            total projected and integrated density</span>
 <span class="sd">            </span>
-<span class="sd">        _site_dos : numpy.array</span>
+<span class="sd">        _site_dos : numpy.ndarray</span>
 <span class="sd">            numpy array that contains the energy of the orbitals and the</span>
 <span class="sd">            site and orbital projected density of states. Only available if a</span>
 <span class="sd">            site projected calculation was performed.</span>

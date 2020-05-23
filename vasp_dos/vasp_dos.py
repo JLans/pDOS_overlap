@@ -61,10 +61,10 @@ def get_band_center(energies, densities, max_energy=None, axis=-1):
         
         Parameters
         ----------
-        energies : numpy.array
+        energies : numpy.ndarray
             discretized orbital energies
         
-        densities : numpy.array
+        densities : numpy.ndarray
             projected state densities
             
         max_energy : float
@@ -179,7 +179,7 @@ class VASP_DOS:
         
         Returns
         -------
-        energies : numpy.array
+        energies : numpy.ndarray
             1-D array of energies
             
         """
@@ -192,7 +192,7 @@ class VASP_DOS:
         
         Returns
         -------
-        total_dos : numpy.array
+        total_dos : numpy.ndarray
             1-D or 2-D array of state densities   
         """
         
@@ -207,7 +207,7 @@ class VASP_DOS:
         
         Returns
         -------
-        integrated_dos : numpy.array
+        integrated_dos : numpy.ndarray
             1-D or 2-D array of state integrated densities  
         """
         
@@ -328,11 +328,11 @@ class VASP_DOS:
             
         Attributes
         ----------
-        _total_dos : numpy.array
+        _total_dos : numpy.ndarray
             numpy array that contains the energy of the orbitals and the
             total projected and integrated density
             
-        _site_dos : numpy.array
+        _site_dos : numpy.ndarray
             numpy array that contains the energy of the orbitals and the
             site and orbital projected density of states. Only available if a
             site projected calculation was performed.
