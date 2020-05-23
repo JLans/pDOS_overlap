@@ -1,0 +1,31 @@
+.. vasp_dos documentation master file
+
+Welcome to vasp_dos's documentation!
+====================================
+
+.. toctree::
+   :maxdepth: 4
+   :caption: Getting Started:
+	
+   includeme
+
+.. toctree::
+   :maxdepth: 4
+   :caption: Contents:
+
+   vasp_dos
+
+   coordination
+
+   plotting_tools
+
+   error_metrics  
+
+   auto_examples/index
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

@@ -1,0 +1,452 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>vasp_dos &mdash; vasp_dos 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery-dataframe.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="coordination" href="coordination.html" />
+    <link rel="prev" title="vasp_dos" href="includeme.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> vasp_dos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting Started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="includeme.html">vasp_dos</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">vasp_dos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-get-data-path-function">The <code class="docutils literal notranslate"><span class="pre">get_data_path</span></code> function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-get-example-data-function">The <code class="docutils literal notranslate"><span class="pre">get_example_data</span></code> function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-get-all-vasp-files-function">The <code class="docutils literal notranslate"><span class="pre">get_all_VASP_files</span></code> function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-get-band-center-function">The <code class="docutils literal notranslate"><span class="pre">get_band_center</span></code> function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-vasp-dos-class">The <code class="docutils literal notranslate"><span class="pre">VASP_DOS</span></code> class</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="coordination.html">coordination</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotting_tools.html">plotting_tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="error_metrics.html">error_metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">vasp_dos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>vasp_dos</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/vasp_dos.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="vasp-dos">
+<h1>vasp_dos<a class="headerlink" href="#vasp-dos" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="the-get-data-path-function">
+<h2>The <code class="docutils literal notranslate"><span class="pre">get_data_path</span></code> function<a class="headerlink" href="#the-get-data-path-function" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="vasp_dos.vasp_dos.get_data_path">
+<code class="sig-name descname">get_data_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/vasp_dos/vasp_dos.html#get_data_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vasp_dos.vasp_dos.get_data_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get default paths to package data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>data_path</strong> – path to package data</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="the-get-example-data-function">
+<h2>The <code class="docutils literal notranslate"><span class="pre">get_example_data</span></code> function<a class="headerlink" href="#the-get-example-data-function" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="vasp_dos.vasp_dos.get_example_data">
+<code class="sig-name descname">get_example_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/vasp_dos/vasp_dos.html#get_example_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vasp_dos.vasp_dos.get_example_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get default paths to experimental data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>example_data_path</strong> – path to example VASP data</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="the-get-all-vasp-files-function">
+<h2>The <code class="docutils literal notranslate"><span class="pre">get_all_VASP_files</span></code> function<a class="headerlink" href="#the-get-all-vasp-files-function" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="vasp_dos.vasp_dos.get_all_VASP_files">
+<code class="sig-name descname">get_all_VASP_files</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">directory</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vasp_dos/vasp_dos.html#get_all_VASP_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vasp_dos.vasp_dos.get_all_VASP_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all DOSCAR and CONTCAR file paths</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – root directory to look for DOSCAR files</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>example_data_path</strong> – path to example VASP data</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="the-get-band-center-function">
+<h2>The <code class="docutils literal notranslate"><span class="pre">get_band_center</span></code> function<a class="headerlink" href="#the-get-band-center-function" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="vasp_dos.vasp_dos.get_band_center">
+<code class="sig-name descname">get_band_center</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">energies</span></em>, <em class="sig-param"><span class="n">densities</span></em>, <em class="sig-param"><span class="n">max_energy</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vasp_dos/vasp_dos.html#get_band_center"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vasp_dos.vasp_dos.get_band_center" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get band center given energies and densities</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>energies</strong> (<em>numpy.array</em>) – discretized orbital energies</p></li>
+<li><p><strong>densities</strong> (<em>numpy.array</em>) – projected state densities</p></li>
+<li><p><strong>max_energy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – cutoff energy (often the fermi energy)</p></li>
+<li><p><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – axis of densities on which to integrate</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>band_center</strong> – center of the band(s) up to max_energy</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a> or numpy.array</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>trapezoidal rule is better for narrow gaussian peaks and for “rough” functions
+<a class="reference external" href="https://doi.org/10.1016/j.chemolab.2018.06.001">https://doi.org/10.1016/j.chemolab.2018.06.001</a>
+<a class="reference external" href="http://emis.icm.edu.pl/journals/JIPAM/v3n4/031_02.html">http://emis.icm.edu.pl/journals/JIPAM/v3n4/031_02.html</a></p>
+</dd></dl>
+
+</div>
+<div class="section" id="the-vasp-dos-class">
+<h2>The <code class="docutils literal notranslate"><span class="pre">VASP_DOS</span></code> class<a class="headerlink" href="#the-vasp-dos-class" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="vasp_dos.vasp_dos.VASP_DOS">
+<em class="property">class </em><code class="sig-name descname">VASP_DOS</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_name</span><span class="o">=</span><span class="default_value">'DOSCAR'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vasp_dos/vasp_dos.html#VASP_DOS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vasp_dos.vasp_dos.VASP_DOS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for extracting projected density of states from VASP</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – full DOSCAR file location</p>
+</dd>
+<dt class="field-even">Variables</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>emax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – maximum energy level</p></li>
+<li><p><strong>emin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – minimum energy level</p></li>
+<li><p><strong>ndos</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – number of descritized energy levels</p></li>
+<li><p><strong>e_fermi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – highest occupied energy level</p></li>
+<li><p><strong>is_spin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – indicates if projected density is spin resolved</p></li>
+<li><p><strong>m_projected</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – indicates if projected density is orbital resolved</p></li>
+<li><p><strong>orbital_dictionary</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – dictionary that maps resolved sublevels/orbitals to indices</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="vasp_dos.vasp_dos.VASP_DOS._read_doscar">
+<code class="sig-name descname">_read_doscar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_name</span><span class="o">=</span><span class="default_value">'DOSCAR'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vasp_dos/vasp_dos.html#VASP_DOS._read_doscar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vasp_dos.vasp_dos.VASP_DOS._read_doscar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read VASP DOSCAR and extract projected densities</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – file location of the DOSCAR file</p>
+</dd>
+<dt class="field-even">Variables</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>_total_dos</strong> (<em>numpy.array</em>) – numpy array that contains the energy of the orbitals and the
+total projected and integrated density</p></li>
+<li><p><strong>_site_dos</strong> (<em>numpy.array</em>) – numpy array that contains the energy of the orbitals and the
+site and orbital projected density of states. Only available if a
+site projected calculation was performed.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>emax</strong> (<em>float</em>) – maximum energy level</p></li>
+<li><p><strong>emin</strong> (<em>float</em>) – minimum energy level</p></li>
+<li><p><strong>ndos</strong> (<em>int</em>) – number of descritized energy levels</p></li>
+<li><p><strong>e_fermi</strong> (<em>float</em>) – highest occupied energy level</p></li>
+<li><p><strong>is_spin</strong> (<em>bool</em>) – indicates if projected density is spin resolved</p></li>
+<li><p><strong>m_projected</strong> (<em>bool</em>) – indicates if projected density is orbital resolved</p></li>
+<li><p><strong>orbital_dictionary</strong> (<em>dict</em>) – dictionary that maps resolved sublevels/orbitals to indices</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="vasp_dos.vasp_dos.VASP_DOS.get_band_center">
+<code class="sig-name descname">get_band_center</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atom</span></em>, <em class="sig-param"><span class="n">orbital_list</span></em>, <em class="sig-param"><span class="n">sum_density</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">max_energy</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vasp_dos/vasp_dos.html#VASP_DOS.get_band_center"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vasp_dos.vasp_dos.VASP_DOS.get_band_center" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get band center for a given atom and list of orbitals</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>atom</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Atom index</p></li>
+<li><p><strong>orbital_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>]</em>) – Which orbitals to return</p></li>
+<li><p><strong>sum_density</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – if a sub-level is provided instead of an orbital, sum_density
+indicates if the individual sub-level densities should be summed</p></li>
+<li><p><strong>max_energy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – cutoff energy (often the fermi energy)</p></li>
+<li><p><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – axis of densities on which to integrate</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>band_center</strong> – center of the band(s) up to max_energy</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a> or numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="vasp_dos.vasp_dos.VASP_DOS.get_energies">
+<code class="sig-name descname">get_energies</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/vasp_dos/vasp_dos.html#VASP_DOS.get_energies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vasp_dos.vasp_dos.VASP_DOS.get_energies" title="Permalink to this definition">¶</a></dt>
+<dd><p>method for obtaining energy levels</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>energies</strong> – 1-D array of energies</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="vasp_dos.vasp_dos.VASP_DOS.get_integrated_dos">
+<code class="sig-name descname">get_integrated_dos</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/vasp_dos/vasp_dos.html#VASP_DOS.get_integrated_dos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vasp_dos.vasp_dos.VASP_DOS.get_integrated_dos" title="Permalink to this definition">¶</a></dt>
+<dd><p>method for obtaining total integrated density of states</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>integrated_dos</strong> – 1-D or 2-D array of state integrated densities</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="vasp_dos.vasp_dos.VASP_DOS.get_site_dos">
+<code class="sig-name descname">get_site_dos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atom</span></em>, <em class="sig-param"><span class="n">orbital_list</span></em>, <em class="sig-param"><span class="n">sum_density</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vasp_dos/vasp_dos.html#VASP_DOS.get_site_dos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vasp_dos.vasp_dos.VASP_DOS.get_site_dos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an NDOSxM array with dos for the chosen atom and orbital(s).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>atom</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Atom index</p></li>
+<li><p><strong>orbital_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>]</em>) – Which orbitals to return</p></li>
+<li><p><strong>sum_density</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – if a sub-level is provided instead of an orbital, sum_density
+indicates if the individual sub-level densities should be summed</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>new_orbital_list</strong> (<em>list[str]</em>) – If sum_density is True, new_orbital_list is the same as
+orbital_list. If sum_density is False, new_orbital_list is resolved
+by both orbital and spin (if available)</p></li>
+<li><p><strong>projected_density</strong> (<em>np.array</em>) – Array of shape (len(new_orbital_list), ndos)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="vasp_dos.vasp_dos.VASP_DOS.get_total_dos">
+<code class="sig-name descname">get_total_dos</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/vasp_dos/vasp_dos.html#VASP_DOS.get_total_dos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vasp_dos.vasp_dos.VASP_DOS.get_total_dos" title="Permalink to this definition">¶</a></dt>
+<dd><p>method for obtaining total density of states</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>total_dos</strong> – 1-D or 2-D array of state densities</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="coordination.html" class="btn btn-neutral float-right" title="coordination" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="includeme.html" class="btn btn-neutral float-left" title="vasp_dos" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Joshua Lansford
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

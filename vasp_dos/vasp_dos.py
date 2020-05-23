@@ -11,13 +11,14 @@ import pkg_resources
 import numpy as np
 
 def get_data_path():
-    """ Get default paths to experimental data.
+    """ Get default paths to package data.
     
     Returns
     -------
     data_path : str
         path to package data
     """
+    
     data_path = pkg_resources.resource_filename(__name__, 'data/')
     return data_path
 
@@ -29,12 +30,14 @@ def get_example_data():
     example_data_path : str
         path to example VASP data
     """
+    
     data_path = pkg_resources.resource_filename(__name__, 'data/')
     example_data_path = os.path.join(data_path, 'example_data')
     return example_data_path
 
 def get_all_VASP_files(directory):
     """ Get all DOSCAR and CONTCAR file paths
+    
     Parameters
     ----------
     directory : str
@@ -45,6 +48,7 @@ def get_all_VASP_files(directory):
     example_data_path : str
         path to example VASP data
     """
+    
     DOSCAR_directories = [os.path.join(r,subdirectory) for r,d,f in os.walk(directory) \
               for subdirectory in d \
               if 'DOSCAR' in os.listdir(os.path.join(r,subdirectory))]
@@ -52,8 +56,9 @@ def get_all_VASP_files(directory):
     CONTCAR_files = [os.path.join(d,'CONTCAR') for d in DOSCAR_directories]
     return DOSCAR_files, CONTCAR_files
 
-def get_band_center(energies, densities, max_energy=float('inf'), axis=-1):
+def get_band_center(energies, densities, max_energy=None, axis=-1):
         """ Get band center given energies and densities
+        
         Parameters
         ----------
         energies : numpy.array
@@ -72,10 +77,23 @@ def get_band_center(energies, densities, max_energy=float('inf'), axis=-1):
         -------
         band_center : float or numpy.array
             center of the band(s) up to max_energy
+            
+        Notes
+        -----
+        trapezoidal rule is better for narrow gaussian peaks and for "rough" functions
+        https://doi.org/10.1016/j.chemolab.2018.06.001
+        http://emis.icm.edu.pl/journals/JIPAM/v3n4/031_02.html
+        
         """
-        idx = (np.abs(energies-max_energy)).argmin()
-        Integrated_Energy = np.trapz(densities[0:idx]*energies[0:idx], energies[0:idx], axis=axis)
-        Integrated_Filling = np.trapz(densities[0:idx], energies[0:idx], axis=axis)
+        
+        if len(densities.shape) == 1:
+            densities = np.array([densities.copy()])
+        if max_energy is None:
+            idx_stop = len(energies)
+        else:
+            idx_stop = (np.abs(energies-max_energy)).argmin()+1
+        Integrated_Energy = np.trapz(densities[:,0:idx_stop]*energies[0:idx_stop], energies[0:idx_stop], axis=axis)
+        Integrated_Filling = np.trapz(densities[:,0:idx_stop], energies[0:idx_stop], axis=axis)
         band_center = Integrated_Energy/Integrated_Filling
         return band_center
 
@@ -122,8 +140,9 @@ class VASP_DOS:
         self.m_projected = m_projected
         self.orbital_dictionary = orbital_dictionary
         
-    def get_band_center(self, atom, orbital_list, sum_density=False, max_energy=float('inf'), axis=-1):
+    def get_band_center(self, atom, orbital_list, sum_density=False, max_energy=None, axis=-1):
         """ Get band center for a given atom and list of orbitals
+        
         Parameters
         ----------
         atom: int
@@ -146,7 +165,9 @@ class VASP_DOS:
         -------
         band_center : float or numpy.array
             center of the band(s) up to max_energy
+
         """
+        
         energies = self.get_energies()
         get_site_dos = self.get_site_dos
         orbitals, density = get_site_dos(atom,orbital_list, sum_density=sum_density)
@@ -155,22 +176,26 @@ class VASP_DOS:
         
     def get_energies(self):
         """ method for obtaining energy levels
+        
         Returns
         -------
         energies : numpy.array
             1-D array of energies
             
         """
+        
         energies = self._total_dos[0,:].copy()
         return energies
     
     def get_total_dos(self):
         """ method for obtaining total density of states
+        
         Returns
         -------
         total_dos : numpy.array
             1-D or 2-D array of state densities   
         """
+        
         if self._total_dos.shape[0] == 3:
             total_dos = self._total_dos[1, :]
         elif self._total_dos.shape[0] == 5:
@@ -179,11 +204,13 @@ class VASP_DOS:
 
     def get_integrated_dos(self):
         """ method for obtaining total integrated density of states
+        
         Returns
         -------
         integrated_dos : numpy.array
             1-D or 2-D array of state integrated densities  
         """
+        
         if self._total_dos.shape[0] == 3:
             integrated_dos = self._total_dos[2, :]
         elif self._total_dos.shape[0] == 5:
@@ -192,6 +219,7 @@ class VASP_DOS:
         
     def get_site_dos(self, atom, orbital_list, sum_density = False):
         """Return an NDOSxM array with dos for the chosen atom and orbital(s).
+        
         Parameters
         ----------
         atom: int
@@ -292,6 +320,7 @@ class VASP_DOS:
         
     def _read_doscar(self, file_name="DOSCAR"):
         """Read VASP DOSCAR and extract projected densities
+        
         Parameters
         ----------
         file_name: str
@@ -332,6 +361,7 @@ class VASP_DOS:
             dictionary that maps resolved sublevels/orbitals to indices
 
         """
+        
         #Accepts a file and reads through to get the density of states
         def get_dos(f, ndos):
             #get first line of density

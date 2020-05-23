@@ -1,0 +1,7 @@
+plotting_tools
+==============
+.. automodule:: vasp_dos.plotting_tools
+   :members:
+   :undoc-members:
+   :private-members:
+

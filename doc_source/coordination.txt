@@ -1,0 +1,7 @@
+coordination
+============
+.. automodule:: vasp_dos.coordination
+   :members:
+   :undoc-members:
+   :private-members:
+

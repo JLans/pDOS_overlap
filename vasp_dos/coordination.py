@@ -146,9 +146,8 @@ class Coordination:
         
         Returns
         -------
-        gcn : list of float
-        	Listof generalized coordination values for the desired atoms in
-            a system.
+        gcn : float
+        	Generalized coordination values for the desired site
             
         """
         # Define the types of bulk accepted
