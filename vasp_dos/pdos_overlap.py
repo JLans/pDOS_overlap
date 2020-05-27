@@ -57,12 +57,15 @@ class PDOS_OVERLAP:
             = self._get_orbital_features(REFERENCE_PDOS, adsorbate_orbital_indices\
                               , adsorbate_index)
         
-        orbital_scores = self._get_orbital_scores(gas_orbital_features\
+        orbital_errors = self._get_orbital_scores(gas_orbital_features\
                                                  , adsorbate_orbital_features)
+            
+        orbital_scores = self._get_orbital_scores(orbital_errors)
         
         self.gas_orbitals = gas_orbitals
         self.gas_peak_energies = gas_peak_energies
         self.gas_peak_densities = gas_peak_densities
+        self.orbital_scores = orbital_scores
         
         
         #Use distance between similarity to get probability
@@ -178,8 +181,8 @@ class PDOS_OVERLAP:
                        
         return orbital_features
     
-    def _get_orbital_scores(self, gas_orbital_features, adsorbate_orbital_features):
-        """ molecular scores as an M x N array
+    def _get_orbital_errors(self, gas_orbital_features, adsorbate_orbital_features):
+        """ Relative molecular orbital feature errors as an M x N array
         
         Parameters
         ----------
@@ -191,7 +194,7 @@ class PDOS_OVERLAP:
                    
         Returns
         -------
-        orbital_scores : numpy.ndarray
+        orbital_errors : numpy.ndarray
             M x N 2D array where M is the number of gas molecular orbitals
             and N is the number of adsorbate molecular orbitals
 
@@ -199,7 +202,8 @@ class PDOS_OVERLAP:
                
         num_gas_orbitals = gas_orbital_features.shape[0]
         num_ad_orbitals = adsorbate_orbital_features.shape[0]
-        orbital_scores = np.zeros((num_gas_orbitals,num_ad_orbitals))
+        num_features = num_gas_orbitals.shape[1]
+        orbital_errors = np.zeros((num_gas_orbitals,num_ad_orbitals))
         
         min_features = np.min(np.concatenate((gas_orbital_features\
                                               , adsorbate_orbital_features)\
@@ -215,13 +219,47 @@ class PDOS_OVERLAP:
         for count in num_gas_orbitals:
             diff = adsorbate_orbital_features - gas_orbital_features[count]
             norm_diff = diff / feature_range
-            RMSE = np.sum(norm_diff**2, axis=1)**0.5
-            orbital_scores[count] = RMSE
+            RMSE = np.sum(norm_diff**2/num_features, axis=1)**0.5
+            orbital_errors[count] = RMSE
             
+        return orbital_errors
+            
+    def _get_orbital_scores(self, orbital_errors):
+        """ orbital scores which represent probabilities of the gas molecular
+        orbital matching each adsorbate molecular orbital
+        
+        Parameters
+        ----------
+        orbital_errors : numpy.ndarray
+            M x N 2D array where M is the number of gas molecular orbitals
+            and N is the number of adsorbate molecular orbitals
+            
+        Returns
+        -------
+        orbital_scores : numpy.ndarray
+            M x N 2D array where M is the number of gas molecular orbitals
+            and N is the number of adsorbate molecular orbitals
+            
+            
+        Notes
+        
+        p = 1 - orbital_errors
+        
+        To get probability that an adsorbate molecular orbital matches a gas
+        molecular orbital:
+        
+        take logit of probability https://en.wikipedia.org/wiki/Logit
+        take softmax of logit functions https://en.wikipedia.org/wiki/Softmax_function
+        logit(p) = ln(p/(1-p)) --> maps p to -infinity to +infinity
+        softmax = exp(zi)/sum(exp(zj))
+        softmax(logits) = p_i/(1-p_i) / sum(p_j/(1-p_j))
+
+        """
+           
+        pairwise_prob = 1 - orbital_errors
+        orbital_errors[orbital_errors[...] == 0] = 10**-8 # some small number
+        odds = pairwise_prob/orbital_errors
+        orbital_scores = odds/odds.sum(axis=1)
+
         return orbital_scores
-            
-            
-        
-            
-        
-        
+    
