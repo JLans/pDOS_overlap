@@ -1,0 +1,11 @@
+pdos_overlap
+============
+
+The ``PDOS_OVERLAP`` class
+**************************
+.. autoclass:: vasp_dos.pdos_overlap.PDOS_OVERLAP
+   :members:
+   :undoc-members:
+   :private-members:
+
+

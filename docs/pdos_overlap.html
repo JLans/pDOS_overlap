@@ -1,0 +1,315 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pdos_overlap &mdash; vasp_dos 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery-dataframe.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="vasp_dos" href="vasp_dos.html" />
+    <link rel="prev" title="vasp_dos" href="includeme.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> vasp_dos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting Started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="includeme.html">vasp_dos</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">pdos_overlap</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-pdos-overlap-class">The <code class="docutils literal notranslate"><span class="pre">PDOS_OVERLAP</span></code> class</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="vasp_dos.html">vasp_dos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coordination.html">coordination</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotting_tools.html">plotting_tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="error_metrics.html">error_metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">vasp_dos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>pdos_overlap</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/pdos_overlap.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="pdos-overlap">
+<h1>pdos_overlap<a class="headerlink" href="#pdos-overlap" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="the-pdos-overlap-class">
+<h2>The <code class="docutils literal notranslate"><span class="pre">PDOS_OVERLAP</span></code> class<a class="headerlink" href="#the-pdos-overlap-class" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="vasp_dos.pdos_overlap.PDOS_OVERLAP">
+<em class="property">class </em><code class="sig-name descname">PDOS_OVERLAP</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">GAS_PDOS</span></em>, <em class="sig-param"><span class="n">REFERENCE_PDOS</span></em>, <em class="sig-param"><span class="n">adsorbate_index</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">site_index</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vasp_dos/pdos_overlap.html#PDOS_OVERLAP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vasp_dos.pdos_overlap.PDOS_OVERLAP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for calculating adsorbate-surface relative orbital overlap</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>GAS_PDOS</strong> (<a class="reference internal" href="vasp_dos.html#vasp_dos.vasp_dos.VASP_DOS" title="vasp_dos.vasp_dos.VASP_DOS"><em>vasp_dos.VASP_DOS</em></a>) – VASP_DOS object of gas phase calculation of adsorbate</p></li>
+<li><p><strong>REFERENCE_PDOS</strong> (<a class="reference internal" href="vasp_dos.html#vasp_dos.vasp_dos.VASP_DOS" title="vasp_dos.vasp_dos.VASP_DOS"><em>vasp_dos.VASP_DOS</em></a>) – VASP_DOS object of reference adsorbate+surface system</p></li>
+<li><p><strong>adsorbate_index</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>]</em>) – index (indices) of adsorbate atom(s) in REFERENCE_PDOS</p></li>
+<li><p><strong>site_index</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>]</em>) – index (indices) of adsorbate atom(s) in REFERENCE_PDOS</p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables</dt>
+<dd class="field-even"><p><strong>emax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – maximum energy level</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>GAS_PDOS is used only to determine the number of orbitals that can
+interact with the surface and to calculate relative orbital overlap with
+projected density of adsorption sites without adsorbates.</p>
+<dl class="py method">
+<dt id="vasp_dos.pdos_overlap.PDOS_OVERLAP._get_mol_orbitals">
+<code class="sig-name descname">_get_mol_orbitals</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">PDOS</span></em>, <em class="sig-param"><span class="n">atom_indices</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vasp_dos/pdos_overlap.html#PDOS_OVERLAP._get_mol_orbitals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vasp_dos.pdos_overlap.PDOS_OVERLAP._get_mol_orbitals" title="Permalink to this definition">¶</a></dt>
+<dd><p>molecular orbitals as an M x ndos array</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>PDOS</strong> (<a class="reference internal" href="vasp_dos.html#vasp_dos.vasp_dos.VASP_DOS" title="vasp_dos.vasp_dos.VASP_DOS"><em>vasp_dos.VASP_DOS</em></a>) – VASP_DOS object of gas or surface phase calculation of adsorbate</p></li>
+<li><p><strong>atom_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – indices of atoms to include in the TOTAL DOS. If empty, then all
+atoms are included (as for the gas)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>peak_energies</strong> (<em>float or numpy.ndarray</em>) – peak energy(s) of molecular orbital(s)</p></li>
+<li><p><strong>peak_densities</strong> (<em>float or numpy.ndarray</em>) – peak density(ies) of molecular orbital(s)</p></li>
+<li><p><strong>mol_orbitals</strong> (<em>numpy.ndarray</em>) – M x ndos 2D array where M is the number of molecular orbitals and
+ndos is the number of gridpoints for the density of states</p></li>
+<li><p><strong>orbital_indices</strong> (<em>list[numpy.ndarray]</em>) – Length M list of non-zero orbital indices</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="vasp_dos.pdos_overlap.PDOS_OVERLAP._get_orbital_features">
+<code class="sig-name descname">_get_orbital_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">PDOS</span></em>, <em class="sig-param"><span class="n">orbital_indices</span></em>, <em class="sig-param"><span class="n">atom_indices</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vasp_dos/pdos_overlap.html#PDOS_OVERLAP._get_orbital_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vasp_dos.pdos_overlap.PDOS_OVERLAP._get_orbital_features" title="Permalink to this definition">¶</a></dt>
+<dd><p>molecular orbitals as an M x ndos array</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>PDOS</strong> (<a class="reference internal" href="vasp_dos.html#vasp_dos.vasp_dos.VASP_DOS" title="vasp_dos.vasp_dos.VASP_DOS"><em>vasp_dos.VASP_DOS</em></a>) – VASP_DOS object of gas or surface phase calculation of adsorbate</p></li>
+<li><p><strong>atom_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – indices of atoms to include in the TOTAL DOS. If empty, then all
+atoms are included (as for the gas)</p></li>
+<li><p><strong>orbital_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a><em>]</em>) – Length M list of non-zero orbital indices</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>orbital_features</strong> – M x n_features 2D array where M is the number of molecular orbitals
+and n_features is the number of orbital features for calculating
+orbital similarity. Includes molecular orbital energy center and
+integrated s, p, and d molecular orbital density of states</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="vasp_dos.pdos_overlap.PDOS_OVERLAP._get_orbital_scores">
+<code class="sig-name descname">_get_orbital_scores</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gas_orbital_features</span></em>, <em class="sig-param"><span class="n">adsorbate_orbital_features</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vasp_dos/pdos_overlap.html#PDOS_OVERLAP._get_orbital_scores"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vasp_dos.pdos_overlap.PDOS_OVERLAP._get_orbital_scores" title="Permalink to this definition">¶</a></dt>
+<dd><p>molecular scores as an M x N array</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gas_orbital_features</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – gas orbital features</p></li>
+<li><p><strong>adsorbate_orbital_features</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – adsorbate orbital features</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>orbital_scores</strong> – M x N 2D array where M is the number of gas molecular orbitals
+and N is the number of adsorbate molecular orbitals</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="vasp_dos.html" class="btn btn-neutral float-right" title="vasp_dos" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="includeme.html" class="btn btn-neutral float-left" title="vasp_dos" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Joshua Lansford
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

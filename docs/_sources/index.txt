@@ -13,6 +13,8 @@ Welcome to vasp_dos's documentation!
    :maxdepth: 4
    :caption: Contents:
 
+   pdos_overlap
+
    vasp_dos
 
    coordination

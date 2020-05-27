@@ -87,6 +87,7 @@
 </ul>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../pdos_overlap.html">pdos_overlap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../vasp_dos.html">vasp_dos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../coordination.html">coordination</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../plotting_tools.html">plotting_tools</a></li>
@@ -232,7 +233,7 @@
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        band_center : float or numpy.array</span>
+<span class="sd">        band_center : float or numpy.ndarray</span>
 <span class="sd">            center of the band(s) up to max_energy</span>
 <span class="sd">            </span>
 <span class="sd">        Notes</span>
@@ -265,6 +266,9 @@
 <span class="sd">        </span>
 <span class="sd">        Attributes</span>
 <span class="sd">        ----------</span>
+<span class="sd">        natoms : int</span>
+<span class="sd">            number of atoms in the system</span>
+<span class="sd">            </span>
 <span class="sd">        emax : float</span>
 <span class="sd">            maximum energy level</span>
 <span class="sd">            </span>
@@ -274,21 +278,22 @@
 <span class="sd">        ndos : int</span>
 <span class="sd">            number of descritized energy levels</span>
 <span class="sd">            </span>
-<span class="sd">        e_fermi: float</span>
+<span class="sd">        e_fermi : float</span>
 <span class="sd">            highest occupied energy level</span>
 <span class="sd">            </span>
-<span class="sd">        is_spin: bool</span>
+<span class="sd">        is_spin : bool</span>
 <span class="sd">            indicates if projected density is spin resolved</span>
 <span class="sd">            </span>
-<span class="sd">        m_projected: bool</span>
+<span class="sd">        m_projected : bool</span>
 <span class="sd">            indicates if projected density is orbital resolved</span>
 <span class="sd">            </span>
 <span class="sd">        orbital_dictionary: dict</span>
 <span class="sd">            dictionary that maps resolved sublevels/orbitals to indices</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         
-        <span class="n">emax</span><span class="p">,</span> <span class="n">emin</span><span class="p">,</span> <span class="n">ndos</span><span class="p">,</span> <span class="n">e_fermi</span><span class="p">,</span> <span class="n">is_spin</span><span class="p">,</span> <span class="n">m_projected</span><span class="p">,</span> <span class="n">orbital_dictionary</span>\
-            <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_doscar</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">)</span>
+        <span class="n">natoms</span><span class="p">,</span> <span class="n">emax</span><span class="p">,</span> <span class="n">emin</span><span class="p">,</span> <span class="n">ndos</span><span class="p">,</span> <span class="n">e_fermi</span><span class="p">,</span> <span class="n">is_spin</span><span class="p">,</span> <span class="n">m_projected</span>\
+            <span class="p">,</span> <span class="n">orbital_dictionary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_doscar</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">natoms</span> <span class="o">=</span> <span class="n">natoms</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">emax</span> <span class="o">=</span> <span class="n">emax</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">emin</span> <span class="o">=</span> <span class="n">emin</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ndos</span> <span class="o">=</span> <span class="n">ndos</span>
@@ -302,13 +307,13 @@
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        atom: int</span>
+<span class="sd">        atom : int</span>
 <span class="sd">            Atom index</span>
 <span class="sd">            </span>
-<span class="sd">        orbital_list: list[str]</span>
+<span class="sd">        orbital_list : list[str]</span>
 <span class="sd">            Which orbitals to return</span>
 <span class="sd">            </span>
-<span class="sd">        sum_density: bool</span>
+<span class="sd">        sum_density : bool</span>
 <span class="sd">            if a sub-level is provided instead of an orbital, sum_density</span>
 <span class="sd">            indicates if the individual sub-level densities should be summed</span>
 <span class="sd">            </span>
@@ -320,7 +325,7 @@
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        band_center : float or numpy.array</span>
+<span class="sd">        band_center : float or numpy.ndarray</span>
 <span class="sd">            center of the band(s) up to max_energy</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -344,7 +349,7 @@
         <span class="n">energies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">energies</span></div>
     
-<div class="viewcode-block" id="VASP_DOS.get_total_dos"><a class="viewcode-back" href="../../vasp_dos.html#vasp_dos.vasp_dos.VASP_DOS.get_total_dos">[docs]</a>    <span class="k">def</span> <span class="nf">get_total_dos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="VASP_DOS.get_total_dos"><a class="viewcode-back" href="../../vasp_dos.html#vasp_dos.vasp_dos.VASP_DOS.get_total_dos">[docs]</a>    <span class="k">def</span> <span class="nf">get_total_dos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; method for obtaining total density of states</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
@@ -356,10 +361,14 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
             <span class="n">total_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
-            <span class="n">total_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="k">if</span> <span class="n">sum_spin</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">total_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">total_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:]</span>
+                
         <span class="k">return</span> <span class="n">total_dos</span></div>
 
-<div class="viewcode-block" id="VASP_DOS.get_integrated_dos"><a class="viewcode-back" href="../../vasp_dos.html#vasp_dos.vasp_dos.VASP_DOS.get_integrated_dos">[docs]</a>    <span class="k">def</span> <span class="nf">get_integrated_dos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="VASP_DOS.get_integrated_dos"><a class="viewcode-back" href="../../vasp_dos.html#vasp_dos.vasp_dos.VASP_DOS.get_integrated_dos">[docs]</a>    <span class="k">def</span> <span class="nf">get_integrated_dos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; method for obtaining total integrated density of states</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
@@ -371,7 +380,10 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
             <span class="n">integrated_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
-            <span class="n">integrated_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="k">if</span> <span class="n">sum_spin</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">integrated_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">integrated_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">integrated_dos</span></div>
         
 <div class="viewcode-block" id="VASP_DOS.get_site_dos"><a class="viewcode-back" href="../../vasp_dos.html#vasp_dos.vasp_dos.VASP_DOS.get_site_dos">[docs]</a>    <span class="k">def</span> <span class="nf">get_site_dos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom</span><span class="p">,</span> <span class="n">orbital_list</span><span class="p">,</span> <span class="n">sum_density</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
@@ -379,13 +391,13 @@
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        atom: int</span>
+<span class="sd">        atom : int</span>
 <span class="sd">            Atom index</span>
 <span class="sd">            </span>
-<span class="sd">        orbital_list: list[str]</span>
+<span class="sd">        orbital_list : list[str]</span>
 <span class="sd">            Which orbitals to return</span>
 <span class="sd">            </span>
-<span class="sd">        sum_density: bool</span>
+<span class="sd">        sum_density : bool</span>
 <span class="sd">            if a sub-level is provided instead of an orbital, sum_density</span>
 <span class="sd">            indicates if the individual sub-level densities should be summed</span>
 <span class="sd">        </span>
@@ -480,7 +492,7 @@
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        file_name: str</span>
+<span class="sd">        file_name : str</span>
 <span class="sd">            file location of the DOSCAR file</span>
 <span class="sd">            </span>
 <span class="sd">        Attributes</span>
@@ -505,16 +517,16 @@
 <span class="sd">        ndos : int</span>
 <span class="sd">            number of descritized energy levels</span>
 <span class="sd">            </span>
-<span class="sd">        e_fermi: float</span>
+<span class="sd">        e_fermi : float</span>
 <span class="sd">            highest occupied energy level</span>
 <span class="sd">            </span>
-<span class="sd">        is_spin: bool</span>
+<span class="sd">        is_spin : bool</span>
 <span class="sd">            indicates if projected density is spin resolved</span>
 <span class="sd">            </span>
-<span class="sd">        m_projected: bool</span>
+<span class="sd">        m_projected : bool</span>
 <span class="sd">            indicates if projected density is orbital resolved</span>
 <span class="sd">            </span>
-<span class="sd">        orbital_dictionary: dict</span>
+<span class="sd">        orbital_dictionary : dict</span>
 <span class="sd">            dictionary that maps resolved sublevels/orbitals to indices</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -539,9 +551,8 @@
         <span class="n">emin</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">descriptive_line</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         <span class="n">ndos</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">descriptive_line</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
         <span class="n">e_fermi</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">descriptive_line</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
-        <span class="n">dos</span> <span class="o">=</span> <span class="n">get_dos</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">ndos</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span> <span class="o">=</span> <span class="n">dos</span>
-        <span class="c1"># Next we have one block per atom, if INCAR contains the stuff</span>
+        <span class="n">_total_dos</span> <span class="o">=</span> <span class="n">get_dos</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">ndos</span><span class="p">)</span>
+        <span class="c1"># Next we have one block per atom, if DOSCAR contains the stuff</span>
         <span class="c1"># necessary for generating site-projected DOS</span>
         <span class="n">dos</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">na</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">natoms</span><span class="p">):</span>
@@ -666,8 +677,9 @@
                 <span class="s1">&#39;fx(x2-3y2)+&#39;</span><span class="p">:</span> <span class="mi">31</span><span class="p">,</span>
                 <span class="s1">&#39;fx(x2-3y2)-&#39;</span><span class="p">:</span> <span class="mi">32</span><span class="p">}</span>
         
+        <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span> <span class="o">=</span> <span class="n">_total_dos</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_site_dos</span> <span class="o">=</span> <span class="n">_site_dos</span>
-        <span class="k">return</span> <span class="n">emax</span><span class="p">,</span> <span class="n">emin</span><span class="p">,</span> <span class="n">ndos</span><span class="p">,</span> <span class="n">e_fermi</span><span class="p">,</span> <span class="n">is_spin</span><span class="p">,</span> <span class="n">m_projected</span><span class="p">,</span> <span class="n">orbitals</span></div></div>
+        <span class="k">return</span> <span class="n">natoms</span><span class="p">,</span> <span class="n">emax</span><span class="p">,</span> <span class="n">emin</span><span class="p">,</span> <span class="n">ndos</span><span class="p">,</span> <span class="n">e_fermi</span><span class="p">,</span> <span class="n">is_spin</span><span class="p">,</span> <span class="n">m_projected</span><span class="p">,</span> <span class="n">orbitals</span></div></div>
         
         
 </pre></div>

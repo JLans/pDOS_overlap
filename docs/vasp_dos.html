@@ -39,7 +39,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="coordination" href="coordination.html" />
-    <link rel="prev" title="vasp_dos" href="includeme.html" /> 
+    <link rel="prev" title="pdos_overlap" href="pdos_overlap.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -89,6 +89,7 @@
 </ul>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="pdos_overlap.html">pdos_overlap</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">vasp_dos</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#the-get-data-path-function">The <code class="docutils literal notranslate"><span class="pre">get_data_path</span></code> function</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#the-get-example-data-function">The <code class="docutils literal notranslate"><span class="pre">get_example_data</span></code> function</a></li>
@@ -240,7 +241,7 @@
 <dd class="field-even"><p><strong>band_center</strong> – center of the band(s) up to max_energy</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a> or numpy.array</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -262,6 +263,7 @@
 </dd>
 <dt class="field-even">Variables</dt>
 <dd class="field-even"><ul class="simple">
+<li><p><strong>natoms</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – number of atoms in the system</p></li>
 <li><p><strong>emax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – maximum energy level</p></li>
 <li><p><strong>emin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – minimum energy level</p></li>
 <li><p><strong>ndos</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – number of descritized energy levels</p></li>
@@ -323,7 +325,7 @@ indicates if the individual sub-level densities should be summed</p></li>
 <dd class="field-even"><p><strong>band_center</strong> – center of the band(s) up to max_energy</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a> or numpy.array</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -344,7 +346,7 @@ indicates if the individual sub-level densities should be summed</p></li>
 
 <dl class="py method">
 <dt id="vasp_dos.vasp_dos.VASP_DOS.get_integrated_dos">
-<code class="sig-name descname">get_integrated_dos</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/vasp_dos/vasp_dos.html#VASP_DOS.get_integrated_dos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vasp_dos.vasp_dos.VASP_DOS.get_integrated_dos" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_integrated_dos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vasp_dos/vasp_dos.html#VASP_DOS.get_integrated_dos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vasp_dos.vasp_dos.VASP_DOS.get_integrated_dos" title="Permalink to this definition">¶</a></dt>
 <dd><p>method for obtaining total integrated density of states</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -383,7 +385,7 @@ by both orbital and spin (if available)</p></li>
 
 <dl class="py method">
 <dt id="vasp_dos.vasp_dos.VASP_DOS.get_total_dos">
-<code class="sig-name descname">get_total_dos</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/vasp_dos/vasp_dos.html#VASP_DOS.get_total_dos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vasp_dos.vasp_dos.VASP_DOS.get_total_dos" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_total_dos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vasp_dos/vasp_dos.html#VASP_DOS.get_total_dos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vasp_dos.vasp_dos.VASP_DOS.get_total_dos" title="Permalink to this definition">¶</a></dt>
 <dd><p>method for obtaining total density of states</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -411,7 +413,7 @@ by both orbital and spin (if available)</p></li>
         <a href="coordination.html" class="btn btn-neutral float-right" title="coordination" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="includeme.html" class="btn btn-neutral float-left" title="vasp_dos" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="pdos_overlap.html" class="btn btn-neutral float-left" title="pdos_overlap" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

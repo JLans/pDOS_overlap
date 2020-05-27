@@ -75,7 +75,7 @@ def get_band_center(energies, densities, max_energy=None, axis=-1):
         
         Returns
         -------
-        band_center : float or numpy.array
+        band_center : float or numpy.ndarray
             center of the band(s) up to max_energy
             
         Notes
@@ -108,6 +108,9 @@ class VASP_DOS:
         
         Attributes
         ----------
+        natoms : int
+            number of atoms in the system
+            
         emax : float
             maximum energy level
             
@@ -117,21 +120,22 @@ class VASP_DOS:
         ndos : int
             number of descritized energy levels
             
-        e_fermi: float
+        e_fermi : float
             highest occupied energy level
             
-        is_spin: bool
+        is_spin : bool
             indicates if projected density is spin resolved
             
-        m_projected: bool
+        m_projected : bool
             indicates if projected density is orbital resolved
             
         orbital_dictionary: dict
             dictionary that maps resolved sublevels/orbitals to indices
         """
         
-        emax, emin, ndos, e_fermi, is_spin, m_projected, orbital_dictionary\
-            = self._read_doscar(file_name=file_name)
+        natoms, emax, emin, ndos, e_fermi, is_spin, m_projected\
+            , orbital_dictionary = self._read_doscar(file_name=file_name)
+        self.natoms = natoms
         self.emax = emax
         self.emin = emin
         self.ndos = ndos
@@ -145,13 +149,13 @@ class VASP_DOS:
         
         Parameters
         ----------
-        atom: int
+        atom : int
             Atom index
             
-        orbital_list: list[str]
+        orbital_list : list[str]
             Which orbitals to return
             
-        sum_density: bool
+        sum_density : bool
             if a sub-level is provided instead of an orbital, sum_density
             indicates if the individual sub-level densities should be summed
             
@@ -163,7 +167,7 @@ class VASP_DOS:
         
         Returns
         -------
-        band_center : float or numpy.array
+        band_center : float or numpy.ndarray
             center of the band(s) up to max_energy
 
         """
@@ -187,7 +191,7 @@ class VASP_DOS:
         energies = self._total_dos[0,:].copy()
         return energies
     
-    def get_total_dos(self):
+    def get_total_dos(self, sum_spin=False):
         """ method for obtaining total density of states
         
         Returns
@@ -199,10 +203,14 @@ class VASP_DOS:
         if self._total_dos.shape[0] == 3:
             total_dos = self._total_dos[1, :]
         elif self._total_dos.shape[0] == 5:
-            total_dos = self._total_dos[1:3, :]
+            if sum_spin == True:
+                total_dos = self._total_dos[1:3, :].sum(axis=0)
+            else:
+                total_dos = self._total_dos[1:3, :]
+                
         return total_dos
 
-    def get_integrated_dos(self):
+    def get_integrated_dos(self, sum_spin=False):
         """ method for obtaining total integrated density of states
         
         Returns
@@ -214,7 +222,10 @@ class VASP_DOS:
         if self._total_dos.shape[0] == 3:
             integrated_dos = self._total_dos[2, :]
         elif self._total_dos.shape[0] == 5:
-            integrated_dos = self._total_dos[3:5, :]
+            if sum_spin == True:
+                integrated_dos = self._total_dos[3:5, :].sum(axis=0)
+            else:
+                integrated_dos = self._total_dos[3:5, :].sum(axis=0)
         return integrated_dos
         
     def get_site_dos(self, atom, orbital_list, sum_density = False):
@@ -222,13 +233,13 @@ class VASP_DOS:
         
         Parameters
         ----------
-        atom: int
+        atom : int
             Atom index
             
-        orbital_list: list[str]
+        orbital_list : list[str]
             Which orbitals to return
             
-        sum_density: bool
+        sum_density : bool
             if a sub-level is provided instead of an orbital, sum_density
             indicates if the individual sub-level densities should be summed
         
@@ -323,7 +334,7 @@ class VASP_DOS:
         
         Parameters
         ----------
-        file_name: str
+        file_name : str
             file location of the DOSCAR file
             
         Attributes
@@ -348,16 +359,16 @@ class VASP_DOS:
         ndos : int
             number of descritized energy levels
             
-        e_fermi: float
+        e_fermi : float
             highest occupied energy level
             
-        is_spin: bool
+        is_spin : bool
             indicates if projected density is spin resolved
             
-        m_projected: bool
+        m_projected : bool
             indicates if projected density is orbital resolved
             
-        orbital_dictionary: dict
+        orbital_dictionary : dict
             dictionary that maps resolved sublevels/orbitals to indices
 
         """
@@ -382,9 +393,8 @@ class VASP_DOS:
         emin = float(descriptive_line[1])
         ndos = int(descriptive_line[2])
         e_fermi = float(descriptive_line[3])
-        dos = get_dos(f,ndos)
-        self._total_dos = dos
-        # Next we have one block per atom, if INCAR contains the stuff
+        _total_dos = get_dos(f,ndos)
+        # Next we have one block per atom, if DOSCAR contains the stuff
         # necessary for generating site-projected DOS
         dos = []
         for na in range(natoms):
@@ -509,7 +519,8 @@ class VASP_DOS:
                 'fx(x2-3y2)+': 31,
                 'fx(x2-3y2)-': 32}
         
+        self._total_dos = _total_dos
         self._site_dos = _site_dos
-        return emax, emin, ndos, e_fermi, is_spin, m_projected, orbitals
+        return natoms, emax, emin, ndos, e_fermi, is_spin, m_projected, orbitals
         
         
