@@ -29,5 +29,5 @@ License
 This project is licensed under the MIT License - see the `LICENSE.md`
 file for details.
 
-.. _`documentation page`: https://VlachosGroup.github.io/vasp_dos/
+.. _`documentation page`: https://JLans.github.io/vasp_dos/
 .. _Numpy: http://www.numpy.org/
