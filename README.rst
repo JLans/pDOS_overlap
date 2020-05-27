@@ -1,6 +1,6 @@
 vasp_dos
 ========
-Methods for converting spectra to structure and solving the materials gap
+Methods for calculating catalyst band overlap with adsorbate molecular orbitals
 
 This is documentation for https://github.com/JLans/vasp_dos.
 vasp_dos enables projected density states analysis from VASP DOSCAR file
