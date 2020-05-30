@@ -153,6 +153,18 @@ class PDOS_OVERLAP:
                                     , orbital_indices[orbital_num] ) )
                 new_occupations[-1] += orbital_occupations[orbital_num]
                 orbital_num += 1
+        
+        new_mol_orbitals_v2 = []
+        new_orbital_indices_v2 = []
+        new_occupations_v2 = []
+        orbital_num = 0
+        band_centers = get_band_center()
+        for i in range(len(new_mol_orbitals)):
+            if new_occupations[i] > 0.9:
+                new_mol_orbitals_v2.append(new_mol_orbitals[i])
+                new_orbital_indices_v2.append(new_orbital_indices[i])
+                new_occupations_v2.append(new_occupations[i])
+            else:
                 
         for count, i in enumerate(new_mol_orbitals):
             plt.figure(count)

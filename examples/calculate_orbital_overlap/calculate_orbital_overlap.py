@@ -16,7 +16,6 @@ with an adsorbate and surface atom.
 """
 
 import os
-from vasp_dos import get_example_data
 from vasp_dos import VASP_DOS
 from vasp_dos.plotting_tools import set_figure_settings
 from vasp_dos import get_adsorbate_indices
