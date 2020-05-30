@@ -31,9 +31,8 @@ def get_example_data():
         path to example VASP data
     """
     
-    data_path = pkg_resources.resource_filename(__name__, 'data/')
-    example_data_path = os.path.join(data_path, 'example_data')
-    return example_data_path
+    data_path = pkg_resources.resource_filename(__name__, 'data/example_data')
+    return data_path
 
 def get_all_VASP_files(directory):
     """ Get all DOSCAR and CONTCAR file paths
@@ -99,15 +98,23 @@ def get_band_center(energies, densities, max_energy=None, axis=-1):
 
 class VASP_DOS:
     """Class for extracting projected density of states from VASP"""
-    def __init__(self, file_name="DOSCAR"):
+    def __init__(self, file_name="DOSCAR",no_negatives=True):
         """ 
         Parameters
         ----------
         file_name : str
             full DOSCAR file location
         
+        no_negatives : bool
+            Indicates wheather negative occupances will be converted to zero.
+            Negative occupances can occur if Methfessel-Paxton is used.
+        
         Attributes
         ----------
+        no_negatives : bool
+            Indicates wheather negative occupances will be converted to zero.
+            Negative occupances can occur if Methfessel-Paxton is used.
+        
         natoms : int
             number of atoms in the system
             
@@ -134,7 +141,8 @@ class VASP_DOS:
         """
         
         natoms, emax, emin, ndos, e_fermi, is_spin, m_projected\
-            , orbital_dictionary = self._read_doscar(file_name=file_name)
+            , orbital_dictionary = self._read_doscar(file_name=file_name, no_negatives=no_negatives)
+        self.no_negatives = no_negatives
         self.natoms = natoms
         self.emax = emax
         self.emin = emin
@@ -329,13 +337,17 @@ class VASP_DOS:
             projected_density = _site_dos[atom, indices, :]
         return new_orbital_list, projected_density
         
-    def _read_doscar(self, file_name="DOSCAR"):
+    def _read_doscar(self, file_name="DOSCAR", no_negatives=True):
         """Read VASP DOSCAR and extract projected densities
         
         Parameters
         ----------
         file_name : str
             file location of the DOSCAR file
+            
+        no_negatives : bool
+            Indicates wheather negative occupances will be converted to zero.
+            Negative occupances can occur if Methfessel-Paxton is used.
             
         Attributes
         ----------
@@ -394,6 +406,8 @@ class VASP_DOS:
         ndos = int(descriptive_line[2])
         e_fermi = float(descriptive_line[3])
         _total_dos = get_dos(f,ndos)
+        if no_negatives == True:
+            _total_dos[1:][_total_dos[1:][...] < 0] = 0
         # Next we have one block per atom, if DOSCAR contains the stuff
         # necessary for generating site-projected DOS
         dos = []
@@ -406,6 +420,8 @@ class VASP_DOS:
             pdos = get_dos(f,ndos)
             dos.append(pdos)
         _site_dos = np.array(dos)
+        if no_negatives == True:
+            _site_dos[:,1:,:][_site_dos[:,1:,:][...] < 0] = 0 
         
         
         # Integer indexing for orbitals starts from 1 in the _site_dos array

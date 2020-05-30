@@ -23,7 +23,7 @@ from vasp_dos.plotting_tools import set_figure_settings
 
 set_figure_settings('paper')
 example_path = get_example_data()
-DOSCAR = os.path.join(example_path, 'DOSCAR')
+DOSCAR = os.path.join(example_path, 'C2H4/DOSCAR')
 PDOS = VASP_DOS(DOSCAR)
 
 #######################################################################################
