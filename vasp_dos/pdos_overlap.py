@@ -156,7 +156,7 @@ class PDOS_OVERLAP:
                 
         for count, i in enumerate(new_mol_orbitals):
             plt.figure(count)
-            plt.plot(PDOS.get_energies()[i > 0], i[i > 0])
+            plt.plot(PDOS.get_energies(), i)
             plt.show()
                
         return peak_energies, peak_densities, mol_orbitals, orbital_indices

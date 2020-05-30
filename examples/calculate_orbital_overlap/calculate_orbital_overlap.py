@@ -30,7 +30,8 @@ from vasp_dos import PDOS_OVERLAP
 # instantiate a VASP_DOS object.
 
 set_figure_settings('paper')
-example_path = get_example_data()
+#These files are too large to store in the examples directory
+example_path = r'C:\Users\lansf\Documents\Data\PROBE_PDOS\vasp_dos_files'
 GAS_DOSCAR = os.path.join(example_path, 'CO/DOSCAR')
 GAS_CONTCAR = os.path.join(example_path, 'CO/CONTCAR')
 ADSORBATE_DOSCAR = os.path.join(example_path, 'CO+Pt111/DOSCAR')

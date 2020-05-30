@@ -18,7 +18,8 @@ GCNList = []
 atom_type = []
 band_list = []
 occupied_band_list = []
-DOSCAR_files, CONTCAR_files = get_all_VASP_files(r'C:\Users\lansf\Documents\Data\PROBE_PDOS\Pt_nano')
+DOSCAR_files, CONTCAR_files = get_all_VASP_files(\
+        r'C:\Users\lansf\Documents\Data\PROBE_PDOS\vasp_dos_files\Pt_nano')
 
 
 for DOSCAR, CONTCAR in zip(DOSCAR_files, CONTCAR_files):
