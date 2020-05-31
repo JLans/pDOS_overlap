@@ -163,7 +163,7 @@ class PDOS_OVERLAP:
         
         j = 0
         for i in range(num_new_orbitals):
-            if new_occupations[i] > min_occupation or i in [0, num_new_orbitals - 1]:
+            if new_occupations[i] > min_occupation or i == 0:
                 mol_orbitals_final[j] += new_mol_orbitals[i]
                 orbital_indices_final[j] = np.concatenate(
                     (orbital_indices_final[j],new_orbital_indices[i]) )
@@ -171,6 +171,11 @@ class PDOS_OVERLAP:
                 #only update if a complete orbital is found    
                 if new_occupations[i] > min_occupation:
                     j += 1
+            elif i == num_new_orbitals - 1:
+                mol_orbitals_final[-1] += new_mol_orbitals[i]
+                orbital_indices_final[-1] = np.concatenate(
+                    (orbital_indices_final[-1],new_orbital_indices[i]) )
+                occupations_final[-1] += new_occupations[i]
             elif abs(band_centers[i] - band_centers[i-1])\
                 <= abs(band_centers[i] - band_centers[i+1]):
                 mol_orbitals_final[j-1] += new_mol_orbitals[i]
