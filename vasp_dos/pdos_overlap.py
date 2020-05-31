@@ -47,12 +47,11 @@ class PDOS_OVERLAP:
         """
         gas_index = list(range(GAS_PDOS.natoms))
         
-        
         gas_peak_energies, gas_peak_densities, gas_orbitals\
-            , gas_orbital_indices = self._get_mol_orbitals(GAS_PDOS, gas_index)
+            , gas_orbital_indices, gas_occupations = self._get_mol_orbitals(GAS_PDOS, gas_index)
         
         adsorbate_peak_energies, adsorbate_peak_densities, adsorbate_orbitals \
-            , adsorbate_orbital_indices \
+            , adsorbate_orbital_indices, adsorbate_occupations \
             = self._get_mol_orbitals(REFERENCE_PDOS, adsorbate_indices)
             
         gas_orbital_features\
@@ -73,7 +72,7 @@ class PDOS_OVERLAP:
         self.adsorbate_peak_densities = adsorbate_peak_densities
         self.orbital_scores = orbital_scores
     
-    def _get_mol_orbitals(self, PDOS, atom_indices):
+    def _get_mol_orbitals(self, PDOS, atom_indices, min_occupation=0.9):
         """ molecular orbitals as an M x ndos array
         
         Parameters
@@ -138,6 +137,7 @@ class PDOS_OVERLAP:
         new_orbital_indices = []
         new_occupations = []
         orbital_num = 0
+        
         #theoreticly new_occupations < 1 but account for some loss of electrons
         while orbital_num < num_peaks:
             new_mol_orbitals.append(mol_orbitals[orbital_num])
@@ -145,33 +145,50 @@ class PDOS_OVERLAP:
             new_occupations.append(orbital_occupations[orbital_num])
             orbital_num += 1
             while orbital_num < num_peaks\
-            and orbital_occupations[orbital_num - 1] < 0.9\
-            and orbital_occupations[orbital_num] < 0.9:
+            and orbital_occupations[orbital_num - 1] < min_occupation\
+            and orbital_occupations[orbital_num] < min_occupation:
                 new_mol_orbitals[-1] += mol_orbitals[orbital_num]
                 new_orbital_indices[-1]\
                                     = np.concatenate( ( new_orbital_indices[-1]\
                                     , orbital_indices[orbital_num] ) )
                 new_occupations[-1] += orbital_occupations[orbital_num]
                 orbital_num += 1
+        num_new_orbitals = len(new_mol_orbitals)
+        band_centers = get_band_center(PDOS.get_energies(),np.array(new_mol_orbitals))
         
-        new_mol_orbitals_v2 = []
-        new_orbital_indices_v2 = []
-        new_occupations_v2 = []
-        orbital_num = 0
-        band_centers = get_band_center()
-        for i in range(len(new_mol_orbitals)):
-            if new_occupations[i] > 0.9:
-                new_mol_orbitals_v2.append(new_mol_orbitals[i])
-                new_orbital_indices_v2.append(new_orbital_indices[i])
-                new_occupations_v2.append(new_occupations[i])
-            else:
+        num_orbitals_final = len([value for value in new_occupations if value > min_occupation])
+        mol_orbitals_final = np.zeros((num_orbitals_final,TOTAL_DOS.size))
+        orbital_indices_final = [np.array([]).astype(int) for _ in range(num_orbitals_final)]
+        occupations_final = np.zeros(num_orbitals_final)
+        
+        j = 0
+        for i in range(num_new_orbitals):
+            if new_occupations[i] > min_occupation or i in [0, num_new_orbitals - 1]:
+                mol_orbitals_final[j] += new_mol_orbitals[i]
+                orbital_indices_final[j] = np.concatenate(
+                    (orbital_indices_final[j],new_orbital_indices[i]) )
+                occupations_final[j] += new_occupations[i]
+                #only update if a complete orbital is found    
+                if new_occupations[i] > min_occupation:
+                    j += 1
+            elif abs(band_centers[i] - band_centers[i-1])\
+                <= abs(band_centers[i] - band_centers[i+1]):
+                mol_orbitals_final[j-1] += new_mol_orbitals[i]
+                orbital_indices_final[j-1] = np.concatenate(
+                    (orbital_indices_final[j-1],new_orbital_indices[i]) )
+                occupations_final[j-1] += new_occupations[i]
+            elif abs(band_centers[i] - band_centers[i-1])\
+                > abs(band_centers[i] - band_centers[i+1]):
+                mol_orbitals_final[j] += new_mol_orbitals[i]
+                orbital_indices_final[j] = np.concatenate(
+                    (orbital_indices_final[j],new_orbital_indices[i]) )
+                occupations_final[j] += new_occupations[i]
                 
-        for count, i in enumerate(new_mol_orbitals):
-            plt.figure(count)
-            plt.plot(PDOS.get_energies(), i)
-            plt.show()
+        molecular_orbitals = mol_orbitals_final
+        orbital_indices = orbital_indices_final
+        occupations = occupations_final
                
-        return peak_energies, peak_densities, mol_orbitals, orbital_indices
+        return peak_energies, peak_densities, molecular_orbitals, orbital_indices, occupations
     
     
     def _get_orbital_features(self, PDOS, orbital_indices, atom_indices=[]):
