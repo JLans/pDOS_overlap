@@ -59,6 +59,7 @@ class Coordination:
         self.exclude = exclude
         self.cutoff = cutoff
         self.cutoff_type = cutoff_type
+        self.read()
         
     def read(self):
         """Returns an array of coordination numbers and an array of existing bonds determined by
@@ -114,19 +115,26 @@ class Coordination:
         self.bonded = bonded
         
     def get_coordination_numbers(self):
-        """Implements the read function
+        """Implements returns coordination values
         
         Returns
         -------
         cn : list of int
         	list of coordination numbers for each atom.
-            
+        """
+        
+        return self.cn
+    
+    def get_bonded(self):
+        """returns bonded list
+        
+        Returns
+        -------
         bonded : list of list
         	List of indices of atoms bonded to each atom
         """
         
-        self.read()
-        return self.cn, self.bonded
+        return self.bonded
     
     def get_gcn(self,site=[], surface_type="fcc"):
         """Returns the generalized coordination number of the site given.  To define

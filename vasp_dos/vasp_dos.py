@@ -236,20 +236,20 @@ class VASP_DOS:
                 integrated_dos = self._total_dos[3:5, :].sum(axis=0)
         return integrated_dos
         
-    def get_site_dos(self, atom, orbital_list, sum_density = False):
+    def get_site_dos(self, atom_list =[], orbital_list=[], sum_density=False, sum_spin=False):
         """Return an NDOSxM array with dos for the chosen atom and orbital(s).
         
         Parameters
         ----------
-        atom : int
-            Atom index
+        atom_list : list(int)
+            List of atom index
             
         orbital_list : list[str]
             Which orbitals to return
             
         sum_density : bool
             if a sub-level is provided instead of an orbital, sum_density
-            indicates if the individual sub-level densities should be summed
+            indicates if the individual orbital densities should be summed
         
         Returns
         -------
@@ -270,6 +270,8 @@ class VASP_DOS:
         m_projected = self.m_projected
         _site_dos = self._site_dos
         ndos = self.ndos
+        if len(orbital_list) == 0:
+            orbital_list = list(orbital_dictionary.keys())
         def get_orbitals(orbital):
             #case where spin polarization is false and m level is resloved
             if is_spin == False and m_projected == True:
@@ -319,13 +321,14 @@ class VASP_DOS:
             else:
                 orbitals = [orbital]
             return orbitals
-        
+        #force list of atom_list is an int
         if sum_density == True:
-            projected_density = np.zeros((len(orbital_list),ndos))
-            for count, orbital in enumerate(orbital_list):
-                new_orbital_list = get_orbitals(orbital)
-                indices = [orbital_dictionary[key] for key in new_orbital_list]
-                projected_density[count] = _site_dos[atom, indices,:].sum(axis=0)
+            projected_density = np.zeros((len(orbital_list), ndos))
+            for atom in atom_list:
+                for count, orbital in enumerate(orbital_list):
+                    new_orbital_list = get_orbitals(orbital)
+                    indices = [orbital_dictionary[key] for key in new_orbital_list]
+                    projected_density[count]+= _site_dos[atom, indices,:].sum(axis=0)
             #return the list of orbitals provided
             new_orbital_list = orbital_list
         else:
@@ -333,8 +336,14 @@ class VASP_DOS:
             new_orbital_list = []
             for orbital in orbital_list:
                 new_orbital_list += get_orbitals(orbital)
+            projected_density = np.zeros((len(new_orbital_list), ndos))
             indices = [orbital_dictionary[key] for key in new_orbital_list]
-            projected_density = _site_dos[atom, indices, :]
+            for atom in atom_list:
+                projected_density += _site_dos[atom, indices, :]
+            
+        if is_spin == True and sum_spin == True and sum_density == False:
+            projected_density = projected_density[0::2,:] + projected_density[1::2,:]
+            new_orbital_list = [key.rstrip('+') for key in new_orbital_list[::2]]
         return new_orbital_list, projected_density
         
     def _read_doscar(self, file_name="DOSCAR", no_negatives=True):

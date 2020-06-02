@@ -25,7 +25,6 @@ DOSCAR_files, CONTCAR_files = get_all_VASP_files(\
 for DOSCAR, CONTCAR in zip(DOSCAR_files, CONTCAR_files):
     nanoparticle = read(CONTCAR)
     CN = Coordination(nanoparticle,cutoff=1.25)
-    CN.get_coordination_numbers()
     # read and return densityofstates object
     PDOS = VASP_DOS(DOSCAR)   
     for atom_index in range(len(nanoparticle)):

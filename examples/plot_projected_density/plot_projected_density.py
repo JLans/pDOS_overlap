@@ -33,21 +33,22 @@ PDOS = VASP_DOS(DOSCAR)
 # We get the site and spin orbital projected density. We sum the individual
 # spin orbital densities to get energy sub-level site projected densities.
 
-orbitals, projected_density = PDOS.get_site_dos(atom=0, orbital_list=['s', 'p', 'd']\
+orbitals, projected_density = PDOS.get_site_dos(atom_list=np.arange(-6,0), orbital_list=['s', 'p', 'd']\
                                       , sum_density = True)
-    
+
 #######################################################################################
 # Plot projected density
 # ----------------------
 #
 # We plot the projected density with the fermi-level indicated.
 
-plt.figure(0,figsize=(3,3))
+plt.figure(figsize=(3,3))
 colors = ['b','g','r']
+zorder = [2,3,4]
 for count, density in enumerate(projected_density):
-    plt.plot(density, PDOS.get_energies(), colors[count])
+    plt.plot(density, PDOS.get_energies(), colors[count], zorder=zorder[count])
 plt.plot([np.min(projected_density), np.max(projected_density)]\
-         ,[PDOS.e_fermi, PDOS.e_fermi],'k--')
+         ,[PDOS.e_fermi, PDOS.e_fermi],'k--', zorder=1)
 plt.legend([i for i in orbitals]+ ['fermi level'])
 plt.xlabel('State density')
 plt.ylabel('Energy [eV]')
