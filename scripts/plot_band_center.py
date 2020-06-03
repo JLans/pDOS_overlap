@@ -33,9 +33,10 @@ for DOSCAR, CONTCAR in zip(DOSCAR_files, CONTCAR_files):
             atom_type.append('surface')
         else:
             atom_type.append('bulk')
-        band_center = PDOS.get_band_center(atom_index, ['s','p','d']\
+        
+        band_center = PDOS.get_band_center([atom_index], ['s','p','d']\
                                 , sum_density=True) - PDOS.e_fermi
-        occupied_band_center = PDOS.get_band_center(atom_index, ['s','p','d']\
+        occupied_band_center = PDOS.get_band_center([atom_index], ['s','p','d']\
                                 , sum_density=True, max_energy=PDOS.e_fermi) - PDOS.e_fermi
             
         band_list.append(band_center)

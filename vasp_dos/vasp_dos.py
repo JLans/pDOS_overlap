@@ -152,13 +152,13 @@ class VASP_DOS:
         self.m_projected = m_projected
         self.orbital_dictionary = orbital_dictionary
         
-    def get_band_center(self, atom, orbital_list, sum_density=False, max_energy=None, axis=-1):
+    def get_band_center(self, atoms, orbital_list, sum_density=False, max_energy=None, axis=-1):
         """ Get band center for a given atom and list of orbitals
         
         Parameters
         ----------
-        atom : int
-            Atom index
+        atom : list
+            list of atom indices
             
         orbital_list : list[str]
             Which orbitals to return
@@ -179,10 +179,9 @@ class VASP_DOS:
             center of the band(s) up to max_energy
 
         """
-        
         energies = self.get_energies()
         get_site_dos = self.get_site_dos
-        orbitals, density = get_site_dos(atom,orbital_list, sum_density=sum_density)
+        orbitals, density = get_site_dos(atoms,orbital_list, sum_density=sum_density)
         band_center = get_band_center(energies, density, max_energy=max_energy, axis=-1)
         return band_center
         
@@ -301,6 +300,10 @@ class VASP_DOS:
                               'fx(x2-3y2)+', 'fx(x2-3y2)-']
                 #case where spin is provided but m-level is not
                 #up spin
+                elif orbital == 's+':
+                    orbitals = ['s+']
+                elif orbital == 's-':
+                    orbitals = ['s-']
                 elif orbital == 'p+':
                     orbitals = ['py+', 'pz+', 'px+']
                 elif orbital == 'd+':

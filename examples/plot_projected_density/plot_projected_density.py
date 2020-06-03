@@ -48,7 +48,7 @@ zorder = [2,3,4]
 for count, density in enumerate(projected_density):
     plt.plot(density, PDOS.get_energies(), colors[count], zorder=zorder[count])
 plt.plot([np.min(projected_density), np.max(projected_density)]\
-         ,[PDOS.e_fermi, PDOS.e_fermi],'k--', zorder=1)
+         ,[PDOS.e_fermi, PDOS.e_fermi],'k--', zorder=1, linewidth=5)
 plt.legend([i for i in orbitals]+ ['fermi level'])
 plt.xlabel('State density')
 plt.ylabel('Energy [eV]')

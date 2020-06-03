@@ -50,21 +50,8 @@ REFERENCE_PDOS = VASP_DOS(ADSORBATE_DOSCAR)
 
 adsorbate_indices, site_indices = get_adsorbate_indices(GAS_CONTCAR, ADSORBATE_CONTCAR)
 #Initialize Coordination object. Repeat is necessary so it doesn't count itself
-CO_overlap = PDOS_OVERLAP(GAS_PDOS, REFERENCE_PDOS, adsorbate_indices\
+C2H4pi_overlap = PDOS_OVERLAP(GAS_PDOS, REFERENCE_PDOS, adsorbate_indices\
                           , site_indices, min_occupation=0.9)
-
-print('Orbital matching scores')
-print(CO_overlap.orbital_scores)
-print('#####################################################################')
-print('Gas to adsorbate indices and band centers')
-print(CO_overlap.gas_2_adsorbate)
-
-#######################################################################################
-# Plot projected density
-# ----------------------
-#
-# We plot the projected density of the gas and adsorbate with the fermi-level.
-
-#CO_overlap.plot_energy_overlap()
-
-#CO_overlap.plot_projected_density()
+orbital_scores = C2H4pi_overlap.assign_orbitals(C2H4pi_overlap.orbital_scores_averaged\
+                    , max_iterations=200, pair_wise=True, verbose=True)
+print(orbital_scores)
