@@ -1,6 +1,6 @@
 coordination
 ============
-.. automodule:: vasp_dos.coordination
+.. automodule:: pdos_overlap.coordination
    :members:
    :undoc-members:
    :private-members:

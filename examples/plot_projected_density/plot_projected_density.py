@@ -10,9 +10,9 @@ This example shows how to plot projected density of states
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-from vasp_dos import get_example_data
-from vasp_dos import VASP_DOS
-from vasp_dos.plotting_tools import set_figure_settings
+from pdos_overlap import get_example_data
+from pdos_overlap import VASP_DOS
+from pdos_overlap.plotting_tools import set_figure_settings
 
 #######################################################################################
 # Load DOSCAR file

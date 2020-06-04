@@ -1,0 +1,754 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pdos_overlap.vasp_dos &mdash; pdos_overlap 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pdos_overlap
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting Started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../includeme.html">pdos_overlap</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../pdos_overlap.html">pdos_overlap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../vasp_dos.html">vasp_dos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../coordination.html">coordination</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plotting_tools.html">plotting_tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../error_metrics.html">error_metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../auto_examples/index.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pdos_overlap</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>pdos_overlap.vasp_dos</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pdos_overlap.vasp_dos</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Tue May 19 22:28:09 2020</span>
+
+<span class="sd">@author: lansf</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pkg_resources</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<div class="viewcode-block" id="get_data_path"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.get_data_path">[docs]</a><span class="k">def</span> <span class="nf">get_data_path</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Get default paths to package data.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    data_path : str</span>
+<span class="sd">        path to package data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">data_path</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="s1">&#39;data/&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data_path</span></div>
+
+<div class="viewcode-block" id="get_example_data"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.get_example_data">[docs]</a><span class="k">def</span> <span class="nf">get_example_data</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Get default paths to experimental data.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    example_data_path : str</span>
+<span class="sd">        path to example VASP data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">data_path</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="s1">&#39;data/example_data&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data_path</span></div>
+
+<div class="viewcode-block" id="get_all_VASP_files"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.get_all_VASP_files">[docs]</a><span class="k">def</span> <span class="nf">get_all_VASP_files</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Get all DOSCAR and CONTCAR file paths</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    directory : str</span>
+<span class="sd">        root directory to look for DOSCAR files</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    example_data_path : str</span>
+<span class="sd">        path to example VASP data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">DOSCAR_directories</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">subdirectory</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span> \
+              <span class="k">for</span> <span class="n">subdirectory</span> <span class="ow">in</span> <span class="n">d</span> \
+              <span class="k">if</span> <span class="s1">&#39;DOSCAR&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">subdirectory</span><span class="p">))]</span>
+    <span class="n">DOSCAR_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="s1">&#39;DOSCAR&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">DOSCAR_directories</span><span class="p">]</span>
+    <span class="n">CONTCAR_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="s1">&#39;CONTCAR&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">DOSCAR_directories</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">DOSCAR_files</span><span class="p">,</span> <span class="n">CONTCAR_files</span></div>
+
+<div class="viewcode-block" id="get_band_center"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.get_band_center">[docs]</a><span class="k">def</span> <span class="nf">get_band_center</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">,</span> <span class="n">max_energy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get band center given energies and densities</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        energies : numpy.ndarray</span>
+<span class="sd">            discretized orbital energies</span>
+<span class="sd">        </span>
+<span class="sd">        densities : numpy.ndarray</span>
+<span class="sd">            projected state densities</span>
+<span class="sd">            </span>
+<span class="sd">        max_energy : float</span>
+<span class="sd">            cutoff energy (often the fermi energy)</span>
+<span class="sd">            </span>
+<span class="sd">        axis : int</span>
+<span class="sd">            axis of densities on which to integrate</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        band_center : float or numpy.ndarray</span>
+<span class="sd">            center of the band(s) up to max_energy</span>
+<span class="sd">            </span>
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        trapezoidal rule is better for narrow gaussian peaks and for &quot;rough&quot; functions</span>
+<span class="sd">        https://doi.org/10.1016/j.chemolab.2018.06.001</span>
+<span class="sd">        http://emis.icm.edu.pl/journals/JIPAM/v3n4/031_02.html</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">densities</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">densities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">densities</span><span class="o">.</span><span class="n">copy</span><span class="p">()])</span>
+        <span class="k">if</span> <span class="n">max_energy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">idx_stop</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">energies</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">idx_stop</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">energies</span><span class="o">-</span><span class="n">max_energy</span><span class="p">))</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span><span class="o">+</span><span class="mi">1</span>
+        <span class="n">Integrated_Energy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">densities</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="n">idx_stop</span><span class="p">]</span><span class="o">*</span><span class="n">energies</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">idx_stop</span><span class="p">],</span> <span class="n">energies</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">idx_stop</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+        <span class="n">Integrated_Filling</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">densities</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="n">idx_stop</span><span class="p">],</span> <span class="n">energies</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">idx_stop</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+        <span class="n">band_center</span> <span class="o">=</span> <span class="n">Integrated_Energy</span><span class="o">/</span><span class="n">Integrated_Filling</span>
+        <span class="k">return</span> <span class="n">band_center</span></div>
+
+<div class="viewcode-block" id="VASP_DOS"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS">[docs]</a><span class="k">class</span> <span class="nc">VASP_DOS</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class for extracting projected density of states from VASP&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;DOSCAR&quot;</span><span class="p">,</span><span class="n">no_negatives</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_name : str</span>
+<span class="sd">            full DOSCAR file location</span>
+<span class="sd">        </span>
+<span class="sd">        no_negatives : bool</span>
+<span class="sd">            Indicates wheather negative occupances will be converted to zero.</span>
+<span class="sd">            Negative occupances can occur if Methfessel-Paxton is used.</span>
+<span class="sd">        </span>
+<span class="sd">        Attributes</span>
+<span class="sd">        ----------</span>
+<span class="sd">        no_negatives : bool</span>
+<span class="sd">            Indicates wheather negative occupances will be converted to zero.</span>
+<span class="sd">            Negative occupances can occur if Methfessel-Paxton is used.</span>
+<span class="sd">        </span>
+<span class="sd">        natoms : int</span>
+<span class="sd">            number of atoms in the system</span>
+<span class="sd">            </span>
+<span class="sd">        emax : float</span>
+<span class="sd">            maximum energy level</span>
+<span class="sd">            </span>
+<span class="sd">        emin : float</span>
+<span class="sd">            minimum energy level</span>
+<span class="sd">            </span>
+<span class="sd">        ndos : int</span>
+<span class="sd">            number of descritized energy levels</span>
+<span class="sd">            </span>
+<span class="sd">        e_fermi : float</span>
+<span class="sd">            highest occupied energy level</span>
+<span class="sd">            </span>
+<span class="sd">        is_spin : bool</span>
+<span class="sd">            indicates if projected density is spin resolved</span>
+<span class="sd">            </span>
+<span class="sd">        m_projected : bool</span>
+<span class="sd">            indicates if projected density is orbital resolved</span>
+<span class="sd">            </span>
+<span class="sd">        orbital_dictionary: dict</span>
+<span class="sd">            dictionary that maps resolved sublevels/orbitals to indices</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">natoms</span><span class="p">,</span> <span class="n">emax</span><span class="p">,</span> <span class="n">emin</span><span class="p">,</span> <span class="n">ndos</span><span class="p">,</span> <span class="n">e_fermi</span><span class="p">,</span> <span class="n">is_spin</span><span class="p">,</span> <span class="n">m_projected</span>\
+            <span class="p">,</span> <span class="n">orbital_dictionary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_doscar</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span> <span class="n">no_negatives</span><span class="o">=</span><span class="n">no_negatives</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">no_negatives</span> <span class="o">=</span> <span class="n">no_negatives</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">natoms</span> <span class="o">=</span> <span class="n">natoms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">emax</span> <span class="o">=</span> <span class="n">emax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">emin</span> <span class="o">=</span> <span class="n">emin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ndos</span> <span class="o">=</span> <span class="n">ndos</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">e_fermi</span> <span class="o">=</span> <span class="n">e_fermi</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_spin</span> <span class="o">=</span> <span class="n">is_spin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">m_projected</span> <span class="o">=</span> <span class="n">m_projected</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">orbital_dictionary</span> <span class="o">=</span> <span class="n">orbital_dictionary</span>
+        
+<div class="viewcode-block" id="VASP_DOS.get_band_center"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.get_band_center">[docs]</a>    <span class="k">def</span> <span class="nf">get_band_center</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">orbital_list</span><span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">max_energy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get band center for a given atom and list of orbitals</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        atom : list</span>
+<span class="sd">            list of atom indices</span>
+<span class="sd">            </span>
+<span class="sd">        orbital_list : list[str]</span>
+<span class="sd">            Which orbitals to return</span>
+<span class="sd">            </span>
+<span class="sd">        sum_density : bool</span>
+<span class="sd">            if a sub-level is provided instead of an orbital, sum_density</span>
+<span class="sd">            indicates if the individual sub-level densities should be summed</span>
+<span class="sd">            </span>
+<span class="sd">        max_energy : float</span>
+<span class="sd">            cutoff energy (often the fermi energy)</span>
+<span class="sd">            </span>
+<span class="sd">        axis : int</span>
+<span class="sd">            axis of densities on which to integrate</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        band_center : float or numpy.ndarray</span>
+<span class="sd">            center of the band(s) up to max_energy</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">energies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_energies</span><span class="p">()</span>
+        <span class="n">get_site_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_site_dos</span>
+        <span class="n">orbitals</span><span class="p">,</span> <span class="n">density</span> <span class="o">=</span> <span class="n">get_site_dos</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span><span class="n">orbital_list</span><span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="n">sum_density</span><span class="p">)</span>
+        <span class="n">band_center</span> <span class="o">=</span> <span class="n">get_band_center</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">density</span><span class="p">,</span> <span class="n">max_energy</span><span class="o">=</span><span class="n">max_energy</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">band_center</span></div>
+        
+<div class="viewcode-block" id="VASP_DOS.get_energies"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.get_energies">[docs]</a>    <span class="k">def</span> <span class="nf">get_energies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; method for obtaining energy levels</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        energies : numpy.ndarray</span>
+<span class="sd">            1-D array of energies</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">energies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">energies</span></div>
+    
+<div class="viewcode-block" id="VASP_DOS.get_total_dos"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.get_total_dos">[docs]</a>    <span class="k">def</span> <span class="nf">get_total_dos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; method for obtaining total density of states</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        total_dos : numpy.ndarray</span>
+<span class="sd">            1-D or 2-D array of state densities   </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">total_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">sum_spin</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">total_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">total_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:]</span>
+                
+        <span class="k">return</span> <span class="n">total_dos</span></div>
+
+<div class="viewcode-block" id="VASP_DOS.get_integrated_dos"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.get_integrated_dos">[docs]</a>    <span class="k">def</span> <span class="nf">get_integrated_dos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; method for obtaining total integrated density of states</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        integrated_dos : numpy.ndarray</span>
+<span class="sd">            1-D or 2-D array of state integrated densities  </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">integrated_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">sum_spin</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">integrated_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">integrated_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">integrated_dos</span></div>
+        
+<div class="viewcode-block" id="VASP_DOS.get_site_dos"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.get_site_dos">[docs]</a>    <span class="k">def</span> <span class="nf">get_site_dos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom_list</span> <span class="o">=</span><span class="p">[],</span> <span class="n">orbital_list</span><span class="o">=</span><span class="p">[],</span> <span class="n">sum_density</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return an NDOSxM array with dos for the chosen atom and orbital(s).</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        atom_list : list(int)</span>
+<span class="sd">            List of atom index</span>
+<span class="sd">            </span>
+<span class="sd">        orbital_list : list[str]</span>
+<span class="sd">            Which orbitals to return</span>
+<span class="sd">            </span>
+<span class="sd">        sum_density : bool</span>
+<span class="sd">            if a sub-level is provided instead of an orbital, sum_density</span>
+<span class="sd">            indicates if the individual orbital densities should be summed</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        new_orbital_list : list[str]</span>
+<span class="sd">            If sum_density is True, new_orbital_list is the same as</span>
+<span class="sd">            orbital_list. If sum_density is False, new_orbital_list is resolved</span>
+<span class="sd">            by both orbital and spin (if available)</span>
+<span class="sd">            </span>
+<span class="sd">        projected_density : np.array</span>
+<span class="sd">            Array of shape (len(new_orbital_list), ndos)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Integer indexing for orbitals starts from 1 in the _site_dos array</span>
+        <span class="c1"># since the 0th column contains the energies</span>
+        <span class="n">orbital_dictionary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">orbital_dictionary</span>
+        <span class="n">is_spin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_spin</span>
+        <span class="n">m_projected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m_projected</span>
+        <span class="n">_site_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_site_dos</span>
+        <span class="n">ndos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndos</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">orbital_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">orbital_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">orbital_dictionary</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">def</span> <span class="nf">get_orbitals</span><span class="p">(</span><span class="n">orbital</span><span class="p">):</span>
+            <span class="c1">#case where spin polarization is false and m level is resloved</span>
+            <span class="k">if</span> <span class="n">is_spin</span> <span class="o">==</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">m_projected</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">orbital</span> <span class="o">==</span> <span class="s1">&#39;p&#39;</span><span class="p">:</span>
+                    <span class="n">orbitals</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;py&#39;</span><span class="p">,</span> <span class="s1">&#39;pz&#39;</span><span class="p">,</span> <span class="s1">&#39;px&#39;</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">orbital</span> <span class="o">==</span> <span class="s1">&#39;d&#39;</span><span class="p">:</span>
+                    <span class="n">orbitals</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;dxy&#39;</span><span class="p">,</span> <span class="s1">&#39;dyz&#39;</span><span class="p">,</span> <span class="s1">&#39;dz2&#39;</span><span class="p">,</span> <span class="s1">&#39;dxz&#39;</span><span class="p">,</span> <span class="s1">&#39;dx2-y2&#39;</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">orbital</span> <span class="o">==</span> <span class="s1">&#39;f&#39;</span><span class="p">:</span>
+                    <span class="n">orbitals</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;fy(3x2-y2)&#39;</span><span class="p">,</span> <span class="s1">&#39;fxyz&#39;</span><span class="p">,</span> <span class="s1">&#39;fyz2&#39;</span><span class="p">,</span> <span class="s1">&#39;fz3&#39;</span><span class="p">,</span> <span class="s1">&#39;fxz2&#39;</span><span class="p">,</span>
+                              <span class="s1">&#39;fz(x2-y2)&#39;</span><span class="p">,</span> <span class="s1">&#39;fx(x2-3y2)&#39;</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">orbitals</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbital</span><span class="p">]</span>
+            <span class="c1">#case where spin polarization is true and m level is resloved</span>
+            <span class="k">elif</span> <span class="n">is_spin</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">m_projected</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="c1">#case where neither spin or m-level are provided</span>
+                <span class="k">if</span> <span class="n">orbital</span> <span class="o">==</span> <span class="s1">&#39;s&#39;</span><span class="p">:</span>
+                    <span class="n">orbitals</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;s+&#39;</span><span class="p">,</span><span class="s1">&#39;s-&#39;</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">orbital</span> <span class="o">==</span> <span class="s1">&#39;p&#39;</span><span class="p">:</span>
+                    <span class="n">orbitals</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;py+&#39;</span><span class="p">,</span> <span class="s1">&#39;py-&#39;</span><span class="p">,</span> <span class="s1">&#39;pz+&#39;</span><span class="p">,</span> <span class="s1">&#39;pz-&#39;</span><span class="p">,</span> <span class="s1">&#39;px+&#39;</span><span class="p">,</span> <span class="s1">&#39;px-&#39;</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">orbital</span> <span class="o">==</span> <span class="s1">&#39;d&#39;</span><span class="p">:</span>
+                    <span class="n">orbitals</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;dxy+&#39;</span><span class="p">,</span> <span class="s1">&#39;dxy-&#39;</span><span class="p">,</span> <span class="s1">&#39;dyz+&#39;</span><span class="p">,</span> <span class="s1">&#39;dyz-&#39;</span><span class="p">,</span> <span class="s1">&#39;dz2+&#39;</span><span class="p">,</span> <span class="s1">&#39;dz2-&#39;</span><span class="p">,</span>
+                              <span class="s1">&#39;dxz+&#39;</span><span class="p">,</span> <span class="s1">&#39;dxz-&#39;</span><span class="p">,</span> <span class="s1">&#39;dx2-y2+&#39;</span><span class="p">,</span> <span class="s1">&#39;dx2-y2-&#39;</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">orbital</span> <span class="o">==</span> <span class="s1">&#39;f&#39;</span><span class="p">:</span>
+                    <span class="n">orbitals</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;fy(3x2-y2)+&#39;</span><span class="p">,</span> <span class="s1">&#39;fy(3x2-y2)-&#39;</span><span class="p">,</span><span class="s1">&#39;fxyz+&#39;</span><span class="p">,</span> <span class="s1">&#39;fxyz-&#39;</span><span class="p">,</span>
+                              <span class="s1">&#39;fyz2+&#39;</span><span class="p">,</span> <span class="s1">&#39;fyz2-&#39;</span><span class="p">,</span> <span class="s1">&#39;fz3+&#39;</span><span class="p">,</span> <span class="s1">&#39;fz3-&#39;</span><span class="p">,</span> <span class="s1">&#39;fxz2+&#39;</span><span class="p">,</span>
+                              <span class="s1">&#39;fxz2-&#39;</span><span class="p">,</span> <span class="s1">&#39;fz(x2-y2)+&#39;</span><span class="p">,</span> <span class="s1">&#39;fz(x2-y2)-&#39;</span><span class="p">,</span>
+                              <span class="s1">&#39;fx(x2-3y2)+&#39;</span><span class="p">,</span> <span class="s1">&#39;fx(x2-3y2)-&#39;</span><span class="p">]</span>
+                <span class="c1">#case where spin is provided but m-level is not</span>
+                <span class="c1">#up spin</span>
+                <span class="k">elif</span> <span class="n">orbital</span> <span class="o">==</span> <span class="s1">&#39;s+&#39;</span><span class="p">:</span>
+                    <span class="n">orbitals</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;s+&#39;</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">orbital</span> <span class="o">==</span> <span class="s1">&#39;s-&#39;</span><span class="p">:</span>
+                    <span class="n">orbitals</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;s-&#39;</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">orbital</span> <span class="o">==</span> <span class="s1">&#39;p+&#39;</span><span class="p">:</span>
+                    <span class="n">orbitals</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;py+&#39;</span><span class="p">,</span> <span class="s1">&#39;pz+&#39;</span><span class="p">,</span> <span class="s1">&#39;px+&#39;</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">orbital</span> <span class="o">==</span> <span class="s1">&#39;d+&#39;</span><span class="p">:</span>
+                    <span class="n">orbitals</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;dxy+&#39;</span><span class="p">,</span> <span class="s1">&#39;dyz+&#39;</span><span class="p">,</span> <span class="s1">&#39;dz2+&#39;</span><span class="p">,</span> <span class="s1">&#39;dxz+&#39;</span><span class="p">,</span> <span class="s1">&#39;dx2-y2+&#39;</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">orbital</span> <span class="o">==</span> <span class="s1">&#39;f+&#39;</span><span class="p">:</span>
+                    <span class="n">orbitals</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;fy(3x2-y2)+&#39;</span><span class="p">,</span> <span class="s1">&#39;fxyz+&#39;</span><span class="p">,</span> <span class="s1">&#39;fyz2+&#39;</span><span class="p">,</span> <span class="s1">&#39;fz3+&#39;</span><span class="p">,</span> <span class="s1">&#39;fxz2+&#39;</span><span class="p">,</span>
+                              <span class="s1">&#39;fz(x2-y2)+&#39;</span><span class="p">,</span> <span class="s1">&#39;fx(x2-3y2)+&#39;</span><span class="p">]</span>
+                <span class="c1"># down spin</span>
+                <span class="k">elif</span> <span class="n">orbital</span> <span class="o">==</span> <span class="s1">&#39;p-&#39;</span><span class="p">:</span>
+                    <span class="n">orbitals</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;py-&#39;</span><span class="p">,</span> <span class="s1">&#39;pz-&#39;</span><span class="p">,</span> <span class="s1">&#39;px-&#39;</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">orbital</span> <span class="o">==</span> <span class="s1">&#39;d-&#39;</span><span class="p">:</span>
+                    <span class="n">orbitals</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;dxy-&#39;</span><span class="p">,</span> <span class="s1">&#39;dyz-&#39;</span><span class="p">,</span> <span class="s1">&#39;dz2-&#39;</span><span class="p">,</span> <span class="s1">&#39;dxz-&#39;</span><span class="p">,</span> <span class="s1">&#39;dx2-y2-&#39;</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">orbital</span> <span class="o">==</span> <span class="s1">&#39;f-&#39;</span><span class="p">:</span>
+                    <span class="n">orbitals</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;fy(3x2-y2)-&#39;</span><span class="p">,</span> <span class="s1">&#39;fxyz-&#39;</span><span class="p">,</span> <span class="s1">&#39;fyz2-&#39;</span><span class="p">,</span> <span class="s1">&#39;fz3-&#39;</span><span class="p">,</span> <span class="s1">&#39;fxz2-&#39;</span><span class="p">,</span>
+                              <span class="s1">&#39;fz(x2-y2)-&#39;</span><span class="p">,</span> <span class="s1">&#39;fx(x2-3y2)-&#39;</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">orbitals</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbital</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">orbitals</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbital</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">orbitals</span>
+        <span class="c1">#force list of atom_list is an int</span>
+        <span class="k">if</span> <span class="n">sum_density</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">projected_density</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">orbital_list</span><span class="p">),</span> <span class="n">ndos</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atom_list</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="n">orbital</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">orbital_list</span><span class="p">):</span>
+                    <span class="n">new_orbital_list</span> <span class="o">=</span> <span class="n">get_orbitals</span><span class="p">(</span><span class="n">orbital</span><span class="p">)</span>
+                    <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbital_dictionary</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">new_orbital_list</span><span class="p">]</span>
+                    <span class="n">projected_density</span><span class="p">[</span><span class="n">count</span><span class="p">]</span><span class="o">+=</span> <span class="n">_site_dos</span><span class="p">[</span><span class="n">atom</span><span class="p">,</span> <span class="n">indices</span><span class="p">,:]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="c1">#return the list of orbitals provided</span>
+            <span class="n">new_orbital_list</span> <span class="o">=</span> <span class="n">orbital_list</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1">#get complete set of orbitals</span>
+            <span class="n">new_orbital_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">orbital</span> <span class="ow">in</span> <span class="n">orbital_list</span><span class="p">:</span>
+                <span class="n">new_orbital_list</span> <span class="o">+=</span> <span class="n">get_orbitals</span><span class="p">(</span><span class="n">orbital</span><span class="p">)</span>
+            <span class="n">projected_density</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">new_orbital_list</span><span class="p">),</span> <span class="n">ndos</span><span class="p">))</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbital_dictionary</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">new_orbital_list</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atom_list</span><span class="p">:</span>
+                <span class="n">projected_density</span> <span class="o">+=</span> <span class="n">_site_dos</span><span class="p">[</span><span class="n">atom</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="p">:]</span>
+            
+        <span class="k">if</span> <span class="n">is_spin</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">sum_spin</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">sum_density</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">projected_density</span> <span class="o">=</span> <span class="n">projected_density</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">,:]</span> <span class="o">+</span> <span class="n">projected_density</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">,:]</span>
+            <span class="n">new_orbital_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;+&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">new_orbital_list</span><span class="p">[::</span><span class="mi">2</span><span class="p">]]</span>
+        <span class="k">return</span> <span class="n">new_orbital_list</span><span class="p">,</span> <span class="n">projected_density</span></div>
+        
+<div class="viewcode-block" id="VASP_DOS._read_doscar"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS._read_doscar">[docs]</a>    <span class="k">def</span> <span class="nf">_read_doscar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;DOSCAR&quot;</span><span class="p">,</span> <span class="n">no_negatives</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read VASP DOSCAR and extract projected densities</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_name : str</span>
+<span class="sd">            file location of the DOSCAR file</span>
+<span class="sd">            </span>
+<span class="sd">        no_negatives : bool</span>
+<span class="sd">            Indicates wheather negative occupances will be converted to zero.</span>
+<span class="sd">            Negative occupances can occur if Methfessel-Paxton is used.</span>
+<span class="sd">            </span>
+<span class="sd">        Attributes</span>
+<span class="sd">        ----------</span>
+<span class="sd">        _total_dos : numpy.ndarray</span>
+<span class="sd">            numpy array that contains the energy of the orbitals and the</span>
+<span class="sd">            total projected and integrated density</span>
+<span class="sd">            </span>
+<span class="sd">        _site_dos : numpy.ndarray</span>
+<span class="sd">            numpy array that contains the energy of the orbitals and the</span>
+<span class="sd">            site and orbital projected density of states. Only available if a</span>
+<span class="sd">            site projected calculation was performed.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        emax : float</span>
+<span class="sd">            maximum energy level</span>
+<span class="sd">            </span>
+<span class="sd">        emin : float</span>
+<span class="sd">            minimum energy level</span>
+<span class="sd">            </span>
+<span class="sd">        ndos : int</span>
+<span class="sd">            number of descritized energy levels</span>
+<span class="sd">            </span>
+<span class="sd">        e_fermi : float</span>
+<span class="sd">            highest occupied energy level</span>
+<span class="sd">            </span>
+<span class="sd">        is_spin : bool</span>
+<span class="sd">            indicates if projected density is spin resolved</span>
+<span class="sd">            </span>
+<span class="sd">        m_projected : bool</span>
+<span class="sd">            indicates if projected density is orbital resolved</span>
+<span class="sd">            </span>
+<span class="sd">        orbital_dictionary : dict</span>
+<span class="sd">            dictionary that maps resolved sublevels/orbitals to indices</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1">#Accepts a file and reads through to get the density of states</span>
+        <span class="k">def</span> <span class="nf">get_dos</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">ndos</span><span class="p">):</span>
+            <span class="c1">#get first line of density</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="n">dos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">ndos</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)))</span>
+            <span class="n">dos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">nd</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">ndos</span><span class="p">):</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="n">dos</span><span class="p">[</span><span class="n">nd</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">line</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">dos</span><span class="o">.</span><span class="n">T</span>
+            
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+        <span class="n">natoms</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span> <span class="k">for</span> <span class="n">lines</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>  <span class="c1"># Skip next 4 lines.</span>
+        <span class="c1"># First we have a block with total and total integrated DOS</span>
+        <span class="n">descriptive_line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">emax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">descriptive_line</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">emin</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">descriptive_line</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">ndos</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">descriptive_line</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">e_fermi</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">descriptive_line</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">_total_dos</span> <span class="o">=</span> <span class="n">get_dos</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">ndos</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">no_negatives</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">_total_dos</span><span class="p">[</span><span class="mi">1</span><span class="p">:][</span><span class="n">_total_dos</span><span class="p">[</span><span class="mi">1</span><span class="p">:][</span><span class="o">...</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># Next we have one block per atom, if DOSCAR contains the stuff</span>
+        <span class="c1"># necessary for generating site-projected DOS</span>
+        <span class="n">dos</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">na</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">natoms</span><span class="p">):</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="c1"># No site-projected DOS</span>
+                <span class="k">break</span>
+            <span class="c1">#ndos = int(line.split()[2]) ndos does not change</span>
+            <span class="n">pdos</span> <span class="o">=</span> <span class="n">get_dos</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">ndos</span><span class="p">)</span>
+            <span class="n">dos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pdos</span><span class="p">)</span>
+        <span class="n">_site_dos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dos</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">no_negatives</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">_site_dos</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:][</span><span class="n">_site_dos</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:][</span><span class="o">...</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span> 
+        
+        
+        <span class="c1"># Integer indexing for orbitals starts from 1 in the _site_dos array</span>
+        <span class="c1"># since the 0th column contains the energies</span>
+        <span class="n">norbs</span> <span class="o">=</span> <span class="n">_site_dos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">norbs</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">is_spin</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">m_projected</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">orbitals</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+        <span class="k">elif</span> <span class="n">norbs</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">is_spin</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">m_projected</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">orbitals</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span>
+        <span class="k">elif</span> <span class="n">norbs</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
+            <span class="n">is_spin</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">m_projected</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">orbitals</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;s+&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;s-&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;p+&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;p-&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;d+&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;d-&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">}</span>
+        <span class="k">elif</span> <span class="n">norbs</span> <span class="o">==</span> <span class="mi">8</span><span class="p">:</span>
+            <span class="n">is_spin</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">m_projected</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">orbitals</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;s+&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s1">&#39;s-&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="s1">&#39;p+&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+                <span class="s1">&#39;p-&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+                <span class="s1">&#39;d+&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+                <span class="s1">&#39;d-&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+                <span class="s1">&#39;f+&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+                <span class="s1">&#39;f-&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">}</span>
+        <span class="k">elif</span> <span class="n">norbs</span> <span class="o">==</span> <span class="mi">9</span><span class="p">:</span>
+            <span class="n">is_spin</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">m_projected</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">orbitals</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;py&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;pz&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;px&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+                    <span class="s1">&#39;dxy&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;dyz&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;dz2&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="s1">&#39;dxz&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;dx2-y2&#39;</span><span class="p">:</span> <span class="mi">9</span><span class="p">}</span>
+        <span class="k">elif</span> <span class="n">norbs</span> <span class="o">==</span> <span class="mi">16</span><span class="p">:</span>
+            <span class="n">is_spin</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">m_projected</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">orbitals</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;s&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s1">&#39;py&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="s1">&#39;pz&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+                <span class="s1">&#39;px&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+                <span class="s1">&#39;dxy&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+                <span class="s1">&#39;dyz&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+                <span class="s1">&#39;dz2&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+                <span class="s1">&#39;dxz&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+                <span class="s1">&#39;dx2&#39;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+                <span class="s1">&#39;fy(3x2-y2)&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                <span class="s1">&#39;fxyz&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+                <span class="s1">&#39;fyz2&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+                <span class="s1">&#39;fz3&#39;</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span>
+                <span class="s1">&#39;fxz2&#39;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
+                <span class="s1">&#39;fz(x2-y2)&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+                <span class="s1">&#39;fx(x2-3y2)&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">}</span>
+        <span class="k">elif</span> <span class="n">norbs</span> <span class="o">==</span> <span class="mi">18</span><span class="p">:</span>
+            <span class="n">is_spin</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">m_projected</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">orbitals</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;s+&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s1">&#39;s-&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="s1">&#39;py+&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+                <span class="s1">&#39;py-&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+                <span class="s1">&#39;pz+&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+                <span class="s1">&#39;pz-&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+                <span class="s1">&#39;px+&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+                <span class="s1">&#39;px-&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+                <span class="s1">&#39;dxy+&#39;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+                <span class="s1">&#39;dxy-&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                <span class="s1">&#39;dyz+&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+                <span class="s1">&#39;dyz-&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+                <span class="s1">&#39;dz2+&#39;</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span>
+                <span class="s1">&#39;dz2-&#39;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
+                <span class="s1">&#39;dxz+&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+                <span class="s1">&#39;dxz-&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+                <span class="s1">&#39;dx2-y2+&#39;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span>
+                <span class="s1">&#39;dx2-y2-&#39;</span><span class="p">:</span> <span class="mi">18</span><span class="p">}</span>
+        <span class="k">elif</span> <span class="n">norbs</span> <span class="o">==</span> <span class="mi">32</span><span class="p">:</span>
+            <span class="n">is_spin</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">m_projected</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">orbitals</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;s+&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s1">&#39;s-&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="s1">&#39;py+&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+                <span class="s1">&#39;py-&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+                <span class="s1">&#39;pz+&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+                <span class="s1">&#39;pz-&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+                <span class="s1">&#39;px+&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+                <span class="s1">&#39;px-&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+                <span class="s1">&#39;dxy+&#39;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+                <span class="s1">&#39;dxy-&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                <span class="s1">&#39;dyz+&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+                <span class="s1">&#39;dyz-&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+                <span class="s1">&#39;dz2+&#39;</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span>
+                <span class="s1">&#39;dz2-&#39;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
+                <span class="s1">&#39;dxz+&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+                <span class="s1">&#39;dxz-&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+                <span class="s1">&#39;dx2-y2+&#39;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span>
+                <span class="s1">&#39;dx2-y2-&#39;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span>
+                <span class="s1">&#39;fy(3x2-y2)+&#39;</span><span class="p">:</span> <span class="mi">19</span><span class="p">,</span>
+                <span class="s1">&#39;fy(3x2-y2)-&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+                <span class="s1">&#39;fxyz+&#39;</span><span class="p">:</span> <span class="mi">21</span><span class="p">,</span>
+                <span class="s1">&#39;fxyz-&#39;</span><span class="p">:</span> <span class="mi">22</span><span class="p">,</span>
+                <span class="s1">&#39;fyz2+&#39;</span><span class="p">:</span> <span class="mi">23</span><span class="p">,</span>
+                <span class="s1">&#39;fyz2-&#39;</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span>
+                <span class="s1">&#39;fz3+&#39;</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span>
+                <span class="s1">&#39;fz3-&#39;</span><span class="p">:</span> <span class="mi">26</span><span class="p">,</span>
+                <span class="s1">&#39;fxz2+&#39;</span><span class="p">:</span> <span class="mi">27</span><span class="p">,</span>
+                <span class="s1">&#39;fxz2-&#39;</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span>
+                <span class="s1">&#39;fz(x2-y2)+&#39;</span><span class="p">:</span> <span class="mi">29</span><span class="p">,</span>
+                <span class="s1">&#39;fz(x2-y2)-&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
+                <span class="s1">&#39;fx(x2-3y2)+&#39;</span><span class="p">:</span> <span class="mi">31</span><span class="p">,</span>
+                <span class="s1">&#39;fx(x2-3y2)-&#39;</span><span class="p">:</span> <span class="mi">32</span><span class="p">}</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span> <span class="o">=</span> <span class="n">_total_dos</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_site_dos</span> <span class="o">=</span> <span class="n">_site_dos</span>
+        <span class="k">return</span> <span class="n">natoms</span><span class="p">,</span> <span class="n">emax</span><span class="p">,</span> <span class="n">emin</span><span class="p">,</span> <span class="n">ndos</span><span class="p">,</span> <span class="n">e_fermi</span><span class="p">,</span> <span class="n">is_spin</span><span class="p">,</span> <span class="n">m_projected</span><span class="p">,</span> <span class="n">orbitals</span></div></div>
+        
+        
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Joshua Lansford
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

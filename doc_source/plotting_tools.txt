@@ -1,6 +1,6 @@
 plotting_tools
 ==============
-.. automodule:: vasp_dos.plotting_tools
+.. automodule:: pdos_overlap.plotting_tools
    :members:
    :undoc-members:
    :private-members:

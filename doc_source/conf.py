@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.abspath('../'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'vasp_dos'
+project = 'pdos_overlap'
 copyright = '2020, Joshua Lansford'
 author = 'Joshua Lansford'
 

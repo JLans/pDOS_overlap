@@ -22,9 +22,9 @@ This example shows how to plot projected density of states
     import os
     import numpy as np
     import matplotlib.pyplot as plt
-    from vasp_dos import get_example_data
-    from vasp_dos import VASP_DOS
-    from vasp_dos.plotting_tools import set_figure_settings
+    from pdos_overlap import get_example_data
+    from pdos_overlap import VASP_DOS
+    from pdos_overlap.plotting_tools import set_figure_settings
 
 
 
@@ -45,7 +45,7 @@ instantiate a VASP_DOS object.
 
     set_figure_settings('paper')
     example_path = get_example_data()
-    DOSCAR = os.path.join(example_path, 'DOSCAR')
+    DOSCAR = os.path.join(example_path, 'C2H4/DOSCAR')
     PDOS = VASP_DOS(DOSCAR)
 
 
@@ -65,9 +65,9 @@ spin orbital densities to get energy sub-level site projected densities.
 .. code-block:: default
 
 
-    orbitals, projected_density = PDOS.get_site_dos(atom=0, orbital_list=['s', 'p', 'd']\
+    orbitals, projected_density = PDOS.get_site_dos(atom_list=np.arange(-6,0), orbital_list=['s', 'p', 'd']\
                                           , sum_density = True)
-    
+
 
 
 
@@ -84,12 +84,13 @@ We plot the projected density with the fermi-level indicated.
 .. code-block:: default
 
 
-    plt.figure(0,figsize=(3,3))
+    plt.figure(figsize=(3,3))
     colors = ['b','g','r']
+    zorder = [2,3,4]
     for count, density in enumerate(projected_density):
-        plt.plot(density, PDOS.get_energies(), colors[count])
+        plt.plot(density, PDOS.get_energies(), colors[count], zorder=zorder[count])
     plt.plot([np.min(projected_density), np.max(projected_density)]\
-             ,[PDOS.e_fermi, PDOS.e_fermi],'k--')
+             ,[PDOS.e_fermi, PDOS.e_fermi],'k--', zorder=1, linewidth=5)
     plt.legend([i for i in orbitals]+ ['fermi level'])
     plt.xlabel('State density')
     plt.ylabel('Energy [eV]')
@@ -108,7 +109,7 @@ We plot the projected density with the fermi-level indicated.
 
  .. code-block:: none
 
-    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\vasp_dos\examples\plot_projected_density\plot_projected_density.py:54: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\examples\plot_projected_density\plot_projected_density.py:55: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
       plt.show()
 
 
@@ -117,7 +118,7 @@ We plot the projected density with the fermi-level indicated.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.734 seconds)
+   **Total running time of the script:** ( 0 minutes  1.042 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_projected_density_plot_projected_density.py:

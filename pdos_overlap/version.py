@@ -26,18 +26,18 @@ CLASSIFIERS = ["Development Status :: 3 - Alpha",
                "Topic :: Scientific/Engineering"]
 
 # Description should be a one-liner:
-description = "vasp_dos: A module for extracting and plotting vasp density of states information"
+description = "pdos_overlap: A module for calculating projected density of states overlap"
 # Long description will go up on the pypi page
 long_description = """
 
-vasp_dos
-========
-This module extracts density of states information.
+pdos_overlap
+============
+This module extracts density of states information and calculates the overlap.
 
 
 License
 =======
-``vasp_dos`` is licensed under the terms of the MIT license. See the file
+``pdos_overlap`` is licensed under the terms of the MIT license. See the file
 "LICENSE" for information on the history of this software, terms & conditions
 for usage, and a DISCLAIMER OF ALL WARRANTIES.
 
@@ -46,12 +46,12 @@ All trademarks referenced herein are property of their respective holders.
 Copyright (c) 2020--, Joshua Lansford, The University of Delaware.
 """
 
-NAME = "vasp_dos"
+NAME = "pdos_overlap"
 MAINTAINER = "Joshua Lansford"
 MAINTAINER_EMAIL = "lansford.jl@gmail.com"
 DESCRIPTION = description
 LONG_DESCRIPTION = long_description
-URL = "http://github.com/JLANS/vasp_dos"
+URL = "http://github.com/JLANS/pdos_overlap"
 DOWNLOAD_URL = ""
 LICENSE = "MIT"
 AUTHOR = "Joshua Lansford"
@@ -61,6 +61,6 @@ MAJOR = _version_major
 MINOR = _version_minor
 MICRO = _version_micro
 VERSION = __version__
-PACKAGE_DATA = {'vasp_dos': [pjoin('data', '*'),pjoin('data', '*','*'),pjoin('data', '*','*','*')]}
+PACKAGE_DATA = {'pdos_overlap': [pjoin('data', '*'),pjoin('data', '*','*'),pjoin('data', '*','*','*')]}
 REQUIRES = ["numpy", "matplotlib", "ase"]
 PYTHON_REQUIRES = ">= 3.5"

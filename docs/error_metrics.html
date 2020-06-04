@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>error_metrics &mdash; vasp_dos 0.0.1 documentation</title>
+  <title>error_metrics &mdash; pdos_overlap 0.0.1 documentation</title>
   
 
   
@@ -53,7 +53,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> vasp_dos
+            <a href="index.html" class="icon icon-home"> pdos_overlap
           
 
           
@@ -85,7 +85,7 @@
             
               <p class="caption"><span class="caption-text">Getting Started:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="includeme.html">vasp_dos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="includeme.html">pdos_overlap</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
@@ -109,7 +109,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">vasp_dos</a>
+          <a href="index.html">pdos_overlap</a>
         
       </nav>
 
@@ -159,11 +159,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-vasp_dos.error_metrics">
-<span id="error-metrics"></span><h1>error_metrics<a class="headerlink" href="#module-vasp_dos.error_metrics" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-pdos_overlap.error_metrics">
+<span id="error-metrics"></span><h1>error_metrics<a class="headerlink" href="#module-pdos_overlap.error_metrics" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
-<dt id="vasp_dos.error_metrics.get_max_error">
-<code class="sig-name descname">get_max_error</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y_true</span></em>, <em class="sig-param"><span class="n">y_pred</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vasp_dos/error_metrics.html#get_max_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vasp_dos.error_metrics.get_max_error" title="Permalink to this definition">¶</a></dt>
+<dt id="pdos_overlap.error_metrics.get_max_error">
+<code class="sig-name descname">get_max_error</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y_true</span></em>, <em class="sig-param"><span class="n">y_pred</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/error_metrics.html#get_max_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.error_metrics.get_max_error" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute maximum absolute error.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -182,8 +182,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="vasp_dos.error_metrics.get_r2">
-<code class="sig-name descname">get_r2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y_true</span></em>, <em class="sig-param"><span class="n">y_pred</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vasp_dos/error_metrics.html#get_r2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vasp_dos.error_metrics.get_r2" title="Permalink to this definition">¶</a></dt>
+<dt id="pdos_overlap.error_metrics.get_r2">
+<code class="sig-name descname">get_r2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y_true</span></em>, <em class="sig-param"><span class="n">y_pred</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/error_metrics.html#get_r2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.error_metrics.get_r2" title="Permalink to this definition">¶</a></dt>
 <dd><p>R2 or the error.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -202,8 +202,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="vasp_dos.error_metrics.get_rmse">
-<code class="sig-name descname">get_rmse</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y_true</span></em>, <em class="sig-param"><span class="n">y_pred</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vasp_dos/error_metrics.html#get_rmse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vasp_dos.error_metrics.get_rmse" title="Permalink to this definition">¶</a></dt>
+<dt id="pdos_overlap.error_metrics.get_rmse">
+<code class="sig-name descname">get_rmse</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y_true</span></em>, <em class="sig-param"><span class="n">y_pred</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/error_metrics.html#get_rmse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.error_metrics.get_rmse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute maximum absolute error.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -222,8 +222,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="vasp_dos.error_metrics.get_wasserstein_loss">
-<code class="sig-name descname">get_wasserstein_loss</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y_true</span></em>, <em class="sig-param"><span class="n">y_pred</span></em>, <em class="sig-param"><span class="n">individual</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vasp_dos/error_metrics.html#get_wasserstein_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vasp_dos.error_metrics.get_wasserstein_loss" title="Permalink to this definition">¶</a></dt>
+<dt id="pdos_overlap.error_metrics.get_wasserstein_loss">
+<code class="sig-name descname">get_wasserstein_loss</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y_true</span></em>, <em class="sig-param"><span class="n">y_pred</span></em>, <em class="sig-param"><span class="n">individual</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/error_metrics.html#get_wasserstein_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.error_metrics.get_wasserstein_loss" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the l2 wasserstein loss</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

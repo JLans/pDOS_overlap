@@ -1,9 +1,10 @@
-vasp_dos
-========
+pdos_overlap
+============
 Methods for calculating catalyst band overlap with adsorbate molecular orbitals
 
-This is documentation for https://github.com/JLans/vasp_dos.
-vasp_dos enables projected density states analysis from VASP DOSCAR file
+This is documentation for https://github.com/JLans/pdos_overlap.
+vasp_dos enables projected density states analysis from VASP DOSCAR file and
+pdos overlap enables bonding analysis.
 
 Documentation
 -------------
@@ -29,5 +30,5 @@ License
 This project is licensed under the MIT License - see the `LICENSE.md`
 file for details.
 
-.. _`documentation page`: https://JLans.github.io/vasp_dos/
+.. _`documentation page`: https://JLans.github.io/pdos_overlap/
 .. _Numpy: http://www.numpy.org/

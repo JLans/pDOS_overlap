@@ -8,9 +8,9 @@ This example shows how to plot projected density of states
 """
 
 import os
-from vasp_dos import get_example_data
-from vasp_dos import VASP_DOS
-from vasp_dos.plotting_tools import set_figure_settings
+from pdos_overlap import get_example_data
+from pdos_overlap import VASP_DOS
+from pdos_overlap.plotting_tools import set_figure_settings
 
 #######################################################################################
 # Load DOSCAR file
@@ -21,7 +21,7 @@ from vasp_dos.plotting_tools import set_figure_settings
 
 set_figure_settings('paper')
 example_path = get_example_data()
-DOSCAR = os.path.join(example_path, 'DOSCAR')
+DOSCAR = os.path.join(example_path, 'C2H4/DOSCAR')
 PDOS = VASP_DOS(DOSCAR)
 
 #######################################################################################
@@ -33,7 +33,7 @@ PDOS = VASP_DOS(DOSCAR)
 
 orbitals = [key for key in PDOS.orbital_dictionary.keys() if 's' in key or 'p' in key]
     
-band_centers = PDOS.get_band_center(0, orbital_list=orbitals\
+band_centers = PDOS.get_band_center([0], orbital_list=orbitals\
                                     , max_energy=PDOS.e_fermi)
 
 for count, orbital in enumerate(orbitals):

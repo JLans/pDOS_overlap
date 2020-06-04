@@ -3,23 +3,23 @@ vasp_dos
 
 The ``get_data_path`` function
 ******************************
-.. autofunction:: vasp_dos.vasp_dos.get_data_path
+.. autofunction:: pdos_overlap.vasp_dos.get_data_path
 
 The ``get_example_data`` function
 *********************************
-.. autofunction:: vasp_dos.vasp_dos.get_example_data
+.. autofunction:: pdos_overlap.vasp_dos.get_example_data
 
 The ``get_all_VASP_files`` function
 ***********************************
-.. autofunction:: vasp_dos.vasp_dos.get_all_VASP_files
+.. autofunction:: pdos_overlap.vasp_dos.get_all_VASP_files
 
 The ``get_band_center`` function
 ********************************
-.. autofunction:: vasp_dos.vasp_dos.get_band_center
+.. autofunction:: pdos_overlap.vasp_dos.get_band_center
 
 The ``VASP_DOS`` class
 **********************
-.. autoclass:: vasp_dos.vasp_dos.VASP_DOS
+.. autoclass:: pdos_overlap.vasp_dos.VASP_DOS
    :members:
    :undoc-members:
    :private-members:

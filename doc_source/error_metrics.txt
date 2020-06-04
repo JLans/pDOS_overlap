@@ -1,6 +1,6 @@
 error_metrics
 =============
-.. automodule:: vasp_dos.error_metrics
+.. automodule:: pdos_overlap.error_metrics
    :members:
    :undoc-members:
    :private-members:

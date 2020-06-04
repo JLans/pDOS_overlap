@@ -7,7 +7,8 @@
 Examples
 ========
 
-This page includes examples for vasp_dos.
+This page includes examples for pdos_overlap.
+
 
 .. raw:: html
 
@@ -43,6 +44,40 @@ This contains an example of calculating band centers.
    :hidden:
 
    /auto_examples/calculate_band_center/calculate_band_center
+.. raw:: html
+
+    <div class="sphx-glr-clear"></div>
+
+
+
+.. _sphx_glr_auto_examples_calculate_orbital_overlap:
+
+Orbial overlap calculation example
+----------------------------------
+
+This contains an example of calculating orbital overlap.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how calculate the overlap of gas phase molecular orbitals with an adsorbate ...">
+
+.. only:: html
+
+ .. figure:: /auto_examples/calculate_orbital_overlap/images/thumb/sphx_glr_calculate_orbital_overlap_thumb.png
+
+     :ref:`sphx_glr_auto_examples_calculate_orbital_overlap_calculate_orbital_overlap.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/calculate_orbital_overlap/calculate_orbital_overlap
 .. raw:: html
 
     <div class="sphx-glr-clear"></div>
@@ -91,13 +126,13 @@ This contains an example of plotting projected densities.
 
   .. container:: sphx-glr-download sphx-glr-download-python
 
-    :download:`Download all examples in Python source code: auto_examples_python.zip </C:/Users/lansf/Box Sync/Synced_Files/Coding/Python/Github/vasp_dos/doc_source/auto_examples/auto_examples_python.zip>`
+    :download:`Download all examples in Python source code: auto_examples_python.zip </C:/Users/lansf/Box Sync/Synced_Files/Coding/Python/Github/pdos_overlap/doc_source/auto_examples/auto_examples_python.zip>`
 
 
 
   .. container:: sphx-glr-download sphx-glr-download-jupyter
 
-    :download:`Download all examples in Jupyter notebooks: auto_examples_jupyter.zip </C:/Users/lansf/Box Sync/Synced_Files/Coding/Python/Github/vasp_dos/doc_source/auto_examples/auto_examples_jupyter.zip>`
+    :download:`Download all examples in Jupyter notebooks: auto_examples_jupyter.zip </C:/Users/lansf/Box Sync/Synced_Files/Coding/Python/Github/pdos_overlap/doc_source/auto_examples/auto_examples_jupyter.zip>`
 
 
 .. only:: html

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Calculating band center using vdos &mdash; vasp_dos 0.0.1 documentation</title>
+  <title>Calculating band center using vdos &mdash; pdos_overlap 0.0.1 documentation</title>
   
 
   
@@ -38,7 +38,7 @@
   <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Plotting projected density obtained from vasp_dos" href="../plot_projected_density/plot_projected_density.html" />
+    <link rel="next" title="Calculating orbital overlap using pdos_overlap" href="../calculate_orbital_overlap/calculate_orbital_overlap.html" />
     <link rel="prev" title="Examples" href="../index.html" /> 
 </head>
 
@@ -53,7 +53,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home"> vasp_dos
+            <a href="../../index.html" class="icon icon-home"> pdos_overlap
           
 
           
@@ -85,7 +85,7 @@
             
               <p class="caption"><span class="caption-text">Getting Started:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../includeme.html">vasp_dos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../includeme.html">pdos_overlap</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
@@ -103,6 +103,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#orbial-overlap-calculation-example">Orbial overlap calculation example</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#projected-density-examples">Projected density examples</a></li>
 </ul>
 </li>
@@ -120,7 +121,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">vasp_dos</a>
+          <a href="../../index.html">pdos_overlap</a>
         
       </nav>
 
@@ -180,9 +181,9 @@
 <span id="sphx-glr-auto-examples-calculate-band-center-calculate-band-center-py"></span><h1>Calculating band center using vdos<a class="headerlink" href="#calculating-band-center-using-vdos" title="Permalink to this headline">¶</a></h1>
 <p>This example shows how to plot projected density of states</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">vasp_dos</span> <span class="kn">import</span> <span class="n">get_example_data</span>
-<span class="kn">from</span> <span class="nn">vasp_dos</span> <span class="kn">import</span> <span class="n">VASP_DOS</span>
-<span class="kn">from</span> <span class="nn">vasp_dos.plotting_tools</span> <span class="kn">import</span> <span class="n">set_figure_settings</span>
+<span class="kn">from</span> <span class="nn">pdos_overlap</span> <span class="kn">import</span> <span class="n">get_example_data</span>
+<span class="kn">from</span> <span class="nn">pdos_overlap</span> <span class="kn">import</span> <span class="n">VASP_DOS</span>
+<span class="kn">from</span> <span class="nn">pdos_overlap.plotting_tools</span> <span class="kn">import</span> <span class="n">set_figure_settings</span>
 </pre></div>
 </div>
 <div class="section" id="load-doscar-file">
@@ -191,7 +192,7 @@
 instantiate a VASP_DOS object.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">set_figure_settings</span><span class="p">(</span><span class="s1">&#39;paper&#39;</span><span class="p">)</span>
 <span class="n">example_path</span> <span class="o">=</span> <span class="n">get_example_data</span><span class="p">()</span>
-<span class="n">DOSCAR</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span></a></a></a></a><span class="p">(</span><span class="n">example_path</span><span class="p">,</span> <span class="s1">&#39;DOSCAR&#39;</span><span class="p">)</span>
+<span class="n">DOSCAR</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span></a></a><span class="p">(</span><span class="n">example_path</span><span class="p">,</span> <span class="s1">&#39;C2H4/DOSCAR&#39;</span><span class="p">)</span>
 <span class="n">PDOS</span> <span class="o">=</span> <span class="n">VASP_DOS</span><span class="p">(</span><span class="n">DOSCAR</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -202,7 +203,7 @@ instantiate a VASP_DOS object.</p>
 spin orbital densities to get energy sub-level band centers.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">orbitals</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">PDOS</span><span class="o">.</span><span class="n">orbital_dictionary</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="s1">&#39;s&#39;</span> <span class="ow">in</span> <span class="n">key</span> <span class="ow">or</span> <span class="s1">&#39;p&#39;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">]</span>
 
-<span class="n">band_centers</span> <span class="o">=</span> <span class="n">PDOS</span><span class="o">.</span><span class="n">get_band_center</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">orbital_list</span><span class="o">=</span><span class="n">orbitals</span>\
+<span class="n">band_centers</span> <span class="o">=</span> <span class="n">PDOS</span><span class="o">.</span><span class="n">get_band_center</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="n">orbital_list</span><span class="o">=</span><span class="n">orbitals</span>\
                                     <span class="p">,</span> <span class="n">max_energy</span><span class="o">=</span><span class="n">PDOS</span><span class="o">.</span><span class="n">e_fermi</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="n">orbital</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">orbitals</span><span class="p">):</span>
@@ -230,7 +231,7 @@ spin orbital densities to get energy sub-level band centers.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../plot_projected_density/plot_projected_density.html" class="btn btn-neutral float-right" title="Plotting projected density obtained from vasp_dos" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="../calculate_orbital_overlap/calculate_orbital_overlap.html" class="btn btn-neutral float-right" title="Calculating orbital overlap using pdos_overlap" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="../index.html" class="btn btn-neutral float-left" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

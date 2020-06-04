@@ -23,19 +23,19 @@ def set_figure_settings(Figure_Type,**kwargs):
     if Figure_Type == 'paper':
         params = {'lines.linewidth': 2,
             'lines.markersize': 5,
-            'legend.fontsize': 8,
+            'legend.fontsize': 10,
             'legend.borderpad': 0.2,
             'legend.labelspacing': 0.2,
             'legend.handletextpad' : 0.2,
             'legend.borderaxespad' : 0.2,
             'legend.scatterpoints' :1,
-            'xtick.labelsize' : 8,
-            'ytick.labelsize' : 8,
-            'axes.titlesize' : 8,
-            'axes.labelsize' : 8,
+            'xtick.labelsize' : 10,
+            'ytick.labelsize' : 10,
+            'axes.titlesize' : 10,
+            'axes.labelsize' : 10,
             'figure.autolayout': True,
-            'font.family': 'Calibri',
-            'font.size': 8}
+            'font.family': 'Arial',
+            'font.size': 10}
     elif Figure_Type == 'presentation':
         params = {'lines.linewidth'   : 3,
           'legend.handlelength'  : 1.0,

@@ -1,4 +1,4 @@
 Examples
 ========
 
-This page includes examples for vasp_dos.
+This page includes examples for pdos_overlap.

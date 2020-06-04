@@ -7,12 +7,12 @@ Created on Wed Jan 11 14:33:54 2017
 @author: lansford
 """
 from __future__ import division
-from vasp_dos.coordination import Coordination
+from pdos_overlap.coordination import Coordination
 from ase.io import read
 import numpy as np
 import matplotlib.pyplot as plt
-from vasp_dos import VASP_DOS
-from vasp_dos import get_all_VASP_files
+from pdos_overlap import VASP_DOS
+from pdos_overlap import get_all_VASP_files
 
 GCNList = []
 atom_type = []

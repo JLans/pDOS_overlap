@@ -1,7 +1,7 @@
-.. vasp_dos documentation master file
+.. pdos_overlap documentation master file
 
-Welcome to vasp_dos's documentation!
-====================================
+Welcome to pdos_overlap's documentation!
+========================================
 
 .. toctree::
    :maxdepth: 4
