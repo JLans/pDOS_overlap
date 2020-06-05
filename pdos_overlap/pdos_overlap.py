@@ -32,27 +32,77 @@ class PDOS_OVERLAP:
         Parameters
         ----------
         GAS_PDOS : vasp_dos.VASP_DOS
-            VASP_DOS object of gas phase calculation of adsorbate
+            VASP_DOS object of gas phase calculation of adsorbate.
             
         REFERENCE_PDOS : vasp_dos.VASP_DOS
-            VASP_DOS object of reference adsorbate+surface system
+            VASP_DOS object of reference adsorbate+surface system.
             
         adsorbate_indices : list[int]
-            index (indices) of adsorbate atom(s) in REFERENCE_PDOS
+            Index (indices) of adsorbate atom(s) in REFERENCE_PDOS. Obtained
+            from pdos_overlap.get_adsorbate_indices.
             
         site_indices : list[int]
-            index (indices) of adsorbate atom(s) in REFERENCE_PDOS
+            Index (indices) of adsorbation site atom(s) in REFERENCE_PDOS.
+            Obtained from pdos_overlap.get_adsorbate_indices.
+            
+        min_occupation : float
+            Minimum state occupation for a section of density to be considered
+            a molecular orbital.
+            
+        sum_density : bool
+            Tag indicates if state density on the same sublevel should be
+            summed when generating features for gas and adsorbate orbitals.
+            
+        sum_spin : bool
+            Tag indictes if state density with different spins should be summed
+            when generating gas and adsorbate orbital features.
         
         Attributes
         ----------
-        emax : float
-            maximum energy level
+        gas_indices : list[ing]
+            Atom index (indices) of the gas molecule.
+        
+        gas_features : numpy.ndarray
+            gas molecular orbital features used in matching gas and adsorbate
+            molecular orbitals
+        
+        adsorbate_features : numpy.ndarray
+            Adsorbate molecular orbital features used in matching gas and
+            adsorbate molecular orbitals
+            
+        gas_orbitals : numpy.ndarray
+            Length mxn array where m is the number of molecular orbitals and
+            n is equal to GAS_PDOS.ndos (dos discritizations)
+            
+        gas_occupations : numpy.ndarray
+            Integrated state density of each gas orbital.
+            
+        adsorbate_orbitals : numpy.ndarray
+            Length mxn array where m is the number of adsorbate orbitals and
+            n is equal to REFERENCE_PDOS.ndos (dos discritizations)
+            
+        adsorbate_occupations : numpy.ndarray
+            Integrated state density of each adsorbate molecular orbital.
+            
+        orbital_scores : numpy.ndarray
+            Array of size mxn where m and n are the number of gas and adsorbate
+            molecular orbitals respecitvely. Indicates similarity.
             
         Notes
         -----
-        GAS_PDOS is used only to determine the number of orbitals that can
-        interact with the surface and to calculate relative orbital overlap with 
-        projected density of adsorption sites without adsorbates.
+        GAS_PDOS is used to determine the number of molecular orbitals that can
+        interact with the surface and to calculate relative orbital overlap the
+        with projected density of adsorption sites without adsorbates.
+        
+        REFERENCE_PDOS is used to determine which metal states, projected onto
+        atomic orbitals, will interact with the adsorbate/gas molecular orbitals.
+        
+        
+        self.orbital_scores = orbital_scores
+        self.overlap_orbitals = overlap_orbitals
+        self.energy_overlap = energy_overlap
+        gas_indices = gas_indices
+        All parameters are saved as attributes.
         """
         gas_indices = list(range(GAS_PDOS.natoms))
         #GCN = [CN.get_gcn(CN.bonded[i]) for i in Catoms]
@@ -81,15 +131,19 @@ class PDOS_OVERLAP:
             = self._get_orbital_features(REFERENCE_PDOS, adsorbate_orbital_indices\
                               , adsorbate_indices, feature_type, sum_spin=sum_spin)
         
-        orbital_scores_gas, orbital_scores_adsorbate, orbital_scores_averaged\
+        orbital_scores_gas\
         = self._get_orbital_scores(gas_features, adsorbate_features)
         
+        orbital_scores_adsorbate\
+        = self._get_orbital_scores(adsorbate_features, gas_features)
+        
         if gas_orbitals.shape[0] == adsorbate_orbitals.shape[0]:
-            orbital_scores = self.get_pair_scores(orbital_scores_averaged)
+            orbital_scores = (orbital_scores_gas * orbital_scores_adsorbate.T)**0.5
+            orbital_scores = (orbital_scores * orbital_scores.T)**0.5
         elif gas_orbitals.shape[0] > adsorbate_orbitals.shape[0]:
             orbital_scores = orbital_scores_gas
         else:
-            orbital_scores = orbital_scores_adsorbate
+            orbital_scores = orbital_scores_adsorbate.T
         
         self.gas_band_centers = get_band_center(GAS_PDOS.get_energies(), gas_orbitals)
         self.adsorbate_band_centers = get_band_center(\
@@ -299,7 +353,7 @@ class PDOS_OVERLAP:
         return orbital_features
     
     @staticmethod
-    def _get_orbital_scores(gas_orbital_features, adsorbate_orbital_features):
+    def _get_orbital_scores(reference_features, comparison_features):
         """ orbital scores which represent probabilities of the gas molecular
             orbital matching each adsorbate molecular orbital
         
@@ -322,30 +376,19 @@ class PDOS_OVERLAP:
         Matrix scaling perfomed using RAS method described in 
         DOI: 10.1109/FOCS.2017.87
         """
-        def get_scores(reference_features, comparison_features):
-            num_reference_orbitals = reference_features.shape[0]
-            num_comparison_orbitals = comparison_features.shape[0]
-            orbital_scores = np.zeros((num_reference_orbitals, num_comparison_orbitals))
-            for count in range(num_reference_orbitals):
-                diff_squared = (comparison_features - reference_features[count])**2
-                var_feature = np.sum(diff_squared,axis=0) / num_comparison_orbitals
-                var_feature[var_feature[...] <= 10**-6] = 10 #prevent divide by zero error
-                #gaussian based likelihood
-                diff_squared[:,0] *=3
-                univariate = np.exp(-1 * diff_squared / var_feature)
-                orbital_scores[count] = np.prod(univariate, axis=1)
-            return orbital_scores
-        
-        orbital_scores_gas = get_scores(gas_orbital_features, adsorbate_orbital_features)
-        orbital_scores_adsorbate = get_scores(adsorbate_orbital_features, gas_orbital_features)
-        
-        #normalize
-        orbital_scores_gas /= orbital_scores_gas.sum(axis=1, keepdims=True)
-        orbital_scores_adsorbate /= orbital_scores_adsorbate.sum(axis=1, keepdims=True)
-        orbital_scores_averaged = (orbital_scores_gas * orbital_scores_adsorbate.T)**0.5
-        orbital_scores_averaged /= orbital_scores_averaged.sum(axis=1, keepdims=True)
-        
-        return orbital_scores_gas, orbital_scores_adsorbate, orbital_scores_averaged
+        num_reference_orbitals = reference_features.shape[0]
+        num_comparison_orbitals = comparison_features.shape[0]
+        orbital_scores = np.zeros((num_reference_orbitals, num_comparison_orbitals))
+        for count in range(num_reference_orbitals):
+            diff_squared = (comparison_features - reference_features[count])**2
+            var_feature = np.sum(diff_squared,axis=0) / num_comparison_orbitals
+            var_feature[var_feature[...] <= 10**-6] = 10 #prevent divide by zero error
+            #gaussian based likelihood
+            diff_squared[:,0] *=3
+            univariate = np.exp(-1 * diff_squared / var_feature)
+            orbital_scores[count] = np.prod(univariate, axis=1)
+       
+        return orbital_scores
     
     @staticmethod
     def get_pair_scores(orbital_scores, max_iterations = 500, verbose=False):
@@ -406,12 +449,14 @@ class PDOS_OVERLAP:
     
     @staticmethod
     def _assign_orbitals(orbital_scores, gas_band_centers, adsorbate_band_centers):
-        orbital_assignments = np.argmax(orbital_scores,axis=1).astype('int')
-        indices = np.arange(orbital_assignments.size).astype('int')
-        if gas_band_centers.shape >= adsorbate_band_centers.shape:
+        if orbital_scores.shape[0] >= orbital_scores.shape[1]:
+            orbital_assignments = np.argmax(orbital_scores,axis=1).astype('int')
+            indices = np.arange(orbital_assignments.size)
             gas_2_adsorbate = np.vstack((indices,orbital_assignments\
             , gas_band_centers, adsorbate_band_centers[orbital_assignments])).T
         else:
+            orbital_assignments = np.argmax(orbital_scores,axis=0).astype('int')
+            indices = np.arange(orbital_assignments.size)
             gas_2_adsorbate = np.vstack((orbital_assignments,indices\
             , gas_band_centers[orbital_assignments], adsorbate_band_centers)).T
                 

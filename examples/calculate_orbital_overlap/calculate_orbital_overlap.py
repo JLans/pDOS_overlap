@@ -46,7 +46,7 @@ REFERENCE_PDOS = VASP_DOS(ADSORBATE_DOSCAR)
 adsorbate_indices, site_indices = get_adsorbate_indices(GAS_CONTCAR, ADSORBATE_CONTCAR)
 #Initialize Coordination object. Repeat is necessary so it doesn't count itself
 CO_overlap = PDOS_OVERLAP(GAS_PDOS, REFERENCE_PDOS, adsorbate_indices\
-                          , site_indices, min_occupation=0.9)
+                          , site_indices, min_occupation=0.4)
 #print overlap scores
 print('Orbital matching scores')
 print(CO_overlap.orbital_scores)
