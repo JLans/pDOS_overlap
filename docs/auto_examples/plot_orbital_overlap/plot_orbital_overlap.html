@@ -1,0 +1,409 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Calculating orbital overlap using pdos_overlap &mdash; pdos_overlap 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Plotting projected density obtained from vasp_dos" href="../plot_projected_density/plot_projected_density.html" />
+    <link rel="prev" title="Calculating band center using vdos" href="../plot_band_center/plot_band_center.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pdos_overlap
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting Started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../includeme.html">pdos_overlap</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../pdos_overlap.html">pdos_overlap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../vasp_dos.html">vasp_dos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../coordination.html">coordination</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plotting_tools.html">plotting_tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../error_metrics.html">error_metrics</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../index.html#band-center-calculation-example">Band center calculation example</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#orbial-overlap-calculation-example">Orbial overlap calculation example</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Calculating orbital overlap using pdos_overlap</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#load-doscar-file">Load DOSCAR file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#generate-vasp-dos-objects">Generate VASP_DOS objects</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#get-adsorbate-and-site-indices-and-initialize-pdos-overlap-object">Get adsorbate and site indices and initialize PDOS_OVERLAP object</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#find-the-optimal-upshift-factor">Find the optimal upshift factor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#print-orbital-co-overlap-attributes">Print orbital CO_overlap attributes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plot-projected-density">Plot projected density</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plot-energy-overlap">Plot energy overlap</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#projected-density-examples">Projected density examples</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pdos_overlap</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Examples</a> &raquo;</li>
+        
+      <li>Calculating orbital overlap using pdos_overlap</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/auto_examples/plot_orbital_overlap/plot_orbital_overlap.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-plot-orbital-overlap-plot-orbital-overlap-py"><span class="std std-ref">here</span></a>     to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="calculating-orbital-overlap-using-pdos-overlap">
+<span id="sphx-glr-auto-examples-plot-orbital-overlap-plot-orbital-overlap-py"></span><h1>Calculating orbital overlap using pdos_overlap<a class="headerlink" href="#calculating-orbital-overlap-using-pdos-overlap" title="Permalink to this headline">¶</a></h1>
+<p>This example shows how calculate the overlap of gas phase molecular orbitals
+with an adsorbate and surface atom.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pdos_overlap</span> <span class="kn">import</span> <span class="n">VASP_DOS</span>
+<span class="kn">from</span> <span class="nn">pdos_overlap.plotting_tools</span> <span class="kn">import</span> <span class="n">set_figure_settings</span>
+<span class="kn">from</span> <span class="nn">pdos_overlap</span> <span class="kn">import</span> <span class="n">get_adsorbate_indices</span>
+<span class="kn">from</span> <span class="nn">pdos_overlap</span> <span class="kn">import</span> <span class="n">PDOS_OVERLAP</span>
+</pre></div>
+</div>
+<div class="section" id="load-doscar-file">
+<h2>Load DOSCAR file<a class="headerlink" href="#load-doscar-file" title="Permalink to this headline">¶</a></h2>
+<p>First we will, get the example data, load a DOSCAR file and use it to
+instantiate a VASP_DOS object.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gas</span></a></a> <span class="o">=</span> <span class="s1">&#39;CO&#39;</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">surface</span></a></a> <span class="o">=</span> <span class="s1">&#39;Pt111&#39;</span>
+<span class="n">set_figure_settings</span><span class="p">(</span><span class="s1">&#39;paper&#39;</span><span class="p">)</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.set_printoptions.html#numpy.set_printoptions" title="numpy.set_printoptions" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><a href="https://numpy.org/doc/stable/reference/generated/numpy.set_printoptions.html#numpy.set_printoptions" title="numpy.set_printoptions" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span></a></a><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="c1">#These files are too large to store in the examples directory</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">example_path</span></a></a> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;C:\Users\lansf\Documents\Data\PROBE_PDOS\vasp_dos_files&#39;</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">GAS_DOSCAR</span></a></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span></a></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">example_path</span></a></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gas</span></a></a> <span class="o">+</span> <span class="s1">&#39;/DOSCAR&#39;</span><span class="p">)</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">GAS_CONTCAR</span></a></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span></a></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">example_path</span></a></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gas</span></a></a> <span class="o">+</span> <span class="s1">&#39;/CONTCAR&#39;</span><span class="p">)</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ADSORBATE_DOSCAR</span></a></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span></a></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">example_path</span></a></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gas</span></a></a> <span class="o">+</span> <span class="s1">&#39;+&#39;</span> <span class="o">+</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">surface</span></a></a> <span class="o">+</span> <span class="s1">&#39;/DOSCAR&#39;</span><span class="p">)</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ADSORBATE_CONTCAR</span></a></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span></a></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">example_path</span></a></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gas</span></a></a> <span class="o">+</span> <span class="s1">&#39;+&#39;</span> <span class="o">+</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">surface</span></a></a> <span class="o">+</span> <span class="s1">&#39;/CONTCAR&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="generate-vasp-dos-objects">
+<h2>Generate VASP_DOS objects<a class="headerlink" href="#generate-vasp-dos-objects" title="Permalink to this headline">¶</a></h2>
+<p>VASP_DOS objects for both the gas (vacuum) and the adsorbate+surface system</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GAS_PDOS</span> <span class="o">=</span> <span class="n">VASP_DOS</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">GAS_DOSCAR</span></a></a><span class="p">)</span>
+<span class="n">REFERENCE_PDOS</span> <span class="o">=</span> <span class="n">VASP_DOS</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ADSORBATE_DOSCAR</span></a></a><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-adsorbate-and-site-indices-and-initialize-pdos-overlap-object">
+<h2>Get adsorbate and site indices and initialize PDOS_OVERLAP object<a class="headerlink" href="#get-adsorbate-and-site-indices-and-initialize-pdos-overlap-object" title="Permalink to this headline">¶</a></h2>
+<p>This method utilizes two VASP_DOS objects, a gas and an adsorption system.
+It uses the adosorbtion system (REFERENCE_PDOS) to map gas molecular orbitals
+to adsorbate molecular orbitals. It then calculates the adsorption site
+atomic orbital energy overlaps with the adsorbate molecular orbital energies.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">adsorbate_indices</span></a></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">site_indices</span></a></a> <span class="o">=</span> <span class="n">get_adsorbate_indices</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">GAS_CONTCAR</span></a></a>\
+                                                        <span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ADSORBATE_CONTCAR</span></a></a><span class="p">)</span>
+<span class="c1">#Initialize Coordination object. Repeat is necessary so it doesn&#39;t count itself</span>
+<span class="n">CO_overlap</span> <span class="o">=</span> <span class="n">PDOS_OVERLAP</span><span class="p">(</span><span class="n">GAS_PDOS</span><span class="p">,</span> <span class="n">REFERENCE_PDOS</span><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">adsorbate_indices</span></a></a>\
+                          <span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">site_indices</span></a></a><span class="p">,</span> <span class="n">min_occupation</span><span class="o">=</span><span class="mf">0.9</span>\
+                          <span class="p">,</span> <span class="n">upshift</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">energy_weight</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="find-the-optimal-upshift-factor">
+<h2>Find the optimal upshift factor<a class="headerlink" href="#find-the-optimal-upshift-factor" title="Permalink to this headline">¶</a></h2>
+<p>The optimal upshift factor shifts the molecular orbital energies to
+minimize the sum the orbital scores used in matching gas and adsorbate orbitals.
+This has the effect of increasing certainty and roughly corresponds to the
+average shift in molecular orbital energies when a gas adsorbs to the surface
+as a fraction of the fermi energy.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">optimized_upshift</span> <span class="o">=</span> <span class="n">CO_overlap</span><span class="o">.</span><span class="n">optimize_energy_shift</span><span class="p">(</span><span class="n">bound</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.5</span><span class="p">]</span>\
+                                                     <span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">optimized_upshift</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/sphx_glr_plot_orbital_overlap_001.png" class="sphx-glr-single-img" src="../../_images/sphx_glr_plot_orbital_overlap_001.png" />
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:564: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+  plt.show()
+0.36169076485686813
+</pre></div>
+</div>
+</div>
+<div class="section" id="print-orbital-co-overlap-attributes">
+<h2>Print orbital CO_overlap attributes<a class="headerlink" href="#print-orbital-co-overlap-attributes" title="Permalink to this headline">¶</a></h2>
+<p>Differences in features are used in computing orbital scores.
+Scores are used to map gas molecular orbitals ot adsorbate molecular orbitals.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Print molecular gas and adsorbate orbital features, respectively.&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">CO_overlap</span><span class="o">.</span><span class="n">gas_features</span></a></a><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">CO_overlap</span><span class="o">.</span><span class="n">adsorbate_features</span></a></a><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;#####################################################################&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Orbital matching scores&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">CO_overlap</span><span class="o">.</span><span class="n">orbital_scores</span></a></a><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;#####################################################################&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Gas to adsorbate indices and band centers&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">CO_overlap</span><span class="o">.</span><span class="n">gas_2_adsorbate</span></a></a><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Print molecular gas and adsorbate orbital features, respectively.
+[[-2.59440624e+01  1.55667344e+00  3.26199490e-13  4.22017815e-01  9.65840299e-15]
+ [-1.07725355e+01  6.77718574e-01  9.85077691e-12  8.64998584e-01  2.91694728e-13]
+ [-8.37158857e+00  3.93060231e-12  1.38208964e+00  7.22459794e-12  1.38201564e+00]
+ [-5.77108906e+00  3.57464960e-01  1.06157881e-12  8.50897818e-01  3.14380969e-14]
+ [ 1.18455181e+00  3.22212492e-02  9.60645175e-01  2.46394073e-02  9.60608089e-01]]
+[[-2.41110858e+01  1.73902895e+00  5.09101559e-10  4.56123751e-01  1.26260274e-09]
+ [-1.05406293e+01  8.09275578e-01  4.59590029e-07  2.72026686e-01  2.63096436e-07]
+ [-7.89123682e+00  1.81585882e-01  3.65520754e-04  1.18150089e+00  2.68352149e-04]
+ [-7.00986643e+00  7.00095672e-03  1.16194079e+00  7.04962282e-02  1.15795451e+00]
+ [ 7.22337248e-01  1.47708586e-01  1.34778394e+00  2.14257133e-01  1.35510153e+00]]
+#####################################################################
+Orbital matching scores
+[[9.29028568e-01 1.61273572e-04 7.34545868e-08 1.38664310e-07 6.45021613e-09]
+ [1.61273572e-04 1.99724666e-01 1.75777184e-02 4.97812655e-03 1.90226298e-05]
+ [7.34545868e-08 1.75777184e-02 3.02183417e-04 6.88050593e-01 1.82339250e-03]
+ [1.38664310e-07 4.97812655e-03 6.88050593e-01 2.21233455e-03 6.35174227e-03]
+ [6.45021613e-09 1.90226298e-05 1.82339250e-03 6.35174227e-03 5.64799688e-01]]
+#####################################################################
+Gas to adsorbate indices and band centers
+[[  0.           0.         -29.20625951 -24.28842369]
+ [  1.           1.         -14.03473256 -10.71795641]
+ [  2.           3.         -11.63378565  -7.18747574]
+ [  3.           2.          -9.03328614  -8.06828387]
+ [  4.           4.          -2.07764527   0.54343512]]
+</pre></div>
+</div>
+</div>
+<div class="section" id="plot-projected-density">
+<h2>Plot projected density<a class="headerlink" href="#plot-projected-density" title="Permalink to this headline">¶</a></h2>
+<p>We plot the projected density of the gas, adsorbate, and adsorption site.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CO_overlap</span><span class="o">.</span><span class="n">plot_projected_density</span><span class="p">()</span>
+</pre></div>
+</div>
+<ul class="sphx-glr-horizontal">
+<li><img alt="../../_images/sphx_glr_plot_orbital_overlap_002.png" class="sphx-glr-multi-img" src="../../_images/sphx_glr_plot_orbital_overlap_002.png" />
+</li>
+<li><img alt="../../_images/sphx_glr_plot_orbital_overlap_003.png" class="sphx-glr-multi-img" src="../../_images/sphx_glr_plot_orbital_overlap_003.png" />
+</li>
+<li><img alt="../../_images/sphx_glr_plot_orbital_overlap_004.png" class="sphx-glr-multi-img" src="../../_images/sphx_glr_plot_orbital_overlap_004.png" />
+</li>
+</ul>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:622: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+  plt.show()
+C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:622: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+  plt.show()
+C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:622: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+  plt.show()
+</pre></div>
+</div>
+</div>
+<div class="section" id="plot-energy-overlap">
+<h2>Plot energy overlap<a class="headerlink" href="#plot-energy-overlap" title="Permalink to this headline">¶</a></h2>
+<p>We select energy overlap histograms with the adsorbate molecular orbitals
+that influence spectra.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">indices</span></a></a> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="k">if</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">CO_overlap</span><span class="o">.</span><span class="n">gas_2_adsorbate</span></a></a><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]]</span>
+<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">adsorbate_indices</span></a></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">CO_overlap</span><span class="o">.</span><span class="n">gas_2_adsorbate</span></a></a><span class="p">[</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">indices</span></a></a><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
+<span class="n">CO_overlap</span><span class="o">.</span><span class="n">plot_energy_overlap</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">adsorbate_indices</span></a></a><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="sphx-glr-horizontal">
+<li><img alt="../../_images/sphx_glr_plot_orbital_overlap_005.png" class="sphx-glr-multi-img" src="../../_images/sphx_glr_plot_orbital_overlap_005.png" />
+</li>
+<li><img alt="../../_images/sphx_glr_plot_orbital_overlap_006.png" class="sphx-glr-multi-img" src="../../_images/sphx_glr_plot_orbital_overlap_006.png" />
+</li>
+<li><img alt="../../_images/sphx_glr_plot_orbital_overlap_007.png" class="sphx-glr-multi-img" src="../../_images/sphx_glr_plot_orbital_overlap_007.png" />
+</li>
+</ul>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:583: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+  plt.show()
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  10.343 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-orbital-overlap-plot-orbital-overlap-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/a5084ecdc30d9e748f0de694ab0df150/plot_orbital_overlap.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_orbital_overlap.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/c984d2a5fb4f45b02cc90e24aeed608e/plot_orbital_overlap.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_orbital_overlap.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../plot_projected_density/plot_projected_density.html" class="btn btn-neutral float-right" title="Plotting projected density obtained from vasp_dos" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../plot_band_center/plot_band_center.html" class="btn btn-neutral float-left" title="Calculating band center using vdos" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Joshua Lansford
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

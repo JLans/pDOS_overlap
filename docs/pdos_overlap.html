@@ -168,25 +168,60 @@
 <h2>The <code class="docutils literal notranslate"><span class="pre">PDOS_OVERLAP</span></code> class<a class="headerlink" href="#the-pdos-overlap-class" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pdos_overlap.pdos_overlap.PDOS_OVERLAP">
-<em class="property">class </em><code class="sig-name descname">PDOS_OVERLAP</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">GAS_PDOS</span></em>, <em class="sig-param"><span class="n">REFERENCE_PDOS</span></em>, <em class="sig-param"><span class="n">adsorbate_indices</span></em>, <em class="sig-param"><span class="n">site_indices</span></em>, <em class="sig-param"><span class="n">min_occupation</span><span class="o">=</span><span class="default_value">0.9</span></em>, <em class="sig-param"><span class="n">sum_density</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/pdos_overlap.html#PDOS_OVERLAP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.pdos_overlap.PDOS_OVERLAP" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">PDOS_OVERLAP</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">GAS_PDOS</span></em>, <em class="sig-param"><span class="n">REFERENCE_PDOS</span></em>, <em class="sig-param"><span class="n">adsorbate_indices</span></em>, <em class="sig-param"><span class="n">site_indices</span></em>, <em class="sig-param"><span class="n">min_occupation</span><span class="o">=</span><span class="default_value">0.9</span></em>, <em class="sig-param"><span class="n">upshift</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">energy_weight</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">sum_density</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/pdos_overlap.html#PDOS_OVERLAP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.pdos_overlap.PDOS_OVERLAP" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class for calculating adsorbate-surface relative orbital overlap</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>GAS_PDOS</strong> (<a class="reference internal" href="vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS" title="pdos_overlap.vasp_dos.VASP_DOS"><em>vasp_dos.VASP_DOS</em></a>) – VASP_DOS object of gas phase calculation of adsorbate</p></li>
-<li><p><strong>REFERENCE_PDOS</strong> (<a class="reference internal" href="vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS" title="pdos_overlap.vasp_dos.VASP_DOS"><em>vasp_dos.VASP_DOS</em></a>) – VASP_DOS object of reference adsorbate+surface system</p></li>
-<li><p><strong>adsorbate_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>]</em>) – index (indices) of adsorbate atom(s) in REFERENCE_PDOS</p></li>
-<li><p><strong>site_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>]</em>) – index (indices) of adsorbate atom(s) in REFERENCE_PDOS</p></li>
+<li><p><strong>GAS_PDOS</strong> (<a class="reference internal" href="vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS" title="pdos_overlap.vasp_dos.VASP_DOS"><em>vasp_dos.VASP_DOS</em></a>) – VASP_DOS object of gas phase calculation of adsorbate.</p></li>
+<li><p><strong>REFERENCE_PDOS</strong> (<a class="reference internal" href="vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS" title="pdos_overlap.vasp_dos.VASP_DOS"><em>vasp_dos.VASP_DOS</em></a>) – VASP_DOS object of reference adsorbate+surface system.</p></li>
+<li><p><strong>adsorbate_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>]</em>) – Index (indices) of adsorbate atom(s) in REFERENCE_PDOS. Obtained
+from pdos_overlap.get_adsorbate_indices.</p></li>
+<li><p><strong>site_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>]</em>) – Index (indices) of adsorbation site atom(s) in REFERENCE_PDOS.
+Obtained from pdos_overlap.get_adsorbate_indices.</p></li>
+<li><p><strong>min_occupation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Minimum state occupation for a section of density to be considered
+a molecular orbital.</p></li>
+<li><p><strong>sum_density</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Tag indicates if state density on the same sublevel should be
+summed when calculating overlap of the site atomic orbitals and the
+adsorbate molecular orbitals.</p></li>
+<li><p><strong>sum_spin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Tag indictes if state density with different spins should be summed
+when generating gas and adsorbate orbital features.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Variables</dt>
-<dd class="field-even"><p><strong>emax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – maximum energy level</p>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>gas_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><em>ing</em><em>]</em>) – Atom index (indices) of the gas molecule.</p></li>
+<li><p><strong>gas_features</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – gas molecular orbital features used in matching gas and adsorbate
+molecular orbitals</p></li>
+<li><p><strong>adsorbate_features</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – Adsorbate molecular orbital features used in matching gas and
+adsorbate molecular orbitals</p></li>
+<li><p><strong>gas_orbitals</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – Length mxn array where m is the number of molecular orbitals and
+n is equal to GAS_PDOS.ndos (dos discritizations)</p></li>
+<li><p><strong>gas_occupations</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – Integrated state density of each gas orbital.</p></li>
+<li><p><strong>adsorbate_orbitals</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – Length mxn array where m is the number of adsorbate orbitals and
+n is equal to REFERENCE_PDOS.ndos (dos discritizations)</p></li>
+<li><p><strong>adsorbate_occupations</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – Integrated state density of each adsorbate molecular orbital.</p></li>
+<li><p><strong>orbital_scores</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – Array of size mxn where m and n are the number of gas and adsorbate
+molecular orbitals respecitvely. Indicates similarity. If
+the number of gas orbitals equals the number of adsorbate orbitals
+then the scores are orbital-pairing scores.</p></li>
+<li><p><strong>overlap_orbitals</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>]</em>) – List of atomic orbitals for which overlap energies of the adsorbate
+state with the metal adsorption-site states are calculated.</p></li>
+<li><p><strong>energy_overlap</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – Array of shape nxp where n is the number of adsorbate molecular
+orbitals and p is the number of adsorption-site atomic orbitals.
+Elements are the projected density of states overlap integral of
+an adsorption site states (projected onto atomic orbitals), and
+the adsorbate states (projected and summed into molecular orbitals)</p></li>
+</ul>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>GAS_PDOS is used only to determine the number of orbitals that can
-interact with the surface and to calculate relative orbital overlap with
-projected density of adsorption sites without adsorbates.</p>
+<p>GAS_PDOS is used to determine the number of molecular orbitals that can
+interact with the surface and to calculate relative orbital overlap the
+with projected density of adsorption sites without adsorbates.</p>
+<p>REFERENCE_PDOS is used to determine which metal states, projected onto
+atomic orbitals, will interact with the adsorbate/gas molecular orbitals.</p>
+<p>All parameters are saved as attributes.</p>
 <dl class="py method">
 <dt id="pdos_overlap.pdos_overlap.PDOS_OVERLAP._assign_orbitals">
 <em class="property">static </em><code class="sig-name descname">_assign_orbitals</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">orbital_scores</span></em>, <em class="sig-param"><span class="n">gas_band_centers</span></em>, <em class="sig-param"><span class="n">adsorbate_band_centers</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/pdos_overlap.html#PDOS_OVERLAP._assign_orbitals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.pdos_overlap.PDOS_OVERLAP._assign_orbitals" title="Permalink to this definition">¶</a></dt>
@@ -205,8 +240,10 @@ projected density of adsorption sites without adsorbates.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>PDOS</strong> (<a class="reference internal" href="vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS" title="pdos_overlap.vasp_dos.VASP_DOS"><em>vasp_dos.VASP_DOS</em></a>) – VASP_DOS object of gas or surface phase calculation of adsorbate</p></li>
-<li><p><strong>atom_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – indices of atoms to include in the TOTAL DOS. If empty, then all
+<li><p><strong>atom_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>]</em>) – indices of atoms to include in the TOTAL DOS. If empty, then all
 atoms are included (as for the gas)</p></li>
+<li><p><strong>min_occupation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Minimum state occupation for a section of density to be considered
+a molecular orbital.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -224,13 +261,13 @@ ndos is the number of gridpoints for the density of states</p></li>
 
 <dl class="py method">
 <dt id="pdos_overlap.pdos_overlap.PDOS_OVERLAP._get_orbital_features">
-<em class="property">static </em><code class="sig-name descname">_get_orbital_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">PDOS</span></em>, <em class="sig-param"><span class="n">orbital_indices</span></em>, <em class="sig-param"><span class="n">atom_indices</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">feature_type</span><span class="o">=</span><span class="default_value">'states'</span></em>, <em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/pdos_overlap.html#PDOS_OVERLAP._get_orbital_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.pdos_overlap.PDOS_OVERLAP._get_orbital_features" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">_get_orbital_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">PDOS</span></em>, <em class="sig-param"><span class="n">orbital_indices</span></em>, <em class="sig-param"><span class="n">atom_indices</span></em>, <em class="sig-param"><span class="n">upshift</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">feature_type</span><span class="o">=</span><span class="default_value">'states'</span></em>, <em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/pdos_overlap.html#PDOS_OVERLAP._get_orbital_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.pdos_overlap.PDOS_OVERLAP._get_orbital_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>molecular orbitals as an M x ndos array</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>PDOS</strong> (<a class="reference internal" href="vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS" title="pdos_overlap.vasp_dos.VASP_DOS"><em>vasp_dos.VASP_DOS</em></a>) – VASP_DOS object of gas or surface phase calculation of adsorbate</p></li>
-<li><p><strong>atom_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – indices of atoms to include in the TOTAL DOS. If empty, then all
+<li><p><strong>atom_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>]</em>) – indices of atoms to include in the TOTAL DOS. If empty, then all
 atoms are included (as for the gas)</p></li>
 <li><p><strong>orbital_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a><em>]</em>) – Length M list of non-zero orbital indices</p></li>
 </ul>
@@ -249,7 +286,7 @@ integrated s, p, and d molecular orbital density of states</p>
 
 <dl class="py method">
 <dt id="pdos_overlap.pdos_overlap.PDOS_OVERLAP._get_orbital_scores">
-<em class="property">static </em><code class="sig-name descname">_get_orbital_scores</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gas_orbital_features</span></em>, <em class="sig-param"><span class="n">adsorbate_orbital_features</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/pdos_overlap.html#PDOS_OVERLAP._get_orbital_scores"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.pdos_overlap.PDOS_OVERLAP._get_orbital_scores" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">_get_orbital_scores</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">reference_features</span></em>, <em class="sig-param"><span class="n">comparison_features</span></em>, <em class="sig-param"><span class="n">energy_weight</span><span class="o">=</span><span class="default_value">3</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/pdos_overlap.html#PDOS_OVERLAP._get_orbital_scores"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.pdos_overlap.PDOS_OVERLAP._get_orbital_scores" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="simple">
 <dt>orbital scores which represent probabilities of the gas molecular</dt><dd><p>orbital matching each adsorbate molecular orbital</p>
 </dd>
@@ -269,19 +306,55 @@ and N is the number of adsorbate molecular orbitals</p>
 <dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pdos_overlap.pdos_overlap.PDOS_OVERLAP.calculate_orbital_interaction">
+<code class="sig-name descname">calculate_orbital_interaction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">PDOS</span></em>, <em class="sig-param"><span class="n">atom_indices</span></em>, <em class="sig-param"><span class="n">atomic_orbitals</span></em>, <em class="sig-param"><span class="n">sum_density</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/pdos_overlap.html#PDOS_OVERLAP.calculate_orbital_interaction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.pdos_overlap.PDOS_OVERLAP.calculate_orbital_interaction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pdos_overlap.pdos_overlap.PDOS_OVERLAP.get_orbital_scores">
+<code class="sig-name descname">get_orbital_scores</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gas_features</span></em>, <em class="sig-param"><span class="n">adsorbate_features</span></em>, <em class="sig-param"><span class="n">energy_weight</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/pdos_overlap.html#PDOS_OVERLAP.get_orbital_scores"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.pdos_overlap.PDOS_OVERLAP.get_orbital_scores" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pdos_overlap.pdos_overlap.PDOS_OVERLAP.get_pair_scores">
+<em class="property">static </em><code class="sig-name descname">get_pair_scores</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">orbital_scores</span></em>, <em class="sig-param"><span class="n">max_iterations</span><span class="o">=</span><span class="default_value">500</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/pdos_overlap.html#PDOS_OVERLAP.get_pair_scores"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.pdos_overlap.PDOS_OVERLAP.get_pair_scores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get normalized pair scores using matrix scaling.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>orbital_scores</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – M x M 2D array</p></li>
+<li><p><strong>max_iterations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Maximum number of iterations before ending normalization procedure</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Print completion information</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>orbital_scores</strong> – M x M 2D array normalized symmetric matrix.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>Matrix scaling perfomed using RAS method described in
 DOI: 10.1109/FOCS.2017.87</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pdos_overlap.pdos_overlap.PDOS_OVERLAP.calculate_orbital_interaction">
-<code class="sig-name descname">calculate_orbital_interaction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">PDOS</span></em>, <em class="sig-param"><span class="n">atoms</span></em>, <em class="sig-param"><span class="n">gas_orbital_index</span></em>, <em class="sig-param"><span class="n">atomic_orbitals</span></em>, <em class="sig-param"><span class="n">sum_density</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/pdos_overlap.html#PDOS_OVERLAP.calculate_orbital_interaction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.pdos_overlap.PDOS_OVERLAP.calculate_orbital_interaction" title="Permalink to this definition">¶</a></dt>
+<dt id="pdos_overlap.pdos_overlap.PDOS_OVERLAP.get_sum_score">
+<em class="property">static </em><code class="sig-name descname">get_sum_score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">orbital_scores</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/pdos_overlap.html#PDOS_OVERLAP.get_sum_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.pdos_overlap.PDOS_OVERLAP.get_sum_score" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="pdos_overlap.pdos_overlap.PDOS_OVERLAP.get_pair_scores">
-<em class="property">static </em><code class="sig-name descname">get_pair_scores</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">orbital_scores</span></em>, <em class="sig-param"><span class="n">max_iterations</span><span class="o">=</span><span class="default_value">500</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/pdos_overlap.html#PDOS_OVERLAP.get_pair_scores"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.pdos_overlap.PDOS_OVERLAP.get_pair_scores" title="Permalink to this definition">¶</a></dt>
+<dt id="pdos_overlap.pdos_overlap.PDOS_OVERLAP.get_upshift_score">
+<code class="sig-name descname">get_upshift_score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">upshift</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/pdos_overlap.html#PDOS_OVERLAP.get_upshift_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.pdos_overlap.PDOS_OVERLAP.get_upshift_score" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pdos_overlap.pdos_overlap.PDOS_OVERLAP.optimize_energy_shift">
+<code class="sig-name descname">optimize_energy_shift</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bound</span><span class="o">=</span><span class="default_value">[- 0.5, 1.5]</span></em>, <em class="sig-param"><span class="n">reset</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/pdos_overlap.html#PDOS_OVERLAP.optimize_energy_shift"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.pdos_overlap.PDOS_OVERLAP.optimize_energy_shift" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">

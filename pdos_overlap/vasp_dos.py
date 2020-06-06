@@ -152,12 +152,12 @@ class VASP_DOS:
         self.m_projected = m_projected
         self.orbital_dictionary = orbital_dictionary
         
-    def get_band_center(self, atoms, orbital_list, sum_density=False, max_energy=None, axis=-1):
+    def get_band_center(self, atom_indices, orbital_list, sum_density=False, max_energy=None, axis=-1):
         """ Get band center for a given atom and list of orbitals
         
         Parameters
         ----------
-        atom : list
+        atom_indices : list[int]
             list of atom indices
             
         orbital_list : list[str]
@@ -181,8 +181,14 @@ class VASP_DOS:
         """
         energies = self.get_energies()
         get_site_dos = self.get_site_dos
-        orbitals, density = get_site_dos(atoms,orbital_list, sum_density=sum_density)
-        band_center = get_band_center(energies, density, max_energy=max_energy, axis=-1)
+        try:
+            len(atom_indices)
+        except:
+            atom_indices = [atom_indices]
+        orbitals, density = get_site_dos(atom_indices,orbital_list\
+                                         , sum_density=sum_density)
+        band_center = get_band_center(energies, density, max_energy=max_energy\
+                                      , axis=-1)
         return band_center
         
     def get_energies(self):
@@ -235,12 +241,12 @@ class VASP_DOS:
                 integrated_dos = self._total_dos[3:5, :].sum(axis=0)
         return integrated_dos
         
-    def get_site_dos(self, atom_list =[], orbital_list=[], sum_density=False, sum_spin=False):
+    def get_site_dos(self, atom_indices, orbital_list=[], sum_density=False, sum_spin=False):
         """Return an NDOSxM array with dos for the chosen atom and orbital(s).
         
         Parameters
         ----------
-        atom_list : list(int)
+        atom_list : list[int]
             List of atom index
             
         orbital_list : list[str]
@@ -269,6 +275,10 @@ class VASP_DOS:
         m_projected = self.m_projected
         _site_dos = self._site_dos
         ndos = self.ndos
+        try:
+            len(atom_indices)
+        except:
+            atom_indices = [atom_indices]
         if len(orbital_list) == 0:
             orbital_list = list(orbital_dictionary.keys())
         def get_orbitals(orbital):
@@ -327,7 +337,7 @@ class VASP_DOS:
         #force list of atom_list is an int
         if sum_density == True:
             projected_density = np.zeros((len(orbital_list), ndos))
-            for atom in atom_list:
+            for atom in atom_indices:
                 for count, orbital in enumerate(orbital_list):
                     new_orbital_list = get_orbitals(orbital)
                     indices = [orbital_dictionary[key] for key in new_orbital_list]
@@ -341,7 +351,7 @@ class VASP_DOS:
                 new_orbital_list += get_orbitals(orbital)
             projected_density = np.zeros((len(new_orbital_list), ndos))
             indices = [orbital_dictionary[key] for key in new_orbital_list]
-            for atom in atom_list:
+            for atom in atom_indices:
                 projected_density += _site_dos[atom, indices, :]
             
         if is_spin == True and sum_spin == True and sum_density == False:

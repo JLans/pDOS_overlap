@@ -16,7 +16,7 @@ This page includes examples for pdos_overlap.
 
 
 
-.. _sphx_glr_auto_examples_calculate_band_center:
+.. _sphx_glr_auto_examples_plot_band_center:
 
 Band center calculation example
 -------------------------------
@@ -31,9 +31,9 @@ This contains an example of calculating band centers.
 
 .. only:: html
 
- .. figure:: /auto_examples/calculate_band_center/images/thumb/sphx_glr_calculate_band_center_thumb.png
+ .. figure:: /auto_examples/plot_band_center/images/thumb/sphx_glr_plot_band_center_thumb.png
 
-     :ref:`sphx_glr_auto_examples_calculate_band_center_calculate_band_center.py`
+     :ref:`sphx_glr_auto_examples_plot_band_center_plot_band_center.py`
 
 .. raw:: html
 
@@ -43,14 +43,14 @@ This contains an example of calculating band centers.
 .. toctree::
    :hidden:
 
-   /auto_examples/calculate_band_center/calculate_band_center
+   /auto_examples/plot_band_center/plot_band_center
 .. raw:: html
 
     <div class="sphx-glr-clear"></div>
 
 
 
-.. _sphx_glr_auto_examples_calculate_orbital_overlap:
+.. _sphx_glr_auto_examples_plot_orbital_overlap:
 
 Orbial overlap calculation example
 ----------------------------------
@@ -65,9 +65,9 @@ This contains an example of calculating orbital overlap.
 
 .. only:: html
 
- .. figure:: /auto_examples/calculate_orbital_overlap/images/thumb/sphx_glr_calculate_orbital_overlap_thumb.png
+ .. figure:: /auto_examples/plot_orbital_overlap/images/thumb/sphx_glr_plot_orbital_overlap_thumb.png
 
-     :ref:`sphx_glr_auto_examples_calculate_orbital_overlap_calculate_orbital_overlap.py`
+     :ref:`sphx_glr_auto_examples_plot_orbital_overlap_plot_orbital_overlap.py`
 
 .. raw:: html
 
@@ -77,7 +77,7 @@ This contains an example of calculating orbital overlap.
 .. toctree::
    :hidden:
 
-   /auto_examples/calculate_orbital_overlap/calculate_orbital_overlap
+   /auto_examples/plot_orbital_overlap/plot_orbital_overlap
 .. raw:: html
 
     <div class="sphx-glr-clear"></div>

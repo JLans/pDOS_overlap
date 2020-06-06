@@ -65,7 +65,8 @@ spin orbital densities to get energy sub-level site projected densities.
 .. code-block:: default
 
 
-    orbitals, projected_density = PDOS.get_site_dos(atom_list=np.arange(-6,0), orbital_list=['s', 'p', 'd']\
+    orbitals, projected_density = PDOS.get_site_dos(atom_indices=np.arange(-6,0)\
+                                                , orbital_list=['s', 'p', 'd']\
                                           , sum_density = True)
 
 
@@ -109,7 +110,7 @@ We plot the projected density with the fermi-level indicated.
 
  .. code-block:: none
 
-    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\examples\plot_projected_density\plot_projected_density.py:55: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\examples\plot_projected_density\plot_projected_density.py:56: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
       plt.show()
 
 
@@ -118,7 +119,7 @@ We plot the projected density with the fermi-level indicated.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  1.042 seconds)
+   **Total running time of the script:** ( 0 minutes  0.741 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_projected_density_plot_projected_density.py:

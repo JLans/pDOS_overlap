@@ -33,7 +33,8 @@ PDOS = VASP_DOS(DOSCAR)
 # We get the site and spin orbital projected density. We sum the individual
 # spin orbital densities to get energy sub-level site projected densities.
 
-orbitals, projected_density = PDOS.get_site_dos(atom_list=np.arange(-6,0), orbital_list=['s', 'p', 'd']\
+orbitals, projected_density = PDOS.get_site_dos(atom_indices=np.arange(-6,0)\
+                                            , orbital_list=['s', 'p', 'd']\
                                       , sum_density = True)
 
 #######################################################################################

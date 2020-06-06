@@ -12,6 +12,7 @@ from .vasp_dos import get_band_center
 from ase.io import read
 from .coordination import Coordination
 from .plotting_tools import set_figure_settings
+from scipy.optimize import minimize_scalar
 
 def get_adsorbate_indices(GAS_CONTCAR, ADSORBATE_CONTCAR):
     gas_symbols = list(set(read(GAS_CONTCAR).get_chemical_symbols()))
@@ -27,7 +28,8 @@ def get_adsorbate_indices(GAS_CONTCAR, ADSORBATE_CONTCAR):
 class PDOS_OVERLAP:
     """Class for calculating adsorbate-surface relative orbital overlap"""
     def __init__(self, GAS_PDOS, REFERENCE_PDOS, adsorbate_indices, site_indices\
-                 , min_occupation=0.9, sum_density=False, sum_spin=True):
+                 , min_occupation=0.9, upshift=1, energy_weight=3\
+                 , sum_density=False, sum_spin=True):
         """ 
         Parameters
         ----------
@@ -51,7 +53,8 @@ class PDOS_OVERLAP:
             
         sum_density : bool
             Tag indicates if state density on the same sublevel should be
-            summed when generating features for gas and adsorbate orbitals.
+            summed when calculating overlap of the site atomic orbitals and the
+            adsorbate molecular orbitals.
             
         sum_spin : bool
             Tag indictes if state density with different spins should be summed
@@ -86,7 +89,20 @@ class PDOS_OVERLAP:
             
         orbital_scores : numpy.ndarray
             Array of size mxn where m and n are the number of gas and adsorbate
-            molecular orbitals respecitvely. Indicates similarity.
+            molecular orbitals respecitvely. Indicates similarity. If
+            the number of gas orbitals equals the number of adsorbate orbitals
+            then the scores are orbital-pairing scores.
+            
+        overlap_orbitals : list[str]
+            List of atomic orbitals for which overlap energies of the adsorbate
+            state with the metal adsorption-site states are calculated.
+            
+        energy_overlap : numpy.ndarray
+            Array of shape nxp where n is the number of adsorbate molecular
+            orbitals and p is the number of adsorption-site atomic orbitals.
+            Elements are the projected density of states overlap integral of
+            an adsorption site states (projected onto atomic orbitals), and
+            the adsorbate states (projected and summed into molecular orbitals)
             
         Notes
         -----
@@ -97,26 +113,21 @@ class PDOS_OVERLAP:
         REFERENCE_PDOS is used to determine which metal states, projected onto
         atomic orbitals, will interact with the adsorbate/gas molecular orbitals.
         
-        
-        self.orbital_scores = orbital_scores
-        self.overlap_orbitals = overlap_orbitals
-        self.energy_overlap = energy_overlap
-        gas_indices = gas_indices
         All parameters are saved as attributes.
         """
         gas_indices = list(range(GAS_PDOS.natoms))
         #GCN = [CN.get_gcn(CN.bonded[i]) for i in Catoms]
         gas_peak_energies, gas_peak_densities, gas_orbitals\
             , gas_orbital_indices, gas_occupations\
-        = self._get_mol_orbitals(GAS_PDOS, gas_indices, min_occupation=min_occupation)
+        = self._get_mol_orbitals(GAS_PDOS, gas_indices, min_occupation)
         
         adsorbate_peak_energies, adsorbate_peak_densities, adsorbate_orbitals \
             , adsorbate_orbital_indices, adsorbate_occupations \
-            = self._get_mol_orbitals(REFERENCE_PDOS, adsorbate_indices, min_occupation=min_occupation)
+            = self._get_mol_orbitals(REFERENCE_PDOS, adsorbate_indices, min_occupation)
             
         overlap_orbitals, energy_overlap \
-        = self._calculate_overlap(adsorbate_orbitals, REFERENCE_PDOS, site_indices
-                                 , sum_density=sum_density, sum_spin=sum_spin) 
+        = self._calculate_overlap(adsorbate_orbitals, REFERENCE_PDOS\
+                                        , site_indices, sum_density, sum_spin) 
         
         if gas_orbitals.shape[0] == adsorbate_orbitals.shape[0]:
             feature_type = 'states'
@@ -125,31 +136,23 @@ class PDOS_OVERLAP:
         
         gas_features\
             = self._get_orbital_features(GAS_PDOS, gas_orbital_indices\
-                                , gas_indices, feature_type, sum_spin=sum_spin)
+                                , gas_indices, upshift, feature_type, sum_spin)
         
         adsorbate_features\
             = self._get_orbital_features(REFERENCE_PDOS, adsorbate_orbital_indices\
-                              , adsorbate_indices, feature_type, sum_spin=sum_spin)
+                   , adsorbate_indices, upshift, feature_type, sum_spin)
         
-        orbital_scores_gas\
-        = self._get_orbital_scores(gas_features, adsorbate_features)
+        orbital_scores = self.get_orbital_scores(gas_features\
+                                           , adsorbate_features, energy_weight)
         
-        orbital_scores_adsorbate\
-        = self._get_orbital_scores(adsorbate_features, gas_features)
-        
-        if gas_orbitals.shape[0] == adsorbate_orbitals.shape[0]:
-            orbital_scores = (orbital_scores_gas * orbital_scores_adsorbate.T)**0.5
-            orbital_scores = (orbital_scores * orbital_scores.T)**0.5
-        elif gas_orbitals.shape[0] > adsorbate_orbitals.shape[0]:
-            orbital_scores = orbital_scores_gas
-        else:
-            orbital_scores = orbital_scores_adsorbate.T
-        
-        self.gas_band_centers = get_band_center(GAS_PDOS.get_energies(), gas_orbitals)
+        self.gas_band_centers = get_band_center(GAS_PDOS.get_energies()\
+                                                , gas_orbitals)
         self.adsorbate_band_centers = get_band_center(\
-                                    REFERENCE_PDOS.get_energies(), adsorbate_orbitals)
+                                    REFERENCE_PDOS.get_energies()\
+                                        , adsorbate_orbitals)
         self.gas_2_adsorbate = self._assign_orbitals(orbital_scores\
-                                    , self.gas_band_centers, self.adsorbate_band_centers)
+                                    , self.gas_band_centers\
+                                        , self.adsorbate_band_centers)
         
         self.gas_features = gas_features
         self.adsorbate_features = adsorbate_features
@@ -166,8 +169,14 @@ class PDOS_OVERLAP:
         self.adsorbate_indices = adsorbate_indices
         self.site_indices = site_indices
         self.min_occupation = min_occupation
+        self.upshift = upshift
+        self.energy_weight = energy_weight
+        self.energy_overlap = energy_overlap
         self.sum_density = sum_density
         self.sum_spin = sum_spin
+        self.feature_type = feature_type
+        self.gas_orbital_indices = gas_orbital_indices
+        self.adsorbate_orbital_indices = adsorbate_orbital_indices
     
     @staticmethod
     def _get_mol_orbitals(PDOS, atom_indices, min_occupation=0.9):
@@ -178,9 +187,13 @@ class PDOS_OVERLAP:
         PDOS : vasp_dos.VASP_DOS
             VASP_DOS object of gas or surface phase calculation of adsorbate
             
-        atom_indices : list
+        atom_indices : list[int]
             indices of atoms to include in the TOTAL DOS. If empty, then all
             atoms are included (as for the gas)
+            
+        min_occupation : float
+            Minimum state occupation for a section of density to be considered
+            a molecular orbital.
         
         Returns
         -------
@@ -198,7 +211,7 @@ class PDOS_OVERLAP:
             Length M list of non-zero orbital indices
 
         """
-        
+            
         TOTAL_DOS = np.zeros(PDOS.ndos)
         #sum over projected density of states for each atom
         orbital_list = [key for key in PDOS.orbital_dictionary.keys()]
@@ -294,7 +307,7 @@ class PDOS_OVERLAP:
     
     
     @staticmethod
-    def _get_orbital_features(PDOS, orbital_indices, atom_indices=[]\
+    def _get_orbital_features(PDOS, orbital_indices, atom_indices, upshift=1\
                               , feature_type='states', sum_spin=True):
         """ molecular orbitals as an M x ndos array
         
@@ -303,7 +316,7 @@ class PDOS_OVERLAP:
         PDOS : vasp_dos.VASP_DOS
             VASP_DOS object of gas or surface phase calculation of adsorbate
             
-        atom_indices : list
+        atom_indices : list[int]
             indices of atoms to include in the TOTAL DOS. If empty, then all
             atoms are included (as for the gas)
             
@@ -321,7 +334,7 @@ class PDOS_OVERLAP:
         """
         
         num_orbitals = len(orbital_indices)
-        energies = PDOS.get_energies() - PDOS.e_fermi
+        energies = PDOS.get_energies() - upshift * PDOS.e_fermi
         orbital_list = list(PDOS.orbital_dictionary.keys())
         #feature_list = ['s','py', 'pz', 'px', 'dxy', 'dyz', 'dz2', 'dxz', 'dx2-y2']
         feature_list = ['s','py', 'pz', 'px']
@@ -353,7 +366,8 @@ class PDOS_OVERLAP:
         return orbital_features
     
     @staticmethod
-    def _get_orbital_scores(reference_features, comparison_features):
+    def _get_orbital_scores(reference_features, comparison_features\
+                            , energy_weight=3):
         """ orbital scores which represent probabilities of the gas molecular
             orbital matching each adsorbate molecular orbital
         
@@ -370,11 +384,6 @@ class PDOS_OVERLAP:
         orbital_scores : numpy.ndarray
             M x N 2D array where M is the number of gas molecular orbitals
             and N is the number of adsorbate molecular orbitals
-
-        Notes
-        -----
-        Matrix scaling perfomed using RAS method described in 
-        DOI: 10.1109/FOCS.2017.87
         """
         num_reference_orbitals = reference_features.shape[0]
         num_comparison_orbitals = comparison_features.shape[0]
@@ -384,7 +393,7 @@ class PDOS_OVERLAP:
             var_feature = np.sum(diff_squared,axis=0) / num_comparison_orbitals
             var_feature[var_feature[...] <= 10**-6] = 10 #prevent divide by zero error
             #gaussian based likelihood
-            diff_squared[:,0] *=3
+            diff_squared[:,0] *= energy_weight
             univariate = np.exp(-1 * diff_squared / var_feature)
             orbital_scores[count] = np.prod(univariate, axis=1)
        
@@ -392,6 +401,29 @@ class PDOS_OVERLAP:
     
     @staticmethod
     def get_pair_scores(orbital_scores, max_iterations = 500, verbose=False):
+        """ Get normalized pair scores using matrix scaling.
+        
+        Parameters
+        ----------
+        orbital_scores : numpy.ndarray
+            M x M 2D array
+            
+        max_iterations : int
+            Maximum number of iterations before ending normalization procedure
+            
+        verbose : bool
+            Print completion information
+                   
+        Returns
+        -------
+        orbital_scores : numpy.ndarray
+            M x M 2D array normalized symmetric matrix.
+
+        Notes
+        -----
+        Matrix scaling perfomed using RAS method described in 
+        DOI: 10.1109/FOCS.2017.87
+        """
         error = 1
         iteration = 0
         orbital_scores = orbital_scores.copy()
@@ -421,14 +453,15 @@ class PDOS_OVERLAP:
         overlap_orbitals = orbital_list
         energy_overlap = np.zeros((num_molecular_orbitals, TOTAL_PDOS.shape[0]))
         for i in range(num_molecular_orbitals):
-            energy_overlap[i] = np.trapz(molecular_orbitals[i]*TOTAL_PDOS,PDOS.get_energies(),axis=1)
+            energy_overlap[i] = np.trapz(molecular_orbitals[i]\
+                                      * TOTAL_PDOS,PDOS.get_energies(),axis=1)
         return overlap_orbitals, energy_overlap
     
-    def calculate_orbital_interaction(self,PDOS, atoms, gas_orbital_index, atomic_orbitals\
-                                      ,sum_density=False, sum_spin=True):
+    def calculate_orbital_interaction(self,PDOS, atom_indices\
+                         , atomic_orbitals, sum_density=False, sum_spin=True):
         GAS_PDOS = self.GAS_PDOS
-        gas_orbital = self.gas_orbitals[gas_orbital_index]
-        orbitals, projected_density = PDOS.get_site_dos(atoms\
+        gas_orbital = self.gas_orbitals[self.gas_orbital_index]
+        orbitals, projected_density = PDOS.get_site_dos(atom_indices\
                                     , atomic_orbitals, sum_density=sum_density\
                                     , sum_spin=sum_spin)
         if PDOS.ndos != GAS_PDOS.ndos:
@@ -461,6 +494,75 @@ class PDOS_OVERLAP:
             , gas_band_centers[orbital_assignments], adsorbate_band_centers)).T
                 
         return gas_2_adsorbate
+    
+    def get_orbital_scores(self, gas_features, adsorbate_features, energy_weight):
+        orbital_scores_gas\
+        = self._get_orbital_scores(gas_features, adsorbate_features, energy_weight)
+        
+        orbital_scores_adsorbate\
+        = self._get_orbital_scores(adsorbate_features, gas_features, energy_weight)
+        
+        if orbital_scores_gas.shape[0] == orbital_scores_adsorbate.shape[0]:
+            orbital_scores = (orbital_scores_gas * orbital_scores_adsorbate.T)**0.5
+            orbital_scores = (orbital_scores * orbital_scores.T)**0.5
+        elif orbital_scores_gas.shape[0] > orbital_scores_adsorbate.shape[0]:
+            orbital_scores = orbital_scores_gas
+        else:
+            orbital_scores = orbital_scores_adsorbate.T
+        return orbital_scores
+        
+    
+    @staticmethod
+    def get_sum_score(orbital_scores):
+        if orbital_scores.shape[0] >= orbital_scores.shape[1]:
+            sum_score = orbital_scores.max(axis=1).sum()
+            
+        else:
+            sum_score = orbital_scores.max(axis=0).sum()
+        return sum_score
+        
+    def get_upshift_score(self, upshift):
+        gas_features\
+                = self._get_orbital_features(self.GAS_PDOS\
+                                             , self.gas_orbital_indices\
+                                             , self.gas_indices, upshift\
+                                             , self.feature_type, self.sum_spin)
+        adsorbate_features\
+                = self._get_orbital_features(self.REFERENCE_PDOS\
+                                             , self.adsorbate_orbital_indices\
+                                             , self.adsorbate_indices, upshift\
+                                             , self.feature_type, self.sum_spin)
+        scores = self.get_orbital_scores(gas_features, adsorbate_features\
+                                             , self.energy_weight)    
+        sum_score = self.get_sum_score(scores)
+        return sum_score
+        
+    def optimize_energy_shift(self, bound=[-0.5,1.5], reset=False, plot=False):
+        def f(upshift):
+            return -1 * self.get_upshift_score(upshift)
+        grid = np.linspace(bound[0],bound[1],50,endpoint=True)
+        y = np.array([f(x) for x in grid])
+        argmin = np.argmin(y)
+        opt = minimize_scalar(f, bounds=(grid[argmin - 2], grid[argmin + 2])\
+                        , method='bounded', options={'xatol': 1e-05\
+                                                  , 'maxiter': 500, 'disp': 1})
+        optimized_upshift = opt['x']
+        
+        if reset == True:
+            self.__init__(self.GAS_PDOS, self.REFERENCE_PDOS\
+                          , self.adsorbate_indices, self.site_indices\
+                          , self.min_occupation, upshift=optimized_upshift\
+                          , energy_weight=self.energy_weight\
+                          , sum_density=False, sum_spin=True)
+                
+        if plot == True:
+            set_figure_settings('paper')
+            plt.figure()
+            plt.plot(grid, - 1 * y)
+            plt.xlabel(r'Increase applied to energies as a fraction of the fermi energy')
+            plt.ylabel(r'$\sum_{m=1}^{M}$max(orbital score$_{m,j}$ for j in N )')
+            plt.show()
+        return optimized_upshift
                 
     def plot_energy_overlap(self, indices = [...],settings='print'):
         if settings == 'presentation':
@@ -480,7 +582,8 @@ class PDOS_OVERLAP:
             if settings == 'print':
                 plt.show()
             
-    def plot_projected_density(self,sum_density=True, sum_spin=True, settings='print'):
+    def plot_projected_density(self,sum_density=True, sum_spin=True\
+                               , settings='print'):
         GAS_PDOS = self.GAS_PDOS
         gas_indices = self.gas_indices
         REFERENCE_PDOS = self.REFERENCE_PDOS
@@ -500,9 +603,8 @@ class PDOS_OVERLAP:
         
         #plotting function
         def plot_density(PDOS, indices, title):
-            orbitals, projected_density = PDOS.get_site_dos(\
-                    atom_list=indices, orbital_list=orbital_list\
-                                 ,sum_density=sum_density, sum_spin=sum_spin)
+            orbitals, projected_density = PDOS.get_site_dos(indices\
+                                , orbital_list, sum_density, sum_spin)
             if sum_spin == False:
                 projected_density[1::2,:] *= -1
             if settings == 'print':

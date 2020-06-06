@@ -3,10 +3,10 @@
     .. note::
         :class: sphx-glr-download-link-note
 
-        Click :ref:`here <sphx_glr_download_auto_examples_calculate_band_center_calculate_band_center.py>`     to download the full example code
+        Click :ref:`here <sphx_glr_download_auto_examples_plot_band_center_plot_band_center.py>`     to download the full example code
     .. rst-class:: sphx-glr-example-title
 
-    .. _sphx_glr_auto_examples_calculate_band_center_calculate_band_center.py:
+    .. _sphx_glr_auto_examples_plot_band_center_plot_band_center.py:
 
 
 ==================================
@@ -25,6 +25,12 @@ This example shows how to plot projected density of states
     from pdos_overlap.plotting_tools import set_figure_settings
 
 
+
+
+
+
+
+
 Load DOSCAR file
 ----------------
 
@@ -39,6 +45,12 @@ instantiate a VASP_DOS object.
     example_path = get_example_data()
     DOSCAR = os.path.join(example_path, 'C2H4/DOSCAR')
     PDOS = VASP_DOS(DOSCAR)
+
+
+
+
+
+
 
 
 Calculate and print band centers
@@ -60,12 +72,33 @@ spin orbital densities to get energy sub-level band centers.
         print(orbital + ' band center :' + str(band_centers[count]))
 
 
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+    s+ band center :-17.178867110984445
+    s- band center :-17.178845887899325
+    py+ band center :-8.756540885848858
+    py- band center :-8.756524623910577
+    pz+ band center :-11.145902800385862
+    pz- band center :-11.14591890144209
+    px+ band center :-8.756562549409367
+    px- band center :-8.756548208350123
+
+
+
+
+
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.000 seconds)
+   **Total running time of the script:** ( 0 minutes  0.825 seconds)
 
 
-.. _sphx_glr_download_auto_examples_calculate_band_center_calculate_band_center.py:
+.. _sphx_glr_download_auto_examples_plot_band_center_plot_band_center.py:
 
 
 .. only :: html
@@ -77,13 +110,13 @@ spin orbital densities to get energy sub-level band centers.
 
   .. container:: sphx-glr-download sphx-glr-download-python
 
-     :download:`Download Python source code: calculate_band_center.py <calculate_band_center.py>`
+     :download:`Download Python source code: plot_band_center.py <plot_band_center.py>`
 
 
 
   .. container:: sphx-glr-download sphx-glr-download-jupyter
 
-     :download:`Download Jupyter notebook: calculate_band_center.ipynb <calculate_band_center.ipynb>`
+     :download:`Download Jupyter notebook: plot_band_center.ipynb <plot_band_center.ipynb>`
 
 
 .. only:: html

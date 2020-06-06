@@ -170,6 +170,7 @@
 <span class="kn">from</span> <span class="nn">ase.io</span> <span class="kn">import</span> <span class="n">read</span>
 <span class="kn">from</span> <span class="nn">.coordination</span> <span class="kn">import</span> <span class="n">Coordination</span>
 <span class="kn">from</span> <span class="nn">.plotting_tools</span> <span class="kn">import</span> <span class="n">set_figure_settings</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">minimize_scalar</span>
 
 <span class="k">def</span> <span class="nf">get_adsorbate_indices</span><span class="p">(</span><span class="n">GAS_CONTCAR</span><span class="p">,</span> <span class="n">ADSORBATE_CONTCAR</span><span class="p">):</span>
     <span class="n">gas_symbols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">read</span><span class="p">(</span><span class="n">GAS_CONTCAR</span><span class="p">)</span><span class="o">.</span><span class="n">get_chemical_symbols</span><span class="p">()))</span>
@@ -185,46 +186,106 @@
 <div class="viewcode-block" id="PDOS_OVERLAP"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP">[docs]</a><span class="k">class</span> <span class="nc">PDOS_OVERLAP</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Class for calculating adsorbate-surface relative orbital overlap&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">GAS_PDOS</span><span class="p">,</span> <span class="n">REFERENCE_PDOS</span><span class="p">,</span> <span class="n">adsorbate_indices</span><span class="p">,</span> <span class="n">site_indices</span>\
-                 <span class="p">,</span> <span class="n">min_occupation</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                 <span class="p">,</span> <span class="n">min_occupation</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">upshift</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">energy_weight</span><span class="o">=</span><span class="mi">3</span>\
+                 <span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        GAS_PDOS : vasp_dos.VASP_DOS</span>
-<span class="sd">            VASP_DOS object of gas phase calculation of adsorbate</span>
+<span class="sd">            VASP_DOS object of gas phase calculation of adsorbate.</span>
 <span class="sd">            </span>
 <span class="sd">        REFERENCE_PDOS : vasp_dos.VASP_DOS</span>
-<span class="sd">            VASP_DOS object of reference adsorbate+surface system</span>
+<span class="sd">            VASP_DOS object of reference adsorbate+surface system.</span>
 <span class="sd">            </span>
 <span class="sd">        adsorbate_indices : list[int]</span>
-<span class="sd">            index (indices) of adsorbate atom(s) in REFERENCE_PDOS</span>
+<span class="sd">            Index (indices) of adsorbate atom(s) in REFERENCE_PDOS. Obtained</span>
+<span class="sd">            from pdos_overlap.get_adsorbate_indices.</span>
 <span class="sd">            </span>
 <span class="sd">        site_indices : list[int]</span>
-<span class="sd">            index (indices) of adsorbate atom(s) in REFERENCE_PDOS</span>
+<span class="sd">            Index (indices) of adsorbation site atom(s) in REFERENCE_PDOS.</span>
+<span class="sd">            Obtained from pdos_overlap.get_adsorbate_indices.</span>
+<span class="sd">            </span>
+<span class="sd">        min_occupation : float</span>
+<span class="sd">            Minimum state occupation for a section of density to be considered</span>
+<span class="sd">            a molecular orbital.</span>
+<span class="sd">            </span>
+<span class="sd">        sum_density : bool</span>
+<span class="sd">            Tag indicates if state density on the same sublevel should be</span>
+<span class="sd">            summed when calculating overlap of the site atomic orbitals and the</span>
+<span class="sd">            adsorbate molecular orbitals.</span>
+<span class="sd">            </span>
+<span class="sd">        sum_spin : bool</span>
+<span class="sd">            Tag indictes if state density with different spins should be summed</span>
+<span class="sd">            when generating gas and adsorbate orbital features.</span>
 <span class="sd">        </span>
 <span class="sd">        Attributes</span>
 <span class="sd">        ----------</span>
-<span class="sd">        emax : float</span>
-<span class="sd">            maximum energy level</span>
+<span class="sd">        gas_indices : list[ing]</span>
+<span class="sd">            Atom index (indices) of the gas molecule.</span>
+<span class="sd">        </span>
+<span class="sd">        gas_features : numpy.ndarray</span>
+<span class="sd">            gas molecular orbital features used in matching gas and adsorbate</span>
+<span class="sd">            molecular orbitals</span>
+<span class="sd">        </span>
+<span class="sd">        adsorbate_features : numpy.ndarray</span>
+<span class="sd">            Adsorbate molecular orbital features used in matching gas and</span>
+<span class="sd">            adsorbate molecular orbitals</span>
+<span class="sd">            </span>
+<span class="sd">        gas_orbitals : numpy.ndarray</span>
+<span class="sd">            Length mxn array where m is the number of molecular orbitals and</span>
+<span class="sd">            n is equal to GAS_PDOS.ndos (dos discritizations)</span>
+<span class="sd">            </span>
+<span class="sd">        gas_occupations : numpy.ndarray</span>
+<span class="sd">            Integrated state density of each gas orbital.</span>
+<span class="sd">            </span>
+<span class="sd">        adsorbate_orbitals : numpy.ndarray</span>
+<span class="sd">            Length mxn array where m is the number of adsorbate orbitals and</span>
+<span class="sd">            n is equal to REFERENCE_PDOS.ndos (dos discritizations)</span>
+<span class="sd">            </span>
+<span class="sd">        adsorbate_occupations : numpy.ndarray</span>
+<span class="sd">            Integrated state density of each adsorbate molecular orbital.</span>
+<span class="sd">            </span>
+<span class="sd">        orbital_scores : numpy.ndarray</span>
+<span class="sd">            Array of size mxn where m and n are the number of gas and adsorbate</span>
+<span class="sd">            molecular orbitals respecitvely. Indicates similarity. If</span>
+<span class="sd">            the number of gas orbitals equals the number of adsorbate orbitals</span>
+<span class="sd">            then the scores are orbital-pairing scores.</span>
+<span class="sd">            </span>
+<span class="sd">        overlap_orbitals : list[str]</span>
+<span class="sd">            List of atomic orbitals for which overlap energies of the adsorbate</span>
+<span class="sd">            state with the metal adsorption-site states are calculated.</span>
+<span class="sd">            </span>
+<span class="sd">        energy_overlap : numpy.ndarray</span>
+<span class="sd">            Array of shape nxp where n is the number of adsorbate molecular</span>
+<span class="sd">            orbitals and p is the number of adsorption-site atomic orbitals.</span>
+<span class="sd">            Elements are the projected density of states overlap integral of</span>
+<span class="sd">            an adsorption site states (projected onto atomic orbitals), and</span>
+<span class="sd">            the adsorbate states (projected and summed into molecular orbitals)</span>
 <span class="sd">            </span>
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
-<span class="sd">        GAS_PDOS is used only to determine the number of orbitals that can</span>
-<span class="sd">        interact with the surface and to calculate relative orbital overlap with </span>
-<span class="sd">        projected density of adsorption sites without adsorbates.</span>
+<span class="sd">        GAS_PDOS is used to determine the number of molecular orbitals that can</span>
+<span class="sd">        interact with the surface and to calculate relative orbital overlap the</span>
+<span class="sd">        with projected density of adsorption sites without adsorbates.</span>
+<span class="sd">        </span>
+<span class="sd">        REFERENCE_PDOS is used to determine which metal states, projected onto</span>
+<span class="sd">        atomic orbitals, will interact with the adsorbate/gas molecular orbitals.</span>
+<span class="sd">        </span>
+<span class="sd">        All parameters are saved as attributes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">gas_indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">GAS_PDOS</span><span class="o">.</span><span class="n">natoms</span><span class="p">))</span>
         <span class="c1">#GCN = [CN.get_gcn(CN.bonded[i]) for i in Catoms]</span>
         <span class="n">gas_peak_energies</span><span class="p">,</span> <span class="n">gas_peak_densities</span><span class="p">,</span> <span class="n">gas_orbitals</span>\
             <span class="p">,</span> <span class="n">gas_orbital_indices</span><span class="p">,</span> <span class="n">gas_occupations</span>\
-        <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_mol_orbitals</span><span class="p">(</span><span class="n">GAS_PDOS</span><span class="p">,</span> <span class="n">gas_indices</span><span class="p">,</span> <span class="n">min_occupation</span><span class="o">=</span><span class="n">min_occupation</span><span class="p">)</span>
+        <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_mol_orbitals</span><span class="p">(</span><span class="n">GAS_PDOS</span><span class="p">,</span> <span class="n">gas_indices</span><span class="p">,</span> <span class="n">min_occupation</span><span class="p">)</span>
         
         <span class="n">adsorbate_peak_energies</span><span class="p">,</span> <span class="n">adsorbate_peak_densities</span><span class="p">,</span> <span class="n">adsorbate_orbitals</span> \
             <span class="p">,</span> <span class="n">adsorbate_orbital_indices</span><span class="p">,</span> <span class="n">adsorbate_occupations</span> \
-            <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_mol_orbitals</span><span class="p">(</span><span class="n">REFERENCE_PDOS</span><span class="p">,</span> <span class="n">adsorbate_indices</span><span class="p">,</span> <span class="n">min_occupation</span><span class="o">=</span><span class="n">min_occupation</span><span class="p">)</span>
+            <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_mol_orbitals</span><span class="p">(</span><span class="n">REFERENCE_PDOS</span><span class="p">,</span> <span class="n">adsorbate_indices</span><span class="p">,</span> <span class="n">min_occupation</span><span class="p">)</span>
             
         <span class="n">overlap_orbitals</span><span class="p">,</span> <span class="n">energy_overlap</span> \
-        <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_overlap</span><span class="p">(</span><span class="n">adsorbate_orbitals</span><span class="p">,</span> <span class="n">REFERENCE_PDOS</span><span class="p">,</span> <span class="n">site_indices</span>
-                                 <span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="n">sum_density</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="n">sum_spin</span><span class="p">)</span> 
+        <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_overlap</span><span class="p">(</span><span class="n">adsorbate_orbitals</span><span class="p">,</span> <span class="n">REFERENCE_PDOS</span>\
+                                        <span class="p">,</span> <span class="n">site_indices</span><span class="p">,</span> <span class="n">sum_density</span><span class="p">,</span> <span class="n">sum_spin</span><span class="p">)</span> 
         
         <span class="k">if</span> <span class="n">gas_orbitals</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">adsorbate_orbitals</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
             <span class="n">feature_type</span> <span class="o">=</span> <span class="s1">&#39;states&#39;</span>
@@ -233,27 +294,23 @@
         
         <span class="n">gas_features</span>\
             <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_orbital_features</span><span class="p">(</span><span class="n">GAS_PDOS</span><span class="p">,</span> <span class="n">gas_orbital_indices</span>\
-                                <span class="p">,</span> <span class="n">gas_indices</span><span class="p">,</span> <span class="n">feature_type</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="n">sum_spin</span><span class="p">)</span>
+                                <span class="p">,</span> <span class="n">gas_indices</span><span class="p">,</span> <span class="n">upshift</span><span class="p">,</span> <span class="n">feature_type</span><span class="p">,</span> <span class="n">sum_spin</span><span class="p">)</span>
         
         <span class="n">adsorbate_features</span>\
             <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_orbital_features</span><span class="p">(</span><span class="n">REFERENCE_PDOS</span><span class="p">,</span> <span class="n">adsorbate_orbital_indices</span>\
-                              <span class="p">,</span> <span class="n">adsorbate_indices</span><span class="p">,</span> <span class="n">feature_type</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="n">sum_spin</span><span class="p">)</span>
+                   <span class="p">,</span> <span class="n">adsorbate_indices</span><span class="p">,</span> <span class="n">upshift</span><span class="p">,</span> <span class="n">feature_type</span><span class="p">,</span> <span class="n">sum_spin</span><span class="p">)</span>
         
-        <span class="n">orbital_scores_gas</span><span class="p">,</span> <span class="n">orbital_scores_adsorbate</span><span class="p">,</span> <span class="n">orbital_scores_averaged</span>\
-        <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_orbital_scores</span><span class="p">(</span><span class="n">gas_features</span><span class="p">,</span> <span class="n">adsorbate_features</span><span class="p">)</span>
+        <span class="n">orbital_scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_orbital_scores</span><span class="p">(</span><span class="n">gas_features</span>\
+                                           <span class="p">,</span> <span class="n">adsorbate_features</span><span class="p">,</span> <span class="n">energy_weight</span><span class="p">)</span>
         
-        <span class="k">if</span> <span class="n">gas_orbitals</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">adsorbate_orbitals</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-            <span class="n">orbital_scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pair_scores</span><span class="p">(</span><span class="n">orbital_scores_averaged</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">gas_orbitals</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">adsorbate_orbitals</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-            <span class="n">orbital_scores</span> <span class="o">=</span> <span class="n">orbital_scores_gas</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">orbital_scores</span> <span class="o">=</span> <span class="n">orbital_scores_adsorbate</span>
-        
-        <span class="bp">self</span><span class="o">.</span><span class="n">gas_band_centers</span> <span class="o">=</span> <span class="n">get_band_center</span><span class="p">(</span><span class="n">GAS_PDOS</span><span class="o">.</span><span class="n">get_energies</span><span class="p">(),</span> <span class="n">gas_orbitals</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gas_band_centers</span> <span class="o">=</span> <span class="n">get_band_center</span><span class="p">(</span><span class="n">GAS_PDOS</span><span class="o">.</span><span class="n">get_energies</span><span class="p">()</span>\
+                                                <span class="p">,</span> <span class="n">gas_orbitals</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">adsorbate_band_centers</span> <span class="o">=</span> <span class="n">get_band_center</span><span class="p">(</span>\
-                                    <span class="n">REFERENCE_PDOS</span><span class="o">.</span><span class="n">get_energies</span><span class="p">(),</span> <span class="n">adsorbate_orbitals</span><span class="p">)</span>
+                                    <span class="n">REFERENCE_PDOS</span><span class="o">.</span><span class="n">get_energies</span><span class="p">()</span>\
+                                        <span class="p">,</span> <span class="n">adsorbate_orbitals</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gas_2_adsorbate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_assign_orbitals</span><span class="p">(</span><span class="n">orbital_scores</span>\
-                                    <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gas_band_centers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">adsorbate_band_centers</span><span class="p">)</span>
+                                    <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gas_band_centers</span>\
+                                        <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">adsorbate_band_centers</span><span class="p">)</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">gas_features</span> <span class="o">=</span> <span class="n">gas_features</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">adsorbate_features</span> <span class="o">=</span> <span class="n">adsorbate_features</span>
@@ -270,8 +327,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">adsorbate_indices</span> <span class="o">=</span> <span class="n">adsorbate_indices</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">site_indices</span> <span class="o">=</span> <span class="n">site_indices</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_occupation</span> <span class="o">=</span> <span class="n">min_occupation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">upshift</span> <span class="o">=</span> <span class="n">upshift</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">energy_weight</span> <span class="o">=</span> <span class="n">energy_weight</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">energy_overlap</span> <span class="o">=</span> <span class="n">energy_overlap</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sum_density</span> <span class="o">=</span> <span class="n">sum_density</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sum_spin</span> <span class="o">=</span> <span class="n">sum_spin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feature_type</span> <span class="o">=</span> <span class="n">feature_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gas_orbital_indices</span> <span class="o">=</span> <span class="n">gas_orbital_indices</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">adsorbate_orbital_indices</span> <span class="o">=</span> <span class="n">adsorbate_orbital_indices</span>
     
 <div class="viewcode-block" id="PDOS_OVERLAP._get_mol_orbitals"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP._get_mol_orbitals">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_get_mol_orbitals</span><span class="p">(</span><span class="n">PDOS</span><span class="p">,</span> <span class="n">atom_indices</span><span class="p">,</span> <span class="n">min_occupation</span><span class="o">=</span><span class="mf">0.9</span><span class="p">):</span>
@@ -282,9 +345,13 @@
 <span class="sd">        PDOS : vasp_dos.VASP_DOS</span>
 <span class="sd">            VASP_DOS object of gas or surface phase calculation of adsorbate</span>
 <span class="sd">            </span>
-<span class="sd">        atom_indices : list</span>
+<span class="sd">        atom_indices : list[int]</span>
 <span class="sd">            indices of atoms to include in the TOTAL DOS. If empty, then all</span>
 <span class="sd">            atoms are included (as for the gas)</span>
+<span class="sd">            </span>
+<span class="sd">        min_occupation : float</span>
+<span class="sd">            Minimum state occupation for a section of density to be considered</span>
+<span class="sd">            a molecular orbital.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -302,7 +369,7 @@
 <span class="sd">            Length M list of non-zero orbital indices</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        
+            
         <span class="n">TOTAL_DOS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">PDOS</span><span class="o">.</span><span class="n">ndos</span><span class="p">)</span>
         <span class="c1">#sum over projected density of states for each atom</span>
         <span class="n">orbital_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">PDOS</span><span class="o">.</span><span class="n">orbital_dictionary</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
@@ -398,7 +465,7 @@
     
     
 <div class="viewcode-block" id="PDOS_OVERLAP._get_orbital_features"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP._get_orbital_features">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_get_orbital_features</span><span class="p">(</span><span class="n">PDOS</span><span class="p">,</span> <span class="n">orbital_indices</span><span class="p">,</span> <span class="n">atom_indices</span><span class="o">=</span><span class="p">[]</span>\
+    <span class="k">def</span> <span class="nf">_get_orbital_features</span><span class="p">(</span><span class="n">PDOS</span><span class="p">,</span> <span class="n">orbital_indices</span><span class="p">,</span> <span class="n">atom_indices</span><span class="p">,</span> <span class="n">upshift</span><span class="o">=</span><span class="mi">1</span>\
                               <span class="p">,</span> <span class="n">feature_type</span><span class="o">=</span><span class="s1">&#39;states&#39;</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; molecular orbitals as an M x ndos array</span>
 <span class="sd">        </span>
@@ -407,7 +474,7 @@
 <span class="sd">        PDOS : vasp_dos.VASP_DOS</span>
 <span class="sd">            VASP_DOS object of gas or surface phase calculation of adsorbate</span>
 <span class="sd">            </span>
-<span class="sd">        atom_indices : list</span>
+<span class="sd">        atom_indices : list[int]</span>
 <span class="sd">            indices of atoms to include in the TOTAL DOS. If empty, then all</span>
 <span class="sd">            atoms are included (as for the gas)</span>
 <span class="sd">            </span>
@@ -425,7 +492,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         
         <span class="n">num_orbitals</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">orbital_indices</span><span class="p">)</span>
-        <span class="n">energies</span> <span class="o">=</span> <span class="n">PDOS</span><span class="o">.</span><span class="n">get_energies</span><span class="p">()</span> <span class="o">-</span> <span class="n">PDOS</span><span class="o">.</span><span class="n">e_fermi</span>
+        <span class="n">energies</span> <span class="o">=</span> <span class="n">PDOS</span><span class="o">.</span><span class="n">get_energies</span><span class="p">()</span> <span class="o">-</span> <span class="n">upshift</span> <span class="o">*</span> <span class="n">PDOS</span><span class="o">.</span><span class="n">e_fermi</span>
         <span class="n">orbital_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">PDOS</span><span class="o">.</span><span class="n">orbital_dictionary</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="c1">#feature_list = [&#39;s&#39;,&#39;py&#39;, &#39;pz&#39;, &#39;px&#39;, &#39;dxy&#39;, &#39;dyz&#39;, &#39;dz2&#39;, &#39;dxz&#39;, &#39;dx2-y2&#39;]</span>
         <span class="n">feature_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">,</span><span class="s1">&#39;py&#39;</span><span class="p">,</span> <span class="s1">&#39;pz&#39;</span><span class="p">,</span> <span class="s1">&#39;px&#39;</span><span class="p">]</span>
@@ -457,7 +524,8 @@
         <span class="k">return</span> <span class="n">orbital_features</span></div>
     
 <div class="viewcode-block" id="PDOS_OVERLAP._get_orbital_scores"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP._get_orbital_scores">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_get_orbital_scores</span><span class="p">(</span><span class="n">gas_orbital_features</span><span class="p">,</span> <span class="n">adsorbate_orbital_features</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_orbital_scores</span><span class="p">(</span><span class="n">reference_features</span><span class="p">,</span> <span class="n">comparison_features</span>\
+                            <span class="p">,</span> <span class="n">energy_weight</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; orbital scores which represent probabilities of the gas molecular</span>
 <span class="sd">            orbital matching each adsorbate molecular orbital</span>
 <span class="sd">        </span>
@@ -474,39 +542,46 @@
 <span class="sd">        orbital_scores : numpy.ndarray</span>
 <span class="sd">            M x N 2D array where M is the number of gas molecular orbitals</span>
 <span class="sd">            and N is the number of adsorbate molecular orbitals</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">num_reference_orbitals</span> <span class="o">=</span> <span class="n">reference_features</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">num_comparison_orbitals</span> <span class="o">=</span> <span class="n">comparison_features</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">orbital_scores</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_reference_orbitals</span><span class="p">,</span> <span class="n">num_comparison_orbitals</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">count</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_reference_orbitals</span><span class="p">):</span>
+            <span class="n">diff_squared</span> <span class="o">=</span> <span class="p">(</span><span class="n">comparison_features</span> <span class="o">-</span> <span class="n">reference_features</span><span class="p">[</span><span class="n">count</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span>
+            <span class="n">var_feature</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">diff_squared</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">num_comparison_orbitals</span>
+            <span class="n">var_feature</span><span class="p">[</span><span class="n">var_feature</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span> <span class="c1">#prevent divide by zero error</span>
+            <span class="c1">#gaussian based likelihood</span>
+            <span class="n">diff_squared</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">*=</span> <span class="n">energy_weight</span>
+            <span class="n">univariate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">diff_squared</span> <span class="o">/</span> <span class="n">var_feature</span><span class="p">)</span>
+            <span class="n">orbital_scores</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">univariate</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+       
+        <span class="k">return</span> <span class="n">orbital_scores</span></div>
+    
+<div class="viewcode-block" id="PDOS_OVERLAP.get_pair_scores"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.get_pair_scores">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_pair_scores</span><span class="p">(</span><span class="n">orbital_scores</span><span class="p">,</span> <span class="n">max_iterations</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get normalized pair scores using matrix scaling.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        orbital_scores : numpy.ndarray</span>
+<span class="sd">            M x M 2D array</span>
+<span class="sd">            </span>
+<span class="sd">        max_iterations : int</span>
+<span class="sd">            Maximum number of iterations before ending normalization procedure</span>
+<span class="sd">            </span>
+<span class="sd">        verbose : bool</span>
+<span class="sd">            Print completion information</span>
+<span class="sd">                   </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        orbital_scores : numpy.ndarray</span>
+<span class="sd">            M x M 2D array normalized symmetric matrix.</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
 <span class="sd">        Matrix scaling perfomed using RAS method described in </span>
 <span class="sd">        DOI: 10.1109/FOCS.2017.87</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">get_scores</span><span class="p">(</span><span class="n">reference_features</span><span class="p">,</span> <span class="n">comparison_features</span><span class="p">):</span>
-            <span class="n">num_reference_orbitals</span> <span class="o">=</span> <span class="n">reference_features</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">num_comparison_orbitals</span> <span class="o">=</span> <span class="n">comparison_features</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">orbital_scores</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_reference_orbitals</span><span class="p">,</span> <span class="n">num_comparison_orbitals</span><span class="p">))</span>
-            <span class="k">for</span> <span class="n">count</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_reference_orbitals</span><span class="p">):</span>
-                <span class="n">diff_squared</span> <span class="o">=</span> <span class="p">(</span><span class="n">comparison_features</span> <span class="o">-</span> <span class="n">reference_features</span><span class="p">[</span><span class="n">count</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span>
-                <span class="n">var_feature</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">diff_squared</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">num_comparison_orbitals</span>
-                <span class="n">var_feature</span><span class="p">[</span><span class="n">var_feature</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span> <span class="c1">#prevent divide by zero error</span>
-                <span class="c1">#gaussian based likelihood</span>
-                <span class="n">diff_squared</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">*=</span><span class="mi">3</span>
-                <span class="n">univariate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">diff_squared</span> <span class="o">/</span> <span class="n">var_feature</span><span class="p">)</span>
-                <span class="n">orbital_scores</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">univariate</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">orbital_scores</span>
-        
-        <span class="n">orbital_scores_gas</span> <span class="o">=</span> <span class="n">get_scores</span><span class="p">(</span><span class="n">gas_orbital_features</span><span class="p">,</span> <span class="n">adsorbate_orbital_features</span><span class="p">)</span>
-        <span class="n">orbital_scores_adsorbate</span> <span class="o">=</span> <span class="n">get_scores</span><span class="p">(</span><span class="n">adsorbate_orbital_features</span><span class="p">,</span> <span class="n">gas_orbital_features</span><span class="p">)</span>
-        
-        <span class="c1">#normalize</span>
-        <span class="n">orbital_scores_gas</span> <span class="o">/=</span> <span class="n">orbital_scores_gas</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">orbital_scores_adsorbate</span> <span class="o">/=</span> <span class="n">orbital_scores_adsorbate</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">orbital_scores_averaged</span> <span class="o">=</span> <span class="p">(</span><span class="n">orbital_scores_gas</span> <span class="o">*</span> <span class="n">orbital_scores_adsorbate</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
-        <span class="n">orbital_scores_averaged</span> <span class="o">/=</span> <span class="n">orbital_scores_averaged</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        
-        <span class="k">return</span> <span class="n">orbital_scores_gas</span><span class="p">,</span> <span class="n">orbital_scores_adsorbate</span><span class="p">,</span> <span class="n">orbital_scores_averaged</span></div>
-    
-<div class="viewcode-block" id="PDOS_OVERLAP.get_pair_scores"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.get_pair_scores">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">get_pair_scores</span><span class="p">(</span><span class="n">orbital_scores</span><span class="p">,</span> <span class="n">max_iterations</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="n">error</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="n">iteration</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">orbital_scores</span> <span class="o">=</span> <span class="n">orbital_scores</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -536,14 +611,15 @@
         <span class="n">overlap_orbitals</span> <span class="o">=</span> <span class="n">orbital_list</span>
         <span class="n">energy_overlap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_molecular_orbitals</span><span class="p">,</span> <span class="n">TOTAL_PDOS</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_molecular_orbitals</span><span class="p">):</span>
-            <span class="n">energy_overlap</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">molecular_orbitals</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">TOTAL_PDOS</span><span class="p">,</span><span class="n">PDOS</span><span class="o">.</span><span class="n">get_energies</span><span class="p">(),</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">energy_overlap</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">molecular_orbitals</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>\
+                                      <span class="o">*</span> <span class="n">TOTAL_PDOS</span><span class="p">,</span><span class="n">PDOS</span><span class="o">.</span><span class="n">get_energies</span><span class="p">(),</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">overlap_orbitals</span><span class="p">,</span> <span class="n">energy_overlap</span></div>
     
-<div class="viewcode-block" id="PDOS_OVERLAP.calculate_orbital_interaction"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.calculate_orbital_interaction">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_orbital_interaction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">PDOS</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">gas_orbital_index</span><span class="p">,</span> <span class="n">atomic_orbitals</span>\
-                                      <span class="p">,</span><span class="n">sum_density</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="PDOS_OVERLAP.calculate_orbital_interaction"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.calculate_orbital_interaction">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_orbital_interaction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">PDOS</span><span class="p">,</span> <span class="n">atom_indices</span>\
+                         <span class="p">,</span> <span class="n">atomic_orbitals</span><span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">GAS_PDOS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GAS_PDOS</span>
-        <span class="n">gas_orbital</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gas_orbitals</span><span class="p">[</span><span class="n">gas_orbital_index</span><span class="p">]</span>
-        <span class="n">orbitals</span><span class="p">,</span> <span class="n">projected_density</span> <span class="o">=</span> <span class="n">PDOS</span><span class="o">.</span><span class="n">get_site_dos</span><span class="p">(</span><span class="n">atoms</span>\
+        <span class="n">gas_orbital</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gas_orbitals</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">gas_orbital_index</span><span class="p">]</span>
+        <span class="n">orbitals</span><span class="p">,</span> <span class="n">projected_density</span> <span class="o">=</span> <span class="n">PDOS</span><span class="o">.</span><span class="n">get_site_dos</span><span class="p">(</span><span class="n">atom_indices</span>\
                                     <span class="p">,</span> <span class="n">atomic_orbitals</span><span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="n">sum_density</span>\
                                     <span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="n">sum_spin</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">PDOS</span><span class="o">.</span><span class="n">ndos</span> <span class="o">!=</span> <span class="n">GAS_PDOS</span><span class="o">.</span><span class="n">ndos</span><span class="p">:</span>
@@ -564,16 +640,87 @@
     
 <div class="viewcode-block" id="PDOS_OVERLAP._assign_orbitals"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP._assign_orbitals">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_assign_orbitals</span><span class="p">(</span><span class="n">orbital_scores</span><span class="p">,</span> <span class="n">gas_band_centers</span><span class="p">,</span> <span class="n">adsorbate_band_centers</span><span class="p">):</span>
-        <span class="n">orbital_assignments</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">orbital_scores</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
-        <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">orbital_assignments</span><span class="o">.</span><span class="n">size</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">gas_band_centers</span><span class="o">.</span><span class="n">shape</span> <span class="o">&gt;=</span> <span class="n">adsorbate_band_centers</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">orbital_scores</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">orbital_scores</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">orbital_assignments</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">orbital_scores</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">orbital_assignments</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
             <span class="n">gas_2_adsorbate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">indices</span><span class="p">,</span><span class="n">orbital_assignments</span>\
             <span class="p">,</span> <span class="n">gas_band_centers</span><span class="p">,</span> <span class="n">adsorbate_band_centers</span><span class="p">[</span><span class="n">orbital_assignments</span><span class="p">]))</span><span class="o">.</span><span class="n">T</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="n">orbital_assignments</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">orbital_scores</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">orbital_assignments</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
             <span class="n">gas_2_adsorbate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">orbital_assignments</span><span class="p">,</span><span class="n">indices</span>\
             <span class="p">,</span> <span class="n">gas_band_centers</span><span class="p">[</span><span class="n">orbital_assignments</span><span class="p">],</span> <span class="n">adsorbate_band_centers</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
                 
         <span class="k">return</span> <span class="n">gas_2_adsorbate</span></div>
+    
+<div class="viewcode-block" id="PDOS_OVERLAP.get_orbital_scores"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.get_orbital_scores">[docs]</a>    <span class="k">def</span> <span class="nf">get_orbital_scores</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gas_features</span><span class="p">,</span> <span class="n">adsorbate_features</span><span class="p">,</span> <span class="n">energy_weight</span><span class="p">):</span>
+        <span class="n">orbital_scores_gas</span>\
+        <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_orbital_scores</span><span class="p">(</span><span class="n">gas_features</span><span class="p">,</span> <span class="n">adsorbate_features</span><span class="p">,</span> <span class="n">energy_weight</span><span class="p">)</span>
+        
+        <span class="n">orbital_scores_adsorbate</span>\
+        <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_orbital_scores</span><span class="p">(</span><span class="n">adsorbate_features</span><span class="p">,</span> <span class="n">gas_features</span><span class="p">,</span> <span class="n">energy_weight</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">orbital_scores_gas</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">orbital_scores_adsorbate</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">orbital_scores</span> <span class="o">=</span> <span class="p">(</span><span class="n">orbital_scores_gas</span> <span class="o">*</span> <span class="n">orbital_scores_adsorbate</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+            <span class="n">orbital_scores</span> <span class="o">=</span> <span class="p">(</span><span class="n">orbital_scores</span> <span class="o">*</span> <span class="n">orbital_scores</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+        <span class="k">elif</span> <span class="n">orbital_scores_gas</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">orbital_scores_adsorbate</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">orbital_scores</span> <span class="o">=</span> <span class="n">orbital_scores_gas</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">orbital_scores</span> <span class="o">=</span> <span class="n">orbital_scores_adsorbate</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">return</span> <span class="n">orbital_scores</span></div>
+        
+    
+<div class="viewcode-block" id="PDOS_OVERLAP.get_sum_score"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.get_sum_score">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_sum_score</span><span class="p">(</span><span class="n">orbital_scores</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">orbital_scores</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">orbital_scores</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">sum_score</span> <span class="o">=</span> <span class="n">orbital_scores</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sum_score</span> <span class="o">=</span> <span class="n">orbital_scores</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">sum_score</span></div>
+        
+<div class="viewcode-block" id="PDOS_OVERLAP.get_upshift_score"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.get_upshift_score">[docs]</a>    <span class="k">def</span> <span class="nf">get_upshift_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">upshift</span><span class="p">):</span>
+        <span class="n">gas_features</span>\
+                <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_orbital_features</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">GAS_PDOS</span>\
+                                             <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gas_orbital_indices</span>\
+                                             <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gas_indices</span><span class="p">,</span> <span class="n">upshift</span>\
+                                             <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sum_spin</span><span class="p">)</span>
+        <span class="n">adsorbate_features</span>\
+                <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_orbital_features</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">REFERENCE_PDOS</span>\
+                                             <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">adsorbate_orbital_indices</span>\
+                                             <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">adsorbate_indices</span><span class="p">,</span> <span class="n">upshift</span>\
+                                             <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sum_spin</span><span class="p">)</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_orbital_scores</span><span class="p">(</span><span class="n">gas_features</span><span class="p">,</span> <span class="n">adsorbate_features</span>\
+                                             <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">energy_weight</span><span class="p">)</span>    
+        <span class="n">sum_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sum_score</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sum_score</span></div>
+        
+<div class="viewcode-block" id="PDOS_OVERLAP.optimize_energy_shift"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.optimize_energy_shift">[docs]</a>    <span class="k">def</span> <span class="nf">optimize_energy_shift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.5</span><span class="p">],</span> <span class="n">reset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">upshift</span><span class="p">):</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_upshift_score</span><span class="p">(</span><span class="n">upshift</span><span class="p">)</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">bound</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">bound</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">50</span><span class="p">,</span><span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">grid</span><span class="p">])</span>
+        <span class="n">argmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">opt</span> <span class="o">=</span> <span class="n">minimize_scalar</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="n">argmin</span> <span class="o">-</span> <span class="mi">2</span><span class="p">],</span> <span class="n">grid</span><span class="p">[</span><span class="n">argmin</span> <span class="o">+</span> <span class="mi">2</span><span class="p">])</span>\
+                        <span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;bounded&#39;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;xatol&#39;</span><span class="p">:</span> <span class="mf">1e-05</span>\
+                                                  <span class="p">,</span> <span class="s1">&#39;maxiter&#39;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;disp&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+        <span class="n">optimized_upshift</span> <span class="o">=</span> <span class="n">opt</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+        
+        <span class="k">if</span> <span class="n">reset</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">GAS_PDOS</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">REFERENCE_PDOS</span>\
+                          <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">adsorbate_indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">site_indices</span>\
+                          <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_occupation</span><span class="p">,</span> <span class="n">upshift</span><span class="o">=</span><span class="n">optimized_upshift</span>\
+                          <span class="p">,</span> <span class="n">energy_weight</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">energy_weight</span>\
+                          <span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                
+        <span class="k">if</span> <span class="n">plot</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">set_figure_settings</span><span class="p">(</span><span class="s1">&#39;paper&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Increase applied to energies as a fraction of the fermi energy&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\sum_{m=1}^</span><span class="si">{M}</span><span class="s1">$max(orbital score$_{m,j}$ for j in N )&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">optimized_upshift</span></div>
                 
 <div class="viewcode-block" id="PDOS_OVERLAP.plot_energy_overlap"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.plot_energy_overlap">[docs]</a>    <span class="k">def</span> <span class="nf">plot_energy_overlap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="o">...</span><span class="p">],</span><span class="n">settings</span><span class="o">=</span><span class="s1">&#39;print&#39;</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">settings</span> <span class="o">==</span> <span class="s1">&#39;presentation&#39;</span><span class="p">:</span>
@@ -593,7 +740,8 @@
             <span class="k">if</span> <span class="n">settings</span> <span class="o">==</span> <span class="s1">&#39;print&#39;</span><span class="p">:</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
             
-<div class="viewcode-block" id="PDOS_OVERLAP.plot_projected_density"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.plot_projected_density">[docs]</a>    <span class="k">def</span> <span class="nf">plot_projected_density</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sum_density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">settings</span><span class="o">=</span><span class="s1">&#39;print&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="PDOS_OVERLAP.plot_projected_density"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.plot_projected_density">[docs]</a>    <span class="k">def</span> <span class="nf">plot_projected_density</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sum_density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span>\
+                               <span class="p">,</span> <span class="n">settings</span><span class="o">=</span><span class="s1">&#39;print&#39;</span><span class="p">):</span>
         <span class="n">GAS_PDOS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GAS_PDOS</span>
         <span class="n">gas_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gas_indices</span>
         <span class="n">REFERENCE_PDOS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">REFERENCE_PDOS</span>
@@ -613,9 +761,8 @@
         
         <span class="c1">#plotting function</span>
         <span class="k">def</span> <span class="nf">plot_density</span><span class="p">(</span><span class="n">PDOS</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
-            <span class="n">orbitals</span><span class="p">,</span> <span class="n">projected_density</span> <span class="o">=</span> <span class="n">PDOS</span><span class="o">.</span><span class="n">get_site_dos</span><span class="p">(</span>\
-                    <span class="n">atom_list</span><span class="o">=</span><span class="n">indices</span><span class="p">,</span> <span class="n">orbital_list</span><span class="o">=</span><span class="n">orbital_list</span>\
-                                 <span class="p">,</span><span class="n">sum_density</span><span class="o">=</span><span class="n">sum_density</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="n">sum_spin</span><span class="p">)</span>
+            <span class="n">orbitals</span><span class="p">,</span> <span class="n">projected_density</span> <span class="o">=</span> <span class="n">PDOS</span><span class="o">.</span><span class="n">get_site_dos</span><span class="p">(</span><span class="n">indices</span>\
+                                <span class="p">,</span> <span class="n">orbital_list</span><span class="p">,</span> <span class="n">sum_density</span><span class="p">,</span> <span class="n">sum_spin</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">sum_spin</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
                 <span class="n">projected_density</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">,:]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
             <span class="k">if</span> <span class="n">settings</span> <span class="o">==</span> <span class="s1">&#39;print&#39;</span><span class="p">:</span>
