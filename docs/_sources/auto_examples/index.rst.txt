@@ -52,8 +52,8 @@ This contains an example of calculating band centers.
 
 .. _sphx_glr_auto_examples_plot_orbital_overlap:
 
-Orbial overlap calculation example
-----------------------------------
+Orbital overlap calculation example
+-----------------------------------
 
 This contains an example of calculating orbital overlap.
 

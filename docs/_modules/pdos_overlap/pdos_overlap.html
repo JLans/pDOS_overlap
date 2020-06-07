@@ -184,7 +184,7 @@
     <span class="k">return</span> <span class="n">adsorbate_indices</span><span class="p">,</span> <span class="n">site_indices</span>
 
 <div class="viewcode-block" id="PDOS_OVERLAP"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP">[docs]</a><span class="k">class</span> <span class="nc">PDOS_OVERLAP</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Class for calculating adsorbate-surface relative orbital overlap&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Class for calculating adsorbate-surface relative energy overlap&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">GAS_PDOS</span><span class="p">,</span> <span class="n">REFERENCE_PDOS</span><span class="p">,</span> <span class="n">adsorbate_indices</span><span class="p">,</span> <span class="n">site_indices</span>\
                  <span class="p">,</span> <span class="n">min_occupation</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">upshift</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">energy_weight</span><span class="o">=</span><span class="mi">3</span>\
                  <span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -208,6 +208,16 @@
 <span class="sd">        min_occupation : float</span>
 <span class="sd">            Minimum state occupation for a section of density to be considered</span>
 <span class="sd">            a molecular orbital.</span>
+<span class="sd">            </span>
+<span class="sd">        upshift : float</span>
+<span class="sd">            The fraction of the fermi energy the gas and adsorbate molecular</span>
+<span class="sd">            orbitals are shifted before pairing</span>
+<span class="sd">        </span>
+<span class="sd">        energy_weight : float</span>
+<span class="sd">            The degree to weight the energy error before computing the </span>
+<span class="sd">            associated liklihood that goes into computing the scores. Increasing</span>
+<span class="sd">            the energy weight sharpens the univariate distribution around</span>
+<span class="sd">            matching peak positions.</span>
 <span class="sd">            </span>
 <span class="sd">        sum_density : bool</span>
 <span class="sd">            Tag indicates if state density on the same sublevel should be</span>
@@ -261,6 +271,29 @@
 <span class="sd">            Elements are the projected density of states overlap integral of</span>
 <span class="sd">            an adsorption site states (projected onto atomic orbitals), and</span>
 <span class="sd">            the adsorbate states (projected and summed into molecular orbitals)</span>
+<span class="sd">            </span>
+<span class="sd">        feature_type : str</span>
+<span class="sd">            Indicates whether integrated state density of atomic orbitals are</span>
+<span class="sd">            used for molecular orbital features or if molecular orbital</span>
+<span class="sd">            occupation fractions.</span>
+<span class="sd">            </span>
+<span class="sd">        gas_orbital_indices : list</span>
+<span class="sd">            List of vector indices that aportion the gas molecule energy and </span>
+<span class="sd">            projected density into molecular orbitals</span>
+<span class="sd">            </span>
+<span class="sd">        adsorbate_orbital_indices : list</span>
+<span class="sd">            List of vector indices that aportion the adsorbate molecule energy </span>
+<span class="sd">            and projected density into molecular orbitals</span>
+<span class="sd">            </span>
+<span class="sd">        gas_band_centers : numpy.ndarray</span>
+<span class="sd">            Gas molecular orbital band centers</span>
+<span class="sd">            </span>
+<span class="sd">        adsorbate_band_centers : numpy.ndarray</span>
+<span class="sd">            Adsorbate molecular orbital band centers</span>
+<span class="sd">                   </span>
+<span class="sd">        gas_2_adsorbate : numpy.ndarray</span>
+<span class="sd">            Array of gas and adsorbate orbital indices along with corresponding</span>
+<span class="sd">            band centers</span>
 <span class="sd">            </span>
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
@@ -461,25 +494,38 @@
         <span class="n">orbital_indices</span> <span class="o">=</span> <span class="n">orbital_indices_final</span>
         <span class="n">occupations</span> <span class="o">=</span> <span class="n">occupations_final</span>
                
-        <span class="k">return</span> <span class="n">peak_energies</span><span class="p">,</span> <span class="n">peak_densities</span><span class="p">,</span> <span class="n">molecular_orbitals</span><span class="p">,</span> <span class="n">orbital_indices</span><span class="p">,</span> <span class="n">occupations</span></div>
+        <span class="k">return</span> <span class="n">peak_energies</span><span class="p">,</span> <span class="n">peak_densities</span><span class="p">,</span> <span class="n">molecular_orbitals</span>\
+            <span class="p">,</span> <span class="n">orbital_indices</span><span class="p">,</span> <span class="n">occupations</span></div>
     
     
 <div class="viewcode-block" id="PDOS_OVERLAP._get_orbital_features"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP._get_orbital_features">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_get_orbital_features</span><span class="p">(</span><span class="n">PDOS</span><span class="p">,</span> <span class="n">orbital_indices</span><span class="p">,</span> <span class="n">atom_indices</span><span class="p">,</span> <span class="n">upshift</span><span class="o">=</span><span class="mi">1</span>\
                               <span class="p">,</span> <span class="n">feature_type</span><span class="o">=</span><span class="s1">&#39;states&#39;</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; molecular orbitals as an M x ndos array</span>
+        <span class="sd">&quot;&quot;&quot; Molecular orbitals as an M x ndos array</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        PDOS : vasp_dos.VASP_DOS</span>
 <span class="sd">            VASP_DOS object of gas or surface phase calculation of adsorbate</span>
 <span class="sd">            </span>
-<span class="sd">        atom_indices : list[int]</span>
-<span class="sd">            indices of atoms to include in the TOTAL DOS. If empty, then all</span>
-<span class="sd">            atoms are included (as for the gas)</span>
-<span class="sd">            </span>
 <span class="sd">        orbital_indices : list[numpy.ndarray]</span>
 <span class="sd">            Length M list of non-zero orbital indices</span>
+<span class="sd">            </span>
+<span class="sd">        atom_indices : list[int]</span>
+<span class="sd">            indices of atoms to include in the TOTAL PDOS.</span>
+<span class="sd">            </span>
+<span class="sd">        upshift : float</span>
+<span class="sd">            The fraction of the fermi energy the gas and adsorbate molecular</span>
+<span class="sd">            orbitals are shifted before pairing</span>
+<span class="sd">            </span>
+<span class="sd">        feature_type : str</span>
+<span class="sd">            Indicates whether integrated state density of atomic orbitals are</span>
+<span class="sd">            used for molecular orbital features or if molecular orbital</span>
+<span class="sd">            occupation fractions.</span>
+<span class="sd">            </span>
+<span class="sd">        sum_spin : bool</span>
+<span class="sd">            Tag indictes if state density with different spins should be summed</span>
+<span class="sd">            when generating gas and adsorbate orbital features.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -526,22 +572,29 @@
 <div class="viewcode-block" id="PDOS_OVERLAP._get_orbital_scores"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP._get_orbital_scores">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_get_orbital_scores</span><span class="p">(</span><span class="n">reference_features</span><span class="p">,</span> <span class="n">comparison_features</span>\
                             <span class="p">,</span> <span class="n">energy_weight</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; orbital scores which represent probabilities of the gas molecular</span>
-<span class="sd">            orbital matching each adsorbate molecular orbital</span>
+        <span class="sd">&quot;&quot;&quot; Orbital scores given reference and comparision features</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        gas_orbital_features : numpy.ndarray</span>
-<span class="sd">            gas orbital features</span>
+<span class="sd">        reference_features : numpy.ndarray</span>
+<span class="sd">            Reference features of molecular orbitals whose values are treated</span>
+<span class="sd">            as the mean</span>
 <span class="sd">            </span>
-<span class="sd">        adsorbate_orbital_features : numpy.ndarray</span>
-<span class="sd">            adsorbate orbital features</span>
+<span class="sd">        comparison_features : numpy.ndarray</span>
+<span class="sd">            Comparison features that are treated as perturbations from the</span>
+<span class="sd">            reference features for generating probabilities</span>
+<span class="sd">            </span>
+<span class="sd">        energy_weight : float</span>
+<span class="sd">            The degree to weight the energy error before computing the </span>
+<span class="sd">            associated liklihood that goes into computing the scores. Increasing</span>
+<span class="sd">            the energy weight sharpens the univariate distribution around</span>
+<span class="sd">            matching peak positions.</span>
 <span class="sd">                   </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        orbital_scores : numpy.ndarray</span>
-<span class="sd">            M x N 2D array where M is the number of gas molecular orbitals</span>
-<span class="sd">            and N is the number of adsorbate molecular orbitals</span>
+<span class="sd">            M x N 2D array where M is the number of reference orbitals</span>
+<span class="sd">            and N is the number of comparison orbitals</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">num_reference_orbitals</span> <span class="o">=</span> <span class="n">reference_features</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">num_comparison_orbitals</span> <span class="o">=</span> <span class="n">comparison_features</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -559,7 +612,7 @@
     
 <div class="viewcode-block" id="PDOS_OVERLAP.get_pair_scores"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.get_pair_scores">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_pair_scores</span><span class="p">(</span><span class="n">orbital_scores</span><span class="p">,</span> <span class="n">max_iterations</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Get normalized pair scores using matrix scaling.</span>
+        <span class="sd">&quot;&quot;&quot; Get normalized pair scores using matrix scaling</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -595,13 +648,52 @@
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The max error is &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Number of iterations is &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">iteration</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">orbital_scores</span></div>
-    
-<div class="viewcode-block" id="PDOS_OVERLAP.set_orbital_scores"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.set_orbital_scores">[docs]</a>    <span class="k">def</span> <span class="nf">set_orbital_scores</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">orbital_scores</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">orbital_scores</span> <span class="o">=</span> <span class="n">orbital_scores</span></div>
-        
+            
 <div class="viewcode-block" id="PDOS_OVERLAP._calculate_overlap"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP._calculate_overlap">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_calculate_overlap</span><span class="p">(</span><span class="n">molecular_orbitals</span><span class="p">,</span> <span class="n">PDOS</span><span class="p">,</span> <span class="n">site_indices</span>\
-                           <span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>            
+                           <span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>   
+        <span class="sd">&quot;&quot;&quot; Calculate overlap of molecular orbitals with atomic orbitals</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        molecular_orbitals : numpy.ndarray</span>
+<span class="sd">            M x ndos 2D array where M is the number of molecular orbitals and</span>
+<span class="sd">            ndos is the number of gridpoints for the density of states</span>
+<span class="sd">            </span>
+<span class="sd">        PDOS : vasp_dos.VASP_DOS</span>
+<span class="sd">            VASP_DOS object of gas or surface phase calculation of adsorbate</span>
+<span class="sd">            </span>
+<span class="sd">        site_indices : list[int]</span>
+<span class="sd">            indices of atoms to include in the TOTAL DOS.</span>
+<span class="sd">            </span>
+<span class="sd">        sum_density : bool</span>
+<span class="sd">            Tag indicates if state density on the same sublevel should be</span>
+<span class="sd">            summed when calculating overlap of the site atomic orbitals and the</span>
+<span class="sd">            adsorbate molecular orbitals.</span>
+<span class="sd">            </span>
+<span class="sd">        sum_spin : bool</span>
+<span class="sd">            Tag indictes if state density with different spins should be summed</span>
+<span class="sd">            when generating gas and adsorbate orbital features.</span>
+<span class="sd">                   </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        overlap_orbitals : list[str]</span>
+<span class="sd">            List of atomic orbitals for which overlap energies of the adsorbate</span>
+<span class="sd">            state with the metal adsorption-site states are calculated.</span>
+<span class="sd">            </span>
+<span class="sd">        energy_overlap : numpy.ndarray</span>
+<span class="sd">            Array of shape nxp where n is the number of adsorbate molecular</span>
+<span class="sd">            orbitals and p is the number of adsorption-site atomic orbitals.</span>
+<span class="sd">            Elements are the projected density of states overlap integral of</span>
+<span class="sd">            an adsorption site states (projected onto atomic orbitals), and</span>
+<span class="sd">            the adsorbate states (projected and summed into molecular orbitals)</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        As implemented, molecular_orbitals are for the adsorbate and PDOS is</span>
+<span class="sd">        for some surface.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>         
         
         <span class="n">num_molecular_orbitals</span> <span class="o">=</span> <span class="n">molecular_orbitals</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">atomic_orbitals</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">PDOS</span><span class="o">.</span><span class="n">orbital_dictionary</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
@@ -615,23 +707,56 @@
                                       <span class="o">*</span> <span class="n">TOTAL_PDOS</span><span class="p">,</span><span class="n">PDOS</span><span class="o">.</span><span class="n">get_energies</span><span class="p">(),</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">overlap_orbitals</span><span class="p">,</span> <span class="n">energy_overlap</span></div>
     
-<div class="viewcode-block" id="PDOS_OVERLAP.calculate_orbital_interaction"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.calculate_orbital_interaction">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_orbital_interaction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">PDOS</span><span class="p">,</span> <span class="n">atom_indices</span>\
+<div class="viewcode-block" id="PDOS_OVERLAP.calculate_orbital_interaction"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.calculate_orbital_interaction">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_orbital_interaction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">gas_orbital_index</span><span class="p">,</span> <span class="n">PDOS</span><span class="p">,</span> <span class="n">site_indices</span>\
                          <span class="p">,</span> <span class="n">atomic_orbitals</span><span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="n">GAS_PDOS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GAS_PDOS</span>
-        <span class="n">gas_orbital</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gas_orbitals</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">gas_orbital_index</span><span class="p">]</span>
-        <span class="n">orbitals</span><span class="p">,</span> <span class="n">projected_density</span> <span class="o">=</span> <span class="n">PDOS</span><span class="o">.</span><span class="n">get_site_dos</span><span class="p">(</span><span class="n">atom_indices</span>\
+        <span class="sd">&quot;&quot;&quot; Calculate surface and gas orbital interactions</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        gas_orbital_index : int or list[int]</span>
+<span class="sd">            Identifies which gas orbitals with which to calculate the overlap</span>
+<span class="sd">            of the PDOS atomic orbitals</span>
+<span class="sd">        </span>
+<span class="sd">        PDOS : vasp_dos.VASP_DOS</span>
+<span class="sd">            VASP_DOS object of surface phase calculation of adsorbate</span>
+<span class="sd">            </span>
+<span class="sd">        overlap_orbitals : list[str]</span>
+<span class="sd">            List of atomic orbitals for which overlap energies of the gas state</span>
+<span class="sd">            with a metal adsorption-site states are calculated.</span>
+<span class="sd">            </span>
+<span class="sd">        site_indices : list[int]</span>
+<span class="sd">            indices of atoms to include in the TOTAL DOS.</span>
+<span class="sd">            </span>
+<span class="sd">        sum_density : bool</span>
+<span class="sd">            Tag indicates if state density on the same sublevel should be</span>
+<span class="sd">            summed when calculating overlap of the site atomic orbitals and the</span>
+<span class="sd">            adsorbate molecular orbitals.</span>
+<span class="sd">            </span>
+<span class="sd">        sum_spin : bool</span>
+<span class="sd">            Tag indictes if state density with different spins should be summed</span>
+<span class="sd">            when generating gas and adsorbate orbital features.</span>
+<span class="sd">                   </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        orbital_interaction : numpy.ndarray</span>
+<span class="sd">            Integrated atomic orbital interactions with the gas molecular orbitls</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>         
+        <span class="n">gas_orbital</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gas_orbitals</span><span class="p">[</span><span class="n">gas_orbital_index</span><span class="p">]</span>
+        <span class="n">gas_band_center</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gas_band_centers</span><span class="p">[</span><span class="n">gas_orbital_index</span><span class="p">]</span>
+        <span class="n">ndos_gas</span> <span class="o">=</span> <span class="n">gas_orbital</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        
+        <span class="n">orbitals</span><span class="p">,</span> <span class="n">temp_density</span> <span class="o">=</span> <span class="n">PDOS</span><span class="o">.</span><span class="n">get_site_dos</span><span class="p">(</span><span class="n">site_indices</span>\
                                     <span class="p">,</span> <span class="n">atomic_orbitals</span><span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="n">sum_density</span>\
                                     <span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="n">sum_spin</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">PDOS</span><span class="o">.</span><span class="n">ndos</span> <span class="o">!=</span> <span class="n">GAS_PDOS</span><span class="o">.</span><span class="n">ndos</span><span class="p">:</span>
-            <span class="n">projected_density</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">orbitals</span><span class="p">),</span><span class="n">GAS_PDOS</span><span class="o">.</span><span class="n">ndos</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">PDOS</span><span class="o">.</span><span class="n">ndos</span> <span class="o">!=</span> <span class="n">ndos_gas</span><span class="p">:</span>
+            <span class="n">projected_density</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">orbitals</span><span class="p">),</span><span class="n">ndos_gas</span><span class="p">))</span>
             <span class="n">old_x</span> <span class="o">=</span> <span class="n">PDOS</span><span class="o">.</span><span class="n">get_energies</span><span class="p">()</span>
-            <span class="n">new_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">old_x</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">old_x</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">GAS_PDOS</span><span class="o">.</span><span class="n">ndos</span><span class="p">)</span>
+            <span class="n">new_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">old_x</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">old_x</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">ndos_gas</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">orbitals</span><span class="p">)):</span>
-                <span class="n">_</span><span class="p">,</span> <span class="n">temp_density</span> <span class="o">=</span> <span class="n">PDOS</span><span class="o">.</span><span class="n">get_site_dos</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">PDOS</span><span class="o">.</span><span class="n">natoms</span><span class="p">))</span>\
-                                    <span class="p">,</span> <span class="p">[</span><span class="n">atomic_orbitals</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="n">sum_density</span><span class="o">=</span><span class="n">sum_density</span>\
-                                    <span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="n">sum_spin</span><span class="p">)</span>
-                <span class="n">projected_density</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">new_x</span><span class="p">,</span> <span class="n">old_x</span><span class="p">,</span> <span class="n">temp_density</span><span class="p">)</span>
-        <span class="n">gas_band_center</span> <span class="o">=</span> <span class="n">get_band_center</span><span class="p">(</span><span class="n">GAS_PDOS</span><span class="o">.</span><span class="n">get_energies</span><span class="p">(),</span> <span class="n">gas_orbital</span><span class="p">)</span>
+                <span class="n">projected_density</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">new_x</span><span class="p">,</span> <span class="n">old_x</span><span class="p">,</span> <span class="n">temp_density</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">projected_density</span> <span class="o">=</span> <span class="n">temp_density</span>
         
         <span class="n">orbital_interaction</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">projected_density</span>\
                           <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">gas_band_center</span> <span class="o">-</span> <span class="n">new_x</span><span class="p">)</span>\
@@ -640,6 +765,27 @@
     
 <div class="viewcode-block" id="PDOS_OVERLAP._assign_orbitals"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP._assign_orbitals">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_assign_orbitals</span><span class="p">(</span><span class="n">orbital_scores</span><span class="p">,</span> <span class="n">gas_band_centers</span><span class="p">,</span> <span class="n">adsorbate_band_centers</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Assign gas orbitals to one or more adsorbate orbitals</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        orbital_scores : numpy.ndarray</span>
+<span class="sd">            M x N 2D array where M is the number of gas molecular orbitals</span>
+<span class="sd">            and N is the number of adsorbate molecular orbitals</span>
+<span class="sd">        </span>
+<span class="sd">        gas_band_centers : numpy.ndarray</span>
+<span class="sd">            Gas molecular orbital band centers</span>
+<span class="sd">            </span>
+<span class="sd">        adsorbate_band_centers : numpy.ndarray</span>
+<span class="sd">            Adsorbate molecular orbital band centers</span>
+<span class="sd">                   </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        gas_2_adsorbate : numpy.ndarray</span>
+<span class="sd">            Array of gas and adsorbate orbital indices along with corresponding</span>
+<span class="sd">            band centers</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+            
         <span class="k">if</span> <span class="n">orbital_scores</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">orbital_scores</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
             <span class="n">orbital_assignments</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">orbital_scores</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
             <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">orbital_assignments</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
@@ -654,6 +800,28 @@
         <span class="k">return</span> <span class="n">gas_2_adsorbate</span></div>
     
 <div class="viewcode-block" id="PDOS_OVERLAP.get_orbital_scores"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.get_orbital_scores">[docs]</a>    <span class="k">def</span> <span class="nf">get_orbital_scores</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gas_features</span><span class="p">,</span> <span class="n">adsorbate_features</span><span class="p">,</span> <span class="n">energy_weight</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Select the set of orbital scores to be used</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        gas_orbital_features : numpy.ndarray</span>
+<span class="sd">            gas orbital features</span>
+<span class="sd">            </span>
+<span class="sd">        adsorbate_orbital_features : numpy.ndarray</span>
+<span class="sd">            adsorbate orbital features</span>
+<span class="sd">            </span>
+<span class="sd">        energy_weight : float</span>
+<span class="sd">            The degree to weight the energy error before computing the </span>
+<span class="sd">            associated liklihood that goes into computing the scores. Increasing</span>
+<span class="sd">            the energy weight sharpens the univariate distribution around</span>
+<span class="sd">            matching peak positions.</span>
+<span class="sd">                   </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        orbital_scores : numpy.ndarray</span>
+<span class="sd">            M x N 2D array where M is the number of gas molecular orbitals</span>
+<span class="sd">            and N is the number of adsorbate molecular orbitals</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">orbital_scores_gas</span>\
         <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_orbital_scores</span><span class="p">(</span><span class="n">gas_features</span><span class="p">,</span> <span class="n">adsorbate_features</span><span class="p">,</span> <span class="n">energy_weight</span><span class="p">)</span>
         
@@ -672,6 +840,19 @@
     
 <div class="viewcode-block" id="PDOS_OVERLAP.get_sum_score"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.get_sum_score">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_sum_score</span><span class="p">(</span><span class="n">orbital_scores</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Compute sum for optimizing upshift</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        orbital_scores : numpy.ndarray</span>
+<span class="sd">            M x N 2D array where M is the number of gas molecular orbitals</span>
+<span class="sd">            and N is the number of adsorbate molecular orbitals</span>
+<span class="sd">                   </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sum_score : numpy.ndarray</span>
+<span class="sd">            Sum of highest scores for each gas or adsorbate molecular orbital</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">orbital_scores</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">orbital_scores</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
             <span class="n">sum_score</span> <span class="o">=</span> <span class="n">orbital_scores</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
             
@@ -680,6 +861,19 @@
         <span class="k">return</span> <span class="n">sum_score</span></div>
         
 <div class="viewcode-block" id="PDOS_OVERLAP.get_upshift_score"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.get_upshift_score">[docs]</a>    <span class="k">def</span> <span class="nf">get_upshift_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">upshift</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Obtain orbital scores given an upshift value</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        upshift : float</span>
+<span class="sd">            The fraction of the fermi energy the gas and adsorbate molecular</span>
+<span class="sd">            orbitals are shifted before pairing</span>
+<span class="sd">                   </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sum_score : numpy.ndarray</span>
+<span class="sd">            Sum of highest scores for each gas or adsorbate molecular orbital</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">gas_features</span>\
                 <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_orbital_features</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">GAS_PDOS</span>\
                                              <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gas_orbital_indices</span>\
@@ -695,7 +889,32 @@
         <span class="n">sum_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sum_score</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">sum_score</span></div>
         
-<div class="viewcode-block" id="PDOS_OVERLAP.optimize_energy_shift"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.optimize_energy_shift">[docs]</a>    <span class="k">def</span> <span class="nf">optimize_energy_shift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.5</span><span class="p">],</span> <span class="n">reset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="PDOS_OVERLAP.optimize_energy_shift"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.optimize_energy_shift">[docs]</a>    <span class="k">def</span> <span class="nf">optimize_energy_shift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.5</span><span class="p">),</span> <span class="n">reset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the optimal energy shift in the gas and adsorbate orbitals</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        upshift : float</span>
+<span class="sd">            The fraction of the fermi energy the gas and adsorbate molecular</span>
+<span class="sd">            orbitals are shifted before pairing</span>
+<span class="sd">            </span>
+<span class="sd">        bound : tuple</span>
+<span class="sd">            Lower and upper bounds to for which to find the optimal energy shift</span>
+<span class="sd">            </span>
+<span class="sd">        rest : bool</span>
+<span class="sd">            Indicates whether the values contained in the PDOS_OVERLAP object</span>
+<span class="sd">            should be reset using the optimal energy shift</span>
+<span class="sd">            </span>
+<span class="sd">        plot : bool</span>
+<span class="sd">            Indicates whether optimization results should be plotted</span>
+<span class="sd">                   </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        optimized_upshift : float</span>
+<span class="sd">            The fraction of the fermi energy the gas and adsorbate molecular</span>
+<span class="sd">            orbitals are shifted before pairing for maximizing likelihood of</span>
+<span class="sd">            score pairings</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">upshift</span><span class="p">):</span>
             <span class="k">return</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_upshift_score</span><span class="p">(</span><span class="n">upshift</span><span class="p">)</span>
         <span class="n">grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">bound</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">bound</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">50</span><span class="p">,</span><span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -723,6 +942,18 @@
         <span class="k">return</span> <span class="n">optimized_upshift</span></div>
                 
 <div class="viewcode-block" id="PDOS_OVERLAP.plot_energy_overlap"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.plot_energy_overlap">[docs]</a>    <span class="k">def</span> <span class="nf">plot_energy_overlap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="o">...</span><span class="p">],</span><span class="n">settings</span><span class="o">=</span><span class="s1">&#39;print&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Plot energy overlap of atomic and molecular orbitals</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        indices : list[int]</span>
+<span class="sd">            Index values of adsorbate molecular orbitals for which to plot</span>
+<span class="sd">            energy overlap histograms.</span>
+<span class="sd">            </span>
+<span class="sd">        settings : str</span>
+<span class="sd">            indicates how to display or save the figures</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">settings</span> <span class="o">==</span> <span class="s1">&#39;presentation&#39;</span><span class="p">:</span>
             <span class="n">set_figure_settings</span><span class="p">(</span><span class="s1">&#39;presentation&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -742,6 +973,23 @@
             
 <div class="viewcode-block" id="PDOS_OVERLAP.plot_projected_density"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.plot_projected_density">[docs]</a>    <span class="k">def</span> <span class="nf">plot_projected_density</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sum_density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span>\
                                <span class="p">,</span> <span class="n">settings</span><span class="o">=</span><span class="s1">&#39;print&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Plot projected density of the gas, adsorbate and site</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sum_density : bool</span>
+<span class="sd">            Tag indicates if state density on the same sublevel should be</span>
+<span class="sd">            summed when calculating overlap of the site atomic orbitals and the</span>
+<span class="sd">            adsorbate molecular orbitals.</span>
+<span class="sd">            </span>
+<span class="sd">        sum_spin : bool</span>
+<span class="sd">            Tag indictes if state density with different spins should be summed</span>
+<span class="sd">            when generating gas and adsorbate orbital features.</span>
+<span class="sd">            </span>
+<span class="sd">        settings : str</span>
+<span class="sd">            indicates how to display or save the figures</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">GAS_PDOS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GAS_PDOS</span>
         <span class="n">gas_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gas_indices</span>
         <span class="n">REFERENCE_PDOS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">REFERENCE_PDOS</span>
