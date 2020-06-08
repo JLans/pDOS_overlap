@@ -7,8 +7,7 @@ Created on Wed Jan 11 14:33:54 2017
 @author: lansford
 """
 from __future__ import division
-from pdos_overlap.coordination import Coordination
-from ase.io import read
+from pdos_overlap.coordination import get_geometric_data
 import numpy as np
 import matplotlib.pyplot as plt
 from pdos_overlap import VASP_DOS
@@ -23,20 +22,15 @@ DOSCAR_files, CONTCAR_files = get_all_VASP_files(\
 
 
 for DOSCAR, CONTCAR in zip(DOSCAR_files, CONTCAR_files):
-    nanoparticle = read(CONTCAR)
-    CN = Coordination(nanoparticle,cutoff=1.25)
+    indices, GCNs, atom_types = get_geometric_data(CONTCAR)
+    GCNList += GCNs.tolist()
+    atom_type += atom_types.tolist()
     # read and return densityofstates object
     PDOS = VASP_DOS(DOSCAR)   
-    for atom_index in range(len(nanoparticle)):
-        GCNList.append(CN.get_gcn([atom_index]))
-        if CN.cn[atom_index] < 12:
-            atom_type.append('surface')
-        else:
-            atom_type.append('bulk')
-        
-        band_center = PDOS.get_band_center([atom_index], ['s','p','d']\
+    for atom_index in indices:
+        band_center = PDOS.get_band_center(atom_index, ['s','p','d']\
                                 , sum_density=True) - PDOS.e_fermi
-        occupied_band_center = PDOS.get_band_center([atom_index], ['s','p','d']\
+        occupied_band_center = PDOS.get_band_center(atom_index, ['s','p','d']\
                                 , sum_density=True, max_energy=PDOS.e_fermi) - PDOS.e_fermi
             
         band_list.append(band_center)

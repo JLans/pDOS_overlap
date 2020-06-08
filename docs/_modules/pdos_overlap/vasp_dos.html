@@ -176,7 +176,6 @@
 <span class="sd">    data_path : str</span>
 <span class="sd">        path to package data</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
     <span class="n">data_path</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="s1">&#39;data/&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data_path</span></div>
 
@@ -188,7 +187,6 @@
 <span class="sd">    example_data_path : str</span>
 <span class="sd">        path to example VASP data</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
     <span class="n">data_path</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="s1">&#39;data/example_data&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data_path</span></div>
 
@@ -205,7 +203,6 @@
 <span class="sd">    example_data_path : str</span>
 <span class="sd">        path to example VASP data</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
     <span class="n">DOSCAR_directories</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">subdirectory</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span> \
               <span class="k">for</span> <span class="n">subdirectory</span> <span class="ow">in</span> <span class="n">d</span> \
               <span class="k">if</span> <span class="s1">&#39;DOSCAR&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">subdirectory</span><span class="p">))]</span>
@@ -240,9 +237,7 @@
 <span class="sd">        trapezoidal rule is better for narrow gaussian peaks and for &quot;rough&quot; functions</span>
 <span class="sd">        https://doi.org/10.1016/j.chemolab.2018.06.001</span>
 <span class="sd">        http://emis.icm.edu.pl/journals/JIPAM/v3n4/031_02.html</span>
-<span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">densities</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">densities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">densities</span><span class="o">.</span><span class="n">copy</span><span class="p">()])</span>
         <span class="k">if</span> <span class="n">max_energy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -297,7 +292,6 @@
 <span class="sd">        orbital_dictionary: dict</span>
 <span class="sd">            dictionary that maps resolved sublevels/orbitals to indices</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        
         <span class="n">natoms</span><span class="p">,</span> <span class="n">emax</span><span class="p">,</span> <span class="n">emin</span><span class="p">,</span> <span class="n">ndos</span><span class="p">,</span> <span class="n">e_fermi</span><span class="p">,</span> <span class="n">is_spin</span><span class="p">,</span> <span class="n">m_projected</span>\
             <span class="p">,</span> <span class="n">orbital_dictionary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_doscar</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span> <span class="n">no_negatives</span><span class="o">=</span><span class="n">no_negatives</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">no_negatives</span> <span class="o">=</span> <span class="n">no_negatives</span>
@@ -335,7 +329,6 @@
 <span class="sd">        -------</span>
 <span class="sd">        band_center : float or numpy.ndarray</span>
 <span class="sd">            center of the band(s) up to max_energy</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">energies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_energies</span><span class="p">()</span>
         <span class="n">get_site_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_site_dos</span>
@@ -355,10 +348,8 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        energies : numpy.ndarray</span>
-<span class="sd">            1-D array of energies</span>
-<span class="sd">            </span>
+<span class="sd">            1-D array of energies    </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        
         <span class="n">energies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">energies</span></div>
     
@@ -370,7 +361,6 @@
 <span class="sd">        total_dos : numpy.ndarray</span>
 <span class="sd">            1-D or 2-D array of state densities   </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
             <span class="n">total_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
@@ -389,7 +379,6 @@
 <span class="sd">        integrated_dos : numpy.ndarray</span>
 <span class="sd">            1-D or 2-D array of state integrated densities  </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
             <span class="n">integrated_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
@@ -423,9 +412,7 @@
 <span class="sd">            </span>
 <span class="sd">        projected_density : np.array</span>
 <span class="sd">            Array of shape (len(new_orbital_list), ndos)</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="c1"># Integer indexing for orbitals starts from 1 in the _site_dos array</span>
         <span class="c1"># since the 0th column contains the energies</span>
         <span class="n">orbital_dictionary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">orbital_dictionary</span>
@@ -487,6 +474,8 @@
                 <span class="k">elif</span> <span class="n">orbital</span> <span class="o">==</span> <span class="s1">&#39;f-&#39;</span><span class="p">:</span>
                     <span class="n">orbitals</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;fy(3x2-y2)-&#39;</span><span class="p">,</span> <span class="s1">&#39;fxyz-&#39;</span><span class="p">,</span> <span class="s1">&#39;fyz2-&#39;</span><span class="p">,</span> <span class="s1">&#39;fz3-&#39;</span><span class="p">,</span> <span class="s1">&#39;fxz2-&#39;</span><span class="p">,</span>
                               <span class="s1">&#39;fz(x2-y2)-&#39;</span><span class="p">,</span> <span class="s1">&#39;fx(x2-3y2)-&#39;</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="s1">&#39;+&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">orbital</span> <span class="ow">and</span> <span class="s1">&#39;-&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">orbital</span><span class="p">:</span>
+                    <span class="n">orbitals</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbital</span> <span class="o">+</span> <span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">orbital</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span><span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">orbitals</span> <span class="o">=</span> <span class="p">[</span><span class="n">orbital</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
@@ -562,9 +551,7 @@
 <span class="sd">            </span>
 <span class="sd">        orbital_dictionary : dict</span>
 <span class="sd">            dictionary that maps resolved sublevels/orbitals to indices</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
-        
         <span class="c1">#Accepts a file and reads through to get the density of states</span>
         <span class="k">def</span> <span class="nf">get_dos</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">ndos</span><span class="p">):</span>
             <span class="c1">#get first line of density</span>
@@ -714,7 +701,6 @@
                 <span class="s1">&#39;fz(x2-y2)-&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
                 <span class="s1">&#39;fx(x2-3y2)+&#39;</span><span class="p">:</span> <span class="mi">31</span><span class="p">,</span>
                 <span class="s1">&#39;fx(x2-3y2)-&#39;</span><span class="p">:</span> <span class="mi">32</span><span class="p">}</span>
-        
         <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span> <span class="o">=</span> <span class="n">_total_dos</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_site_dos</span> <span class="o">=</span> <span class="n">_site_dos</span>
         <span class="k">return</span> <span class="n">natoms</span><span class="p">,</span> <span class="n">emax</span><span class="p">,</span> <span class="n">emin</span><span class="p">,</span> <span class="n">ndos</span><span class="p">,</span> <span class="n">e_fermi</span><span class="p">,</span> <span class="n">is_spin</span><span class="p">,</span> <span class="n">m_projected</span><span class="p">,</span> <span class="n">orbitals</span></div></div>

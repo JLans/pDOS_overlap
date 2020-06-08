@@ -7,7 +7,53 @@ Created on Thu Mar 02 17:26:23 2017
 
 """Vibrational modes."""
 from ase.data import covalent_radii as CR
+from ase.io import read
 import numpy as np
+
+def get_geometric_data(CONTCAR, cutoff=1.25, crystal_type='fcc'):
+    """ Obtain important geometric data for all atoms
+        
+    Parameters
+    ----------
+    CONTCAR : str
+        Location to VASP CONTCAR file for a gas molecule.
+    
+    cutoff : float
+            Fudge factor multiplied by covalent radii used to determine
+            connectivity. If distance between atoms is less than the summ of
+            their radii times cutoff they are considered to be coordinated
+    
+    Returns
+    -------
+    indices : list[int]
+        Atom indices
+        
+    GCNs : list[float]
+        GCN values of all atoms
+        
+    atom_types : list[str]
+        Indicates if atoms are of type 'surface' or 'bulk'
+    """
+    if crystal_type == 'fcc':
+        bulk_CN = 12
+    elif crystal_type == 'bcc':
+        bulk_CN = 14
+    else:
+        bulk_CN = crystal_type
+    
+    nanoparticle = read(CONTCAR)
+    CN = Coordination(nanoparticle,cutoff=cutoff)
+    # read and return densityofstates object
+    indices = np.arange(len(nanoparticle))
+    atom_types = []
+    GCNs = np.zeros_like(indices)
+    for atom_index in indices:
+        GCNs[atom_index] = CN.get_gcn([atom_index])
+        if CN.cn[atom_index] < bulk_CN:
+            atom_types.append('surface')
+        else:
+            atom_types.append('bulk')
+    return indices, GCNs, np.array(atom_types)
 
 class Coordination:
     """Class for calculating coordination and generalized coordination number."""
@@ -24,7 +70,7 @@ class Coordination:
             each atom
             
         cutoff : float
-            Fudge factor multiplied by Van der Waals radii used to determine
+            Fudge factor multiplied by covalent radii used to determine
             connectivity. If distance between atoms is less than the summ of
             their radii times cutoff they are considered to be coordinated
             
@@ -52,8 +98,7 @@ class Coordination:
             Can be 'percent' or 'absolute'. If Absolute then the cutoff is
             considered a distance and replaces the use of Van der Waals radii
             entirely. If multiple atom types are to be used then 'perecent'
-            is best.
-            
+            is best.   
         """
         self.atoms = atoms
         self.exclude = exclude
@@ -77,10 +122,8 @@ class Coordination:
         	list of coordination numbers for each atom.
             
         bonded : list of list
-        	List of indices of atoms bonded to each atom
-            
+        	List of indices of atoms bonded to each atom 
         """
-    
         # Get all the distances
         distances = np.divide(self.atoms.get_all_distances(mic=True), self.cutoff)
         
@@ -122,7 +165,6 @@ class Coordination:
         cn : list of int
         	list of coordination numbers for each atom.
         """
-        
         return self.cn
     
     def get_bonded(self):
@@ -133,7 +175,6 @@ class Coordination:
         bonded : list of list
         	List of indices of atoms bonded to each atom
         """
-        
         return self.bonded
     
     def get_gcn(self,site=[], surface_type="fcc"):
@@ -155,8 +196,7 @@ class Coordination:
         Returns
         -------
         gcn : float
-        	Generalized coordination values for the desired site
-            
+        	Generalized coordination values for the desired site    
         """
         # Define the types of bulk accepted
         gcn_bulk = {"fcc": [12., 18., 22., 26., 26.], "bcc": [14., 22., 28., 32.]}

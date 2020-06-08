@@ -14,6 +14,7 @@ from pdos_overlap import VASP_DOS
 from pdos_overlap.plotting_tools import set_figure_settings
 from pdos_overlap import get_adsorbate_indices
 from pdos_overlap import PDOS_OVERLAP
+from pdos_overlap.coordination import get_geometric_data
 
 #######################################################################################
 # Load DOSCAR file
@@ -54,6 +55,13 @@ adsorbate_indices, site_indices = get_adsorbate_indices(GAS_CONTCAR\
 CO_overlap = PDOS_OVERLAP(GAS_PDOS, REFERENCE_PDOS, adsorbate_indices\
                           , site_indices, min_occupation=0.9\
                           , upshift=0.5, energy_weight=4)
+    
+#######################################################################################
+# Plot projected density
+# ----------------------
+#
+# We plot the projected density of the gas, adsorbate, and adsorption site.
+CO_overlap.plot_projected_density()
 
 #######################################################################################
 # Find the optimal upshift factor
@@ -85,17 +93,39 @@ print('Gas to adsorbate indices and band centers')
 print(CO_overlap.gas_2_adsorbate)
 
 #######################################################################################
-# Plot projected density
-# ----------------------
-#
-# We plot the projected density of the gas, adsorbate, and adsorption site.
-CO_overlap.plot_projected_density()
-
-#######################################################################################
 # Plot energy overlap
 # -------------------
 # We select energy overlap histograms with the adsorbate molecular orbitals
-# that influence spectra.
-indices = [i for i in range(5) if CO_overlap.gas_2_adsorbate[i][0] in [1,2,3]]
-adsorbate_indices = CO_overlap.gas_2_adsorbate[indices,1].astype('int')
+# that influence spectra. Gas orbitals 1,2, and 3 interact with the surface.
+gas_indices = [i for i in range(5) if CO_overlap.gas_2_adsorbate[i][0] in [1,2,3]]
+adsorbate_indices = CO_overlap.gas_2_adsorbate[gas_indices,1].astype('int')
 CO_overlap.plot_energy_overlap(adsorbate_indices)
+
+#######################################################################################
+# Print orbital interactions
+# --------------------------
+# Plot orbital interaction of the first gas molecular orbital with a surface
+# s, pz, and dz2 orbitals. These are identified from first figure above
+nano = 'Pt44'
+nano_DOSCAR = os.path.join(example_path, nano + '/DOSCAR')
+nano_CONTCAR = os.path.join(example_path, nano + '/CONTCAR')
+#obtain atom indices and atom type as 'surface' or 'bulk'
+nano_indices, GCNs, atom_types = get_geometric_data(nano_CONTCAR)
+#initialize a PDOS object for the nanoparticle
+nano_PDOS = VASP_DOS(nano_DOSCAR)
+#calculate orbital interactions
+print('Interactions with 4sigma orbital')
+orbital_interaction = CO_overlap.calculate_orbital_interaction(gas_indices[0]\
+                    , nano_PDOS, nano_indices[atom_types[...] == 'surface'][0]\
+                         , ['s','pz','dz2'], sum_density=False, sum_spin=True)
+print(orbital_interaction)
+print('Interactions with 2pi orbital')
+orbital_interaction = CO_overlap.calculate_orbital_interaction(gas_indices[1]\
+                    , nano_PDOS, nano_indices[atom_types[...] == 'surface'][0]\
+                         , ['dyz','dxz'], sum_density=False, sum_spin=True)
+print(orbital_interaction)
+print('Interactions with 5sigma orbital')
+orbital_interaction = CO_overlap.calculate_orbital_interaction(gas_indices[2]\
+                    , nano_PDOS, nano_indices[atom_types[...] == 'surface'][0]\
+                         , ['s','pz','dz2'], sum_density=False, sum_spin=True)
+print(orbital_interaction)

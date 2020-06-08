@@ -18,7 +18,6 @@ def get_data_path():
     data_path : str
         path to package data
     """
-    
     data_path = pkg_resources.resource_filename(__name__, 'data/')
     return data_path
 
@@ -30,7 +29,6 @@ def get_example_data():
     example_data_path : str
         path to example VASP data
     """
-    
     data_path = pkg_resources.resource_filename(__name__, 'data/example_data')
     return data_path
 
@@ -47,7 +45,6 @@ def get_all_VASP_files(directory):
     example_data_path : str
         path to example VASP data
     """
-    
     DOSCAR_directories = [os.path.join(r,subdirectory) for r,d,f in os.walk(directory) \
               for subdirectory in d \
               if 'DOSCAR' in os.listdir(os.path.join(r,subdirectory))]
@@ -82,9 +79,7 @@ def get_band_center(energies, densities, max_energy=None, axis=-1):
         trapezoidal rule is better for narrow gaussian peaks and for "rough" functions
         https://doi.org/10.1016/j.chemolab.2018.06.001
         http://emis.icm.edu.pl/journals/JIPAM/v3n4/031_02.html
-        
         """
-        
         if len(densities.shape) == 1:
             densities = np.array([densities.copy()])
         if max_energy is None:
@@ -139,7 +134,6 @@ class VASP_DOS:
         orbital_dictionary: dict
             dictionary that maps resolved sublevels/orbitals to indices
         """
-        
         natoms, emax, emin, ndos, e_fermi, is_spin, m_projected\
             , orbital_dictionary = self._read_doscar(file_name=file_name, no_negatives=no_negatives)
         self.no_negatives = no_negatives
@@ -177,7 +171,6 @@ class VASP_DOS:
         -------
         band_center : float or numpy.ndarray
             center of the band(s) up to max_energy
-
         """
         energies = self.get_energies()
         get_site_dos = self.get_site_dos
@@ -197,10 +190,8 @@ class VASP_DOS:
         Returns
         -------
         energies : numpy.ndarray
-            1-D array of energies
-            
+            1-D array of energies    
         """
-        
         energies = self._total_dos[0,:].copy()
         return energies
     
@@ -212,7 +203,6 @@ class VASP_DOS:
         total_dos : numpy.ndarray
             1-D or 2-D array of state densities   
         """
-        
         if self._total_dos.shape[0] == 3:
             total_dos = self._total_dos[1, :]
         elif self._total_dos.shape[0] == 5:
@@ -231,7 +221,6 @@ class VASP_DOS:
         integrated_dos : numpy.ndarray
             1-D or 2-D array of state integrated densities  
         """
-        
         if self._total_dos.shape[0] == 3:
             integrated_dos = self._total_dos[2, :]
         elif self._total_dos.shape[0] == 5:
@@ -265,9 +254,7 @@ class VASP_DOS:
             
         projected_density : np.array
             Array of shape (len(new_orbital_list), ndos)
-
         """
-
         # Integer indexing for orbitals starts from 1 in the _site_dos array
         # since the 0th column contains the energies
         orbital_dictionary = self.orbital_dictionary
@@ -329,6 +316,8 @@ class VASP_DOS:
                 elif orbital == 'f-':
                     orbitals = ['fy(3x2-y2)-', 'fxyz-', 'fyz2-', 'fz3-', 'fxz2-',
                               'fz(x2-y2)-', 'fx(x2-3y2)-']
+                elif '+' not in orbital and '-' not in orbital:
+                    orbitals = [orbital + '+', orbital + '-']
                 else:
                     orbitals = [orbital]
             else:
@@ -404,9 +393,7 @@ class VASP_DOS:
             
         orbital_dictionary : dict
             dictionary that maps resolved sublevels/orbitals to indices
-
         """
-        
         #Accepts a file and reads through to get the density of states
         def get_dos(f, ndos):
             #get first line of density
@@ -556,7 +543,6 @@ class VASP_DOS:
                 'fz(x2-y2)-': 30,
                 'fx(x2-3y2)+': 31,
                 'fx(x2-3y2)-': 32}
-        
         self._total_dos = _total_dos
         self._site_dos = _site_dos
         return natoms, emax, emin, ndos, e_fermi, is_spin, m_projected, orbitals

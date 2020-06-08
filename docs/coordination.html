@@ -173,7 +173,7 @@
 <li><p><strong>atoms</strong> (<em>atoms</em>) – ASE atoms type.</p></li>
 <li><p><strong>exclude</strong> (<em>list of int</em>) – Indices of atoms to exclude in tabulating the coordination of
 each atom</p></li>
-<li><p><strong>cutoff</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Fudge factor multiplied by Van der Waals radii used to determine
+<li><p><strong>cutoff</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Fudge factor multiplied by covalent radii used to determine
 connectivity. If distance between atoms is less than the summ of
 their radii times cutoff they are considered to be coordinated</p></li>
 <li><p><strong>cutoff_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Can be ‘percent’ or ‘absolute’. If Absolute then the cutoff is
@@ -270,6 +270,30 @@ bonds to other excluded atomic numbers.</p>
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py function">
+<dt id="pdos_overlap.coordination.get_geometric_data">
+<code class="sig-name descname">get_geometric_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">CONTCAR</span></em>, <em class="sig-param"><span class="n">cutoff</span><span class="o">=</span><span class="default_value">1.25</span></em>, <em class="sig-param"><span class="n">crystal_type</span><span class="o">=</span><span class="default_value">'fcc'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/coordination.html#get_geometric_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.coordination.get_geometric_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtain important geometric data for all atoms</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>CONTCAR</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Location to VASP CONTCAR file for a gas molecule.</p></li>
+<li><p><strong>cutoff</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Fudge factor multiplied by covalent radii used to determine
+connectivity. If distance between atoms is less than the summ of
+their radii times cutoff they are considered to be coordinated</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>indices</strong> (<em>list[int]</em>) – Atom indices</p></li>
+<li><p><strong>GCNs</strong> (<em>list[float]</em>) – GCN values of all atoms</p></li>
+<li><p><strong>atom_types</strong> (<em>list[str]</em>) – Indicates if atoms are of type ‘surface’ or ‘bulk’</p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>

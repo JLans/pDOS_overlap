@@ -15,8 +15,7 @@ def set_figure_settings(Figure_Type,**kwargs):
     
     **kwargs : dict
         Takes dictionary attributes given by \
-        https://matplotlib.org/3.1.1/tutorials/introductory/customizing.html#a-sample-matplotlibrc-file.
-        
+        https://matplotlib.org/3.1.1/tutorials/introductory/customizing.html#a-sample-matplotlibrc-file.   
     """
     rcParams.update(rcParamsDefault)
     params = {}
