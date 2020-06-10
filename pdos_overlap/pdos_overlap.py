@@ -12,7 +12,9 @@ from .vasp_dos import get_band_center
 from ase.io import read
 from .coordination import Coordination
 from .plotting_tools import set_figure_settings
+from .error_metrics import get_continuous_wasserstein
 from scipy.optimize import minimize_scalar
+
 
 def get_adsorbate_indices(GAS_CONTCAR, ADSORBATE_CONTCAR):
     """ Identify the adsorbate and adsorption site indices
@@ -160,7 +162,7 @@ class PDOS_OVERLAP:
         Notes
         -----
         GAS_PDOS is used to determine the number of molecular orbitals that can
-        interact with the surface and to calculate relative orbital overlap the
+        interact with the surface and to calculate relative pdos overlap the
         with projected density of adsorption sites without adsorbates.
         
         REFERENCE_PDOS is used to determine which metal states, projected onto
@@ -598,27 +600,28 @@ class PDOS_OVERLAP:
             Integrated atomic orbital interactions with the gas molecular orbitls
             
         """         
-        gas_orbital = self.gas_orbitals[gas_orbital_index]
         gas_band_center = self.gas_band_centers[gas_orbital_index]
-        ndos_gas = gas_orbital.shape[0]
         
-        
-        orbitals, temp_density = PDOS.get_site_dos(site_indices\
+        orbitals, projected_density = PDOS.get_site_dos(site_indices\
                                     , atomic_orbitals, sum_density=sum_density\
                                     , sum_spin=sum_spin)
-        if PDOS.ndos != ndos_gas:
-            projected_density = np.zeros((len(orbitals),ndos_gas))
-            old_x = PDOS.get_energies()
-            new_x = np.linspace(old_x.min(), old_x.max(), ndos_gas)
-            for i in range(len(orbitals)):
-                projected_density[i] = np.interp(new_x, old_x, temp_density[i])
-        else:
-            projected_density = temp_density
-            new_x = PDOS.get_energies()
+        if len(projected_density.shape) == 1:
+            projected_density = [projected_density]
         
-        orbital_interaction = np.trapz(np.nan_to_num(projected_density\
-                          / np.abs(gas_band_center - new_x))\
-                              ,PDOS.get_energies(), axis=1)
+        if gas_band_center <= self.GAS_PDOS.e_fermi:
+            ndos_metal = len(PDOS.get_energies()[PDOS.get_energies()[...] > PDOS.e_fermi])
+            densities = np.zeros((len(orbitals),ndos_metal))
+            energies = PDOS.get_energies()[PDOS.get_energies()[...] > PDOS.e_fermi]
+            for count, density in enumerate(projected_density):
+                densities[count] = density[PDOS.get_energies()[...] > PDOS.e_fermi]  
+        else:
+            ndos_metal = len(PDOS.get_energies()[PDOS.get_energies()[...] < PDOS.e_fermi])
+            densities = np.zeros((len(orbitals),ndos_metal))
+            energies = PDOS.get_energies()[PDOS.get_energies()[...] < PDOS.e_fermi]
+            for count, density in enumerate(projected_density):
+                densities[count] = density[PDOS.get_energies()[...] < PDOS.e_fermi]
+        orbital_interaction = np.trapz(densities / np.abs(gas_band_center - energies)\
+                              ,energies, axis=1)
         return orbital_interaction
     
     @staticmethod

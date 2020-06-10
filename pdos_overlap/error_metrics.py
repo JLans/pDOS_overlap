@@ -2,6 +2,7 @@
 from __future__ import absolute_import, division, print_function
 import numpy as np
 from copy import deepcopy
+from scipy.integrate import cumtrapz
 
 def get_r2(y_true, y_pred):
     """R2 or the error.
@@ -89,6 +90,39 @@ def get_wasserstein_loss(y_true, y_pred,individual=False):
     Tcum = np.cumsum(y_true, axis=-1)
     Pcum = np.cumsum(y_pred, axis=-1)
     w_loss = (1/float(y_true.shape[1])*np.sum((Pcum-Tcum)**2, axis=1))**0.5
+    if individual == True:
+        return w_loss
+    else:
+        return w_loss.mean()
+    
+def get_continuous_wasserstein(y_true, y_pred, x, individual=False):
+    """Compute the l2 wasserstein loss
+
+    Parameters
+    ----------
+    y_true : numpy.ndarray or list
+        Ground truth (correct) values.
+
+    y_pred : numpy.ndarray or list
+        Predicted values, as returned by a regression estimator.
+        
+    individual : bool
+        If True, returns Wasserstein loss along last dimension.
+        If False, returns average Wasserstein loss.
+
+    Returns
+    -------
+    loss : float or numpy.ndarray
+        The degree to which the samples are correctly predicted.
+    """
+    y_true = np.array(deepcopy(y_true))
+    y_pred = np.array(deepcopy(y_pred))
+    Tcum = cumtrapz(y_true, x, axis=-1)
+    Pcum = cumtrapz(y_pred, x, axis=-1)
+    w_loss = (1/y_true.shape[-1]*np.sum((Pcum-Tcum)**2, axis=-1))**0.5
+    print(y_true.shape[-1])
+    print(Pcum.sum())
+    print(Tcum.sum(axis=-1))
     if individual == True:
         return w_loss
     else:

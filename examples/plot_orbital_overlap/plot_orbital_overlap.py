@@ -119,7 +119,7 @@ orbital_interaction = CO_overlap.calculate_orbital_interaction(gas_indices[0]\
                     , nano_PDOS, nano_indices[atom_types[...] == 'surface'][0]\
                          , ['s','pz','dz2'], sum_density=False, sum_spin=True)
 print(orbital_interaction)
-print('Interactions with 2pi orbital')
+print('Interactions with 1pi orbital')
 orbital_interaction = CO_overlap.calculate_orbital_interaction(gas_indices[1]\
                     , nano_PDOS, nano_indices[atom_types[...] == 'surface'][0]\
                          , ['dyz','dxz'], sum_density=False, sum_spin=True)

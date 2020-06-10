@@ -52,7 +52,7 @@ def get_all_VASP_files(directory):
     CONTCAR_files = [os.path.join(d,'CONTCAR') for d in DOSCAR_directories]
     return DOSCAR_files, CONTCAR_files
 
-def get_band_center(energies, densities, max_energy=None, axis=-1):
+def get_band_center(energies, densities, max_energy=None, min_energy=None, axis=-1):
         """ Get band center given energies and densities
         
         Parameters
@@ -64,6 +64,9 @@ def get_band_center(energies, densities, max_energy=None, axis=-1):
             projected state densities
             
         max_energy : float
+            cutoff energy (often the fermi energy)
+            
+        min_energy : float
             cutoff energy (often the fermi energy)
             
         axis : int
@@ -86,10 +89,117 @@ def get_band_center(energies, densities, max_energy=None, axis=-1):
             idx_stop = len(energies)
         else:
             idx_stop = (np.abs(energies-max_energy)).argmin()+1
-        Integrated_Energy = np.trapz(densities[:,0:idx_stop]*energies[0:idx_stop], energies[0:idx_stop], axis=axis)
-        Integrated_Filling = np.trapz(densities[:,0:idx_stop], energies[0:idx_stop], axis=axis)
+        if min_energy is None:
+            idx_start = 0
+        else:
+            idx_start = (np.abs(energies-min_energy)).argmin()
+        Integrated_Energy = np.trapz(densities[:,idx_start:idx_stop]\
+                                     * energies[idx_start:idx_stop]\
+                                     , energies[idx_start:idx_stop], axis=axis)
+        Integrated_Filling = np.trapz(densities[:,idx_start:idx_stop]\
+                                      , energies[idx_start:idx_stop], axis=axis)
         band_center = Integrated_Energy/Integrated_Filling
         return band_center
+    
+def get_band_width(energies, densities, fraction=0):
+        """ Get band width given energies and densities
+        
+        Parameters
+        ----------
+        energies : numpy.ndarray
+            discretized orbital energies
+        
+        densities : numpy.ndarray
+            projected state densities
+            
+        fraction : float
+            maximum projected density considered part of a band
+        
+        Returns
+        -------
+        band_width : float or numpy.ndarray
+            width of the band(s)
+        """
+        if len(densities.shape) == 1:
+            densities = np.array([densities.copy()])
+        index_values = np.arange(densities.shape[-1])
+        min_index = np.zeros(densities.shape[0])
+        max_index = np.zeros(densities.shape[0])
+        for count, density in enumerate(densities):
+            min_index[count] = np.min(index_values[density > fraction * density.max()])
+            max_index[count] = np.max(index_values[density > fraction * density.max()])
+        band_width = energies[max_index.astype(int)] - energies[min_index.astype(int)]
+        return band_width
+    
+def get_center_width(energies, densities, energy):
+        """ Get width between to band centers given a division
+        
+        Parameters
+        ----------
+        energies : numpy.ndarray
+            discretized orbital energies
+        
+        densities : numpy.ndarray
+            projected state densities
+            
+        energy : int
+            energy that divides band centers
+        
+        Returns
+        -------
+        center_width : float or numpy.ndarray
+            width of two band centers separated by some ennergy
+            
+        """
+        center_lower = get_band_center(energies, densities, max_energy=energy)
+        center_upper = get_band_center(energies, densities, min_energy=energy)
+        center_width = center_upper - center_lower
+        return center_width
+    
+def get_filling(energies, densities, max_energy=None, min_energy=None, axis=-1):
+        """ Get band center given energies and densities
+        
+        Parameters
+        ----------
+        energies : numpy.ndarray
+            discretized orbital energies
+        
+        densities : numpy.ndarray
+            projected state densities
+            
+        max_energy : float
+            cutoff energy (often the fermi energy)
+            
+        min_energy : float
+            cutoff energy (often the fermi energy)
+            
+        axis : int
+            axis of densities on which to integrate
+        
+        Returns
+        -------
+        band_center : float or numpy.ndarray
+            center of the band(s) up to max_energy
+            
+        Notes
+        -----
+        trapezoidal rule is better for narrow gaussian peaks and for "rough" functions
+        https://doi.org/10.1016/j.chemolab.2018.06.001
+        http://emis.icm.edu.pl/journals/JIPAM/v3n4/031_02.html
+        """
+        if len(densities.shape) == 1:
+            densities = np.array([densities.copy()])
+        if max_energy is None:
+            idx_stop = len(energies)
+        else:
+            idx_stop = (np.abs(energies-max_energy)).argmin()+1
+        if min_energy is None:
+            idx_start = 0
+        else:
+            idx_start = (np.abs(energies-min_energy)).argmin()
+        Integrated_Filling = np.trapz(densities[:,idx_start:idx_stop]\
+                                      , energies[idx_start:idx_stop], axis=axis)
+        return Integrated_Filling
 
 class VASP_DOS:
     """Class for extracting projected density of states from VASP"""
@@ -146,7 +256,8 @@ class VASP_DOS:
         self.m_projected = m_projected
         self.orbital_dictionary = orbital_dictionary
         
-    def get_band_center(self, atom_indices, orbital_list, sum_density=False, max_energy=None, axis=-1):
+    def get_band_center(self, atom_indices, orbital_list, sum_density=False, sum_spin=True\
+                        , max_energy=None, min_energy=None, axis=-1):
         """ Get band center for a given atom and list of orbitals
         
         Parameters
@@ -161,7 +272,13 @@ class VASP_DOS:
             if a sub-level is provided instead of an orbital, sum_density
             indicates if the individual sub-level densities should be summed
             
+        sum_spin : bool
+            different spin densities are summed.
+            
         max_energy : float
+            cutoff energy (often the fermi energy)
+        
+        min_energy : float
             cutoff energy (often the fermi energy)
             
         axis : int
@@ -179,10 +296,137 @@ class VASP_DOS:
         except:
             atom_indices = [atom_indices]
         orbitals, density = get_site_dos(atom_indices,orbital_list\
-                                         , sum_density=sum_density)
+                                         , sum_density=sum_density\
+                                         , sum_spin=sum_spin)
         band_center = get_band_center(energies, density, max_energy=max_energy\
-                                      , axis=-1)
+                                      , min_energy = min_energy, axis=-1)
         return band_center
+    
+    def get_filling(self, atom_indices, orbital_list, sum_density=False, sum_spin=True\
+                        , max_energy=None, min_energy=None, axis=-1):
+        """ Get band center for a given atom and list of orbitals
+        
+        Parameters
+        ----------
+        atom_indices : list[int]
+            list of atom indices
+            
+        orbital_list : list[str]
+            Which orbitals to return
+            
+        sum_density : bool
+            if a sub-level is provided instead of an orbital, sum_density
+            indicates if the individual sub-level densities should be summed
+            
+        sum_spin : bool
+            different spin densities are summed.
+            
+        max_energy : float
+            cutoff energy (often the fermi energy)
+        
+        min_energy : float
+            cutoff energy (often the fermi energy)
+            
+        axis : int
+            axis of densities on which to integrate
+        
+        Returns
+        -------
+        band_center : float or numpy.ndarray
+            center of the band(s) up to max_energy
+        """
+        energies = self.get_energies()
+        get_site_dos = self.get_site_dos
+        try:
+            len(atom_indices)
+        except:
+            atom_indices = [atom_indices]
+        orbitals, density = get_site_dos(atom_indices,orbital_list\
+                                         , sum_density=sum_density\
+                                         , sum_spin=sum_spin)
+        filling = get_filling(energies, density, max_energy=max_energy\
+                                      , min_energy = min_energy, axis=-1)
+        return filling
+
+    def get_band_width(self, atom_indices, orbital_list, sum_density=False\
+                       , sum_spin=True, fraction=0):
+        """ Get band width given energies and densities
+        
+        Parameters
+        ----------
+        atom_indices : list[int]
+            list of atom indices
+            
+        orbital_list : list[str]
+            Which orbitals to return
+            
+        sum_density : bool
+            if a sub-level is provided instead of an orbital, sum_density
+            indicates if the individual sub-level densities should be summed
+            
+        sum_spin : bool
+            different spin densities are summed.
+            
+        fraction : float
+            maximum projected density considered part of a band
+        
+        Returns
+        -------
+        band_width : float or numpy.ndarray
+            width of the band(s)
+        """
+        energies = self.get_energies()
+        get_site_dos = self.get_site_dos
+        try:
+            len(atom_indices)
+        except:
+            atom_indices = [atom_indices]
+        orbitals, densities = get_site_dos(atom_indices,orbital_list\
+                                         , sum_density=sum_density\
+                                         , sum_spin=sum_spin)
+        band_width = get_band_width(energies, densities, fraction)
+        return band_width
+    
+    def get_center_width(self, energy, atom_indices, orbital_list, sum_density=False\
+                       , sum_spin=True):
+        """ Get width between to band centers given a division
+        
+        Parameters
+        ----------            
+        energy : int
+            energy that divides band centers
+            
+        atom_indices : list[int]
+            list of atom indices
+            
+        orbital_list : list[str]
+            Which orbitals to return
+            
+        sum_density : bool
+            if a sub-level is provided instead of an orbital, sum_density
+            indicates if the individual sub-level densities should be summed
+            
+        sum_spin : bool
+            different spin densities are summed.
+        
+        Returns
+        -------
+        center_width : float or numpy.ndarray
+            width of two band centers separated by some ennergy
+            
+        """
+        energies = self.get_energies()
+        get_site_dos = self.get_site_dos
+        try:
+            len(atom_indices)
+        except:
+            atom_indices = [atom_indices]
+        orbitals, densities = get_site_dos(atom_indices,orbital_list\
+                                         , sum_density=sum_density\
+                                         , sum_spin=sum_spin)
+        
+        center_width = get_center_width(energies, densities, energy)
+        return center_width
         
     def get_energies(self):
         """ method for obtaining energy levels
@@ -195,7 +439,7 @@ class VASP_DOS:
         energies = self._total_dos[0,:].copy()
         return energies
     
-    def get_total_dos(self, sum_spin=False):
+    def get_total_dos(self, sum_spin=True):
         """ method for obtaining total density of states
         
         Returns
@@ -213,7 +457,7 @@ class VASP_DOS:
                 
         return total_dos
 
-    def get_integrated_dos(self, sum_spin=False):
+    def get_integrated_dos(self, sum_spin=True):
         """ method for obtaining total integrated density of states
         
         Returns
@@ -227,10 +471,10 @@ class VASP_DOS:
             if sum_spin == True:
                 integrated_dos = self._total_dos[3:5, :].sum(axis=0)
             else:
-                integrated_dos = self._total_dos[3:5, :].sum(axis=0)
+                integrated_dos = self._total_dos[3:5, :]
         return integrated_dos
         
-    def get_site_dos(self, atom_indices, orbital_list=[], sum_density=False, sum_spin=False):
+    def get_site_dos(self, atom_indices, orbital_list=[], sum_density=False, sum_spin=True):
         """Return an NDOSxM array with dos for the chosen atom and orbital(s).
         
         Parameters
@@ -244,6 +488,9 @@ class VASP_DOS:
         sum_density : bool
             if a sub-level is provided instead of an orbital, sum_density
             indicates if the individual orbital densities should be summed
+            
+        sum_spin : bool
+            different spin densities are summed.
         
         Returns
         -------
