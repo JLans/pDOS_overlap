@@ -27,10 +27,11 @@ GAS_DOSCAR = os.path.join(example_path, gas + '/DOSCAR')
 GAS_CONTCAR = os.path.join(example_path, gas + '/CONTCAR')
 ADSORBATE_DOSCAR = os.path.join(example_path, gas + '+' + surface + '/DOSCAR')
 ADSORBATE_CONTCAR = os.path.join(example_path, gas + '+' + surface + '/CONTCAR')
-
+BULK_DOSCAR = os.path.join(example_path,'Pt_nano/Pt147/DOSCAR')
 # VASP_DOS objects for both the gas (vacuum) and the adsorbate+surface system
 GAS_PDOS = VASP_DOS(GAS_DOSCAR)
 REFERENCE_PDOS = VASP_DOS(ADSORBATE_DOSCAR)
+BULK_PDOS = VASP_DOS(BULK_DOSCAR)
 
 # Get adsorbate and site indices and initialize PDOS_OVERLAP object
 adsorbate_indices, site_indices = get_adsorbate_indices(GAS_CONTCAR\
@@ -57,11 +58,11 @@ for nano_DOSCAR, nano_CONTCAR in zip(DOSCAR_files, CONTCAR_files):
     nano_PDOS = VASP_DOS(nano_DOSCAR)   
     for atom_index in nano_indices[atom_types[...] == 'surface']:
         four_sigma = CO_overlap.calculate_orbital_interaction(1\
-                            , nano_PDOS, atom_index, ['s','pz','dz2'])
+                            , nano_PDOS, atom_index, ['s','pz','dz2'], BULK_PDOS, bulk_atom=43)
         one_pi = CO_overlap.calculate_orbital_interaction(2\
-                            , nano_PDOS, atom_index, ['dyz','dxz'])
+                            , nano_PDOS, atom_index, ['dyz','dxz'], BULK_PDOS, bulk_atom=43)
         five_sigma = CO_overlap.calculate_orbital_interaction(3\
-                            , nano_PDOS, atom_index, ['s','pz','dz2'])
+                            , nano_PDOS, atom_index, ['s','pz','dz2'], BULK_PDOS, bulk_atom=43)
         
             
         four_sigma_list.append(four_sigma)
@@ -82,12 +83,12 @@ for count, color in enumerate(colors):
     plt.plot(np.sort(GCNList), np.poly1d(orbitalfit[count])(np.sort(GCNList)), color + '--')
 for count, color in enumerate(colors):
     plt.plot(GCNList, four_sigma_list[count], color + 'o')
-plt.legend([r'${interaction}_{s}$=%.2fGCN + %.2f eV$^{-1}$' %(orbitalfit[0][0], orbitalfit[0][1])
-,r'${interaction}_{pz}$=%.2fGCN + %.2f eV$^{-1}$' %(orbitalfit[1][0], orbitalfit[1][1])
-,r'${interaction}_{dz2}$=%.2fGCN + %.2f eV$^{-1}$' %(orbitalfit[2][0], orbitalfit[2][1])]
-,loc=2,prop={'size':14},frameon=False)
+plt.legend([r'${interaction}_{s}$=%.2fGCN + %.2f eV' %(orbitalfit[0][0], orbitalfit[0][1])
+,r'${interaction}_{pz}$=%.2fGCN + %.2f eV' %(orbitalfit[1][0], orbitalfit[1][1])
+,r'${interaction}_{dz2}$=%.2fGCN + %.2f eV' %(orbitalfit[2][0], orbitalfit[2][1])]
+,loc='best',frameon=False)
 plt.xlabel('Generalized coordination number (GCN)')
-plt.ylabel('Energy interaction [eV$^{-1}$]')
+plt.ylabel('Interaction energy [states]')
 plt.show()
 
 #plotting scaling of band center with GCN
@@ -99,12 +100,12 @@ for count, color in enumerate(colors):
     plt.plot(np.sort(GCNList), np.poly1d(orbitalfit[count])(np.sort(GCNList)), color + '--')
 for count, color in enumerate(colors):
     plt.plot(GCNList, five_sigma_list[count], color + 'o')
-plt.legend([r'${interaction}_{s}$=%.2fGCN + %.2f eV$^{-1}$' %(orbitalfit[0][0], orbitalfit[0][1])
-,r'${interaction}_{pz}$=%.2fGCN + %.2f eV$^{-1}$' %(orbitalfit[1][0], orbitalfit[1][1])
-,r'${interaction}_{dz2}$=%.2fGCN + %.2f eV$^{-1}$' %(orbitalfit[2][0], orbitalfit[2][1])]
-,loc=2,prop={'size':14},frameon=False)
+plt.legend([r'${interaction}_{s}$=%.2fGCN + %.2f eV' %(orbitalfit[0][0], orbitalfit[0][1])
+,r'${interaction}_{pz}$=%.2fGCN + %.2f eV' %(orbitalfit[1][0], orbitalfit[1][1])
+,r'${interaction}_{dz2}$=%.2fGCN + %.2f eV' %(orbitalfit[2][0], orbitalfit[2][1])]
+,loc='best',frameon=False)
 plt.xlabel('Generalized coordination number (GCN)')
-plt.ylabel('Energy interaction [eV$^{-1}$]')
+plt.ylabel('Interaction energy [eV]')
 plt.show()
 
 #plotting scaling of band center with GCN
@@ -116,10 +117,10 @@ for count, color in enumerate(colors):
     plt.plot(np.sort(GCNList), np.poly1d(orbitalfit[count])(np.sort(GCNList)), color + '--')
 for count, color in enumerate(colors):
     plt.plot(GCNList, one_pi_list[count], color + 'o')
-plt.legend([r'${interaction}_{dyz}$=%.2fGCN + %.2f eV$^{-1}$' %(orbitalfit[0][0], orbitalfit[0][1])
-,r'${interaction}_{dxz}$=%.2fGCN + %.2f eV$^{-1}$' %(orbitalfit[1][0], orbitalfit[1][1])]
-,loc=2,prop={'size':14},frameon=False)
+plt.legend([r'${interaction}_{dyz}$=%.2fGCN + %.2f eV' %(orbitalfit[0][0], orbitalfit[0][1])
+,r'${interaction}_{dxz}$=%.2fGCN + %.2f eV' %(orbitalfit[1][0], orbitalfit[1][1])]
+,loc='best',frameon=False)
 plt.xlabel('Generalized coordination number (GCN)')
-plt.ylabel('Energy interaction [eV$^{-1}$]')
+plt.ylabel('Interaction energy [eV]')
 plt.show()
 

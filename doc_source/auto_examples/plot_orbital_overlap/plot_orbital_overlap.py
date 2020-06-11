@@ -114,18 +114,26 @@ nano_indices, GCNs, atom_types = get_geometric_data(nano_CONTCAR)
 #initialize a PDOS object for the nanoparticle
 nano_PDOS = VASP_DOS(nano_DOSCAR)
 #calculate orbital interactions
+BULK_DOSCAR = os.path.join(example_path,'Pt_nano/Pt147/DOSCAR')
+# VASP_DOS objects for both the gas (vacuum) and the adsorbate+surface system
+GAS_PDOS = VASP_DOS(GAS_DOSCAR)
+REFERENCE_PDOS = VASP_DOS(ADSORBATE_DOSCAR)
+BULK_PDOS = VASP_DOS(BULK_DOSCAR)
 print('Interactions with 4sigma orbital')
 orbital_interaction = CO_overlap.calculate_orbital_interaction(gas_indices[0]\
                     , nano_PDOS, nano_indices[atom_types[...] == 'surface'][0]\
-                         , ['s','pz','dz2'], sum_density=False, sum_spin=True)
+                         , ['s','pz','dz2'], BULK_PDOS, bulk_atom=43\
+                             , sum_density=False, sum_spin=True)
 print(orbital_interaction)
-print('Interactions with 2pi orbital')
+print('Interactions with 1pi orbital')
 orbital_interaction = CO_overlap.calculate_orbital_interaction(gas_indices[1]\
                     , nano_PDOS, nano_indices[atom_types[...] == 'surface'][0]\
-                         , ['dyz','dxz'], sum_density=False, sum_spin=True)
+                         , ['dyz','dxz'], BULK_PDOS, bulk_atom=43\
+                             , sum_density=False, sum_spin=True)
 print(orbital_interaction)
 print('Interactions with 5sigma orbital')
 orbital_interaction = CO_overlap.calculate_orbital_interaction(gas_indices[2]\
                     , nano_PDOS, nano_indices[atom_types[...] == 'surface'][0]\
-                         , ['s','pz','dz2'], sum_density=False, sum_spin=True)
+                         , ['s','pz','dz2'], BULK_PDOS, bulk_atom=43\
+                             , sum_density=False, sum_spin=True)
 print(orbital_interaction)

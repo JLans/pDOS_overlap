@@ -20,6 +20,8 @@ band_width_list = []
 occupied_band_list = []
 unoccupied_band_list = []
 filling_list = []
+second_moment_list = []
+bond_energy_list = []
 DOSCAR_files, CONTCAR_files = get_all_VASP_files(\
         r'C:\Users\lansf\Documents\Data\PROBE_PDOS\vasp_dos_files\Pt_nano')
 
@@ -39,6 +41,12 @@ for DOSCAR, CONTCAR in zip(DOSCAR_files, CONTCAR_files):
                                 , sum_density=True, min_energy=PDOS.e_fermi) - PDOS.e_fermi
         band_width = PDOS.get_center_width(PDOS.e_fermi, atom_index, ['s','p','d']\
                                 , sum_density=True)
+        second_moment = PDOS.get_second_moment(atom_index, ['s','p','d']\
+                                , sum_density=True)
+        
+        bond_energy = PDOS.get_bond_energy(atom_index, ['s','p','d']\
+                                , sum_density=True)
+            
         filling = PDOS.get_filling(atom_index, ['s','p','d']\
                                 , sum_density=True, max_energy=PDOS.e_fermi)
             
@@ -47,6 +55,8 @@ for DOSCAR, CONTCAR in zip(DOSCAR_files, CONTCAR_files):
         occupied_band_list.append(occupied_band_center)
         unoccupied_band_list.append(unoccupied_band_center)
         filling_list.append(filling)
+        second_moment_list.append(second_moment)
+        bond_energy_list.append(bond_energy)
 
 GCNList = np.array(GCNList)
 atom_type = np.array(atom_type)
@@ -55,6 +65,8 @@ band_width_list = np.array(band_width_list).T
 occupied_band_list = np.array(occupied_band_list).T
 unoccupied_band_list = np.array(unoccupied_band_list).T
 filling_list = np.array(filling_list).T
+second_moment_list = np.array(second_moment_list).T
+bond_energy_list = np.array(bond_energy_list).T
 
 #plotting scaling of band center with GCN
 plt.figure(figsize=(7,5))
@@ -227,25 +239,42 @@ plt.xlabel('Generalized coordination number (GCN)')
 plt.ylabel('Band width [eV]')
 plt.show()
 
-
-"""
-#calculating f factor
-plt.figure(4,figsize=(7,5))
+#plotting scaling of occupied band center with GCN for surface sites
+plt.figure(figsize=(7,5))
 colors = ['b','g','r']
+Efit = []
 for count, color in enumerate(colors):
-    if count in [0,2]:
-        plt.plot(GCNList[atom_type=='surface'], band_width_list[count][atom_type=='surface']/band_list[count][atom_type=='surface'], color + 'o')
+    Efit.append(np.polyfit(GCNList[atom_type=='surface']\
+                ,second_moment_list[count][atom_type=='surface'], 1))
+    plt.plot(np.sort(GCNList[atom_type=='surface'])\
+             , np.poly1d(Efit[count])\
+             (np.sort(GCNList[atom_type=='surface'])), color + '--')
 for count, color in enumerate(colors):
-    if count in [0,2]:
-        plt.plot(GCNList[atom_type=='bulk'], band_width_list[count][atom_type=='bulk']/band_list[count][atom_type=='bulk'], color + 's')
-plt.legend(['s/surface', 'd/surface', 's/bulk', 'd/bulk']
-,loc=2,title='Band/Location',prop={'size':14},frameon=False)
-plt.gcf().subplots_adjust(bottom=0.15)
-plt.gcf().subplots_adjust(top=0.99)
-plt.gcf().subplots_adjust(left=0.10)
-plt.gcf().subplots_adjust(right=0.99)
+    plt.plot(GCNList[atom_type=='surface'], second_moment_list[count][atom_type=='surface'], color + 'o')
+plt.legend([r'${\epsilon}_{s}$=%.2fGCN + %.2f eV$^{2}$' %(Efit[0][0],Efit[0][1])
+,r'${\epsilon}_{p}$=%.2fGCN + %.2f eV$^{2}$' %(Efit[1][0],Efit[1][1])
+,r'${\epsilon}_{d}$=%.2fGCN + %.2f eV$^{2}$' %(Efit[2][0],Efit[2][1])]
+,loc=3,prop={'size':14},frameon=False)
 plt.xlabel('Generalized coordination number (GCN)')
-plt.ylabel(r'${\epsilon}^{*}$ $\times$ $({\epsilon})^{-1}$')
+plt.ylabel('Second moment [eV$^{2}$]')
 plt.show()
-"""
 
+#bond energy
+plt.figure(figsize=(7,5))
+colors = ['b','g','r']
+Efit = []
+for count, color in enumerate(colors):
+    Efit.append(np.polyfit(GCNList[atom_type=='surface']\
+                ,bond_energy_list[count][atom_type=='surface'], 1))
+    plt.plot(np.sort(GCNList[atom_type=='surface'])\
+             , np.poly1d(Efit[count])\
+             (np.sort(GCNList[atom_type=='surface'])), color + '--')
+for count, color in enumerate(colors):
+    plt.plot(GCNList[atom_type=='surface'], bond_energy_list[count][atom_type=='surface'], color + 'o')
+plt.legend([r'${be}_{s}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
+,r'${be}_{p}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])
+,r'${be}_{d}$=%.2fGCN + %.2f eV' %(Efit[2][0],Efit[2][1])]
+,loc=3,prop={'size':14},frameon=False)
+plt.xlabel('Generalized coordination number (GCN)')
+plt.ylabel('Bond energy [eV]')
+plt.show()

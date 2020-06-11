@@ -34,7 +34,7 @@ PDOS = VASP_DOS(DOSCAR)
 orbitals = [key for key in PDOS.orbital_dictionary.keys() if 's' in key or 'p' in key]
     
 band_centers = PDOS.get_band_center([0], orbital_list=orbitals\
-                                    , max_energy=PDOS.e_fermi)
+                                    , max_energy=PDOS.e_fermi, sum_spin=False)
 
 for count, orbital in enumerate(orbitals):
     print(orbital + ' band center :' + str(band_centers[count]))

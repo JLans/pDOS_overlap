@@ -510,7 +510,7 @@ class PDOS_OVERLAP:
             
     @staticmethod
     def _calculate_overlap(molecular_orbitals, PDOS, site_indices\
-                           , sum_density=False, sum_spin=True):   
+                           , sum_density=False, sum_spin=True, normalize=False):   
         """ Calculate overlap of molecular orbitals with atomic orbitals
         
         Parameters
@@ -561,12 +561,19 @@ class PDOS_OVERLAP:
         overlap_orbitals = orbital_list
         energy_overlap = np.zeros((num_molecular_orbitals, TOTAL_PDOS.shape[0]))
         for i in range(num_molecular_orbitals):
-            energy_overlap[i] = np.trapz(molecular_orbitals[i]\
-                                      * TOTAL_PDOS,PDOS.get_energies(),axis=1)
+            if normalize == False:
+                energy_overlap[i] = np.trapz(molecular_orbitals[i] * TOTAL_PDOS\
+                                         ,PDOS.get_energies())
+            else:
+                energy_overlap[i] = np.trapz(molecular_orbitals[i]**0.5 * TOTAL_PDOS**0.5\
+                                         ,PDOS.get_energies())\
+                                    /(np.trapz(molecular_orbitals[i],PDOS.get_energies())\
+                                      * np.trapz(TOTAL_PDOS,PDOS.get_energies()))
         return overlap_orbitals, energy_overlap
     
     def calculate_orbital_interaction(self,gas_orbital_index, PDOS, site_indices\
-                         , atomic_orbitals, sum_density=False, sum_spin=True):
+                         , atomic_orbitals, BULK_PDOS, bulk_atom=0\
+                             ,sum_density=False, sum_spin=True):
         """ Calculate surface and gas orbital interactions
         
         Parameters
@@ -599,29 +606,34 @@ class PDOS_OVERLAP:
         orbital_interaction : numpy.ndarray
             Integrated atomic orbital interactions with the gas molecular orbitls
             
-        """         
-        gas_band_center = self.gas_band_centers[gas_orbital_index]
+        """
+        gas_indices = [i for i in range(self.gas_2_adsorbate.shape[0])\
+                       if self.gas_2_adsorbate[i][0] == gas_orbital_index]
+        adsorbate_indices = self.gas_2_adsorbate[gas_indices,1].astype('int')
+        overlap_orbitals, normalized_overlap = self._calculate_overlap(
+                                                   self.adsorbate_orbitals\
+                                                    , self.REFERENCE_PDOS\
+                                                    , self.site_indices\
+                                                    , sum_density=sum_density\
+                                                    , sum_spin=sum_spin\
+                                                        , normalize=True)
+        energy_overlap = np.array([normalized_overlap[adsorbate_indices\
+                                        ,overlap_orbitals.index(i)].sum()\
+                                              for i in atomic_orbitals])
+        bulk_bond_energy = BULK_PDOS.get_bond_energy(bulk_atom,atomic_orbitals\
+                                  , sum_density=sum_density, sum_spin=sum_spin)
+
+        bond_energy = PDOS.get_bond_energy(site_indices, atomic_orbitals\
+                                , sum_density=sum_density, sum_spin=sum_spin)
+            
+        #bulk_moment = BULK_PDOS.get_second_moment(bulk_atom, atomic_orbitals\
+        #                        , sum_density=sum_density, sum_spin=sum_spin)
         
-        orbitals, projected_density = PDOS.get_site_dos(site_indices\
-                                    , atomic_orbitals, sum_density=sum_density\
-                                    , sum_spin=sum_spin)
-        if len(projected_density.shape) == 1:
-            projected_density = [projected_density]
-        
-        if gas_band_center <= self.GAS_PDOS.e_fermi:
-            ndos_metal = len(PDOS.get_energies()[PDOS.get_energies()[...] > PDOS.e_fermi])
-            densities = np.zeros((len(orbitals),ndos_metal))
-            energies = PDOS.get_energies()[PDOS.get_energies()[...] > PDOS.e_fermi]
-            for count, density in enumerate(projected_density):
-                densities[count] = density[PDOS.get_energies()[...] > PDOS.e_fermi]  
-        else:
-            ndos_metal = len(PDOS.get_energies()[PDOS.get_energies()[...] < PDOS.e_fermi])
-            densities = np.zeros((len(orbitals),ndos_metal))
-            energies = PDOS.get_energies()[PDOS.get_energies()[...] < PDOS.e_fermi]
-            for count, density in enumerate(projected_density):
-                densities[count] = density[PDOS.get_energies()[...] < PDOS.e_fermi]
-        orbital_interaction = np.trapz(densities / np.abs(gas_band_center - energies)\
-                              ,energies, axis=1)
+        #moment = PDOS.get_second_moment(site_indices, atomic_orbitals\
+        #                        , sum_density=sum_density, sum_spin=sum_spin)
+            
+        orbital_interaction = (bulk_bond_energy - bond_energy) * energy_overlap
+        #orbital_interaction = (moment**0.5 - bulk_moment**0.5) * energy_overlap
         return orbital_interaction
     
     @staticmethod

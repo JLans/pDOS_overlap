@@ -143,11 +143,11 @@ We plot the projected density of the gas, adsorbate, and adsorption site.
 
  .. code-block:: none
 
-    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:884: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:899: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
       plt.show()
-    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:884: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:899: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
       plt.show()
-    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:884: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:899: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
       plt.show()
 
 
@@ -182,7 +182,7 @@ as a fraction of the fermi energy.
 
  .. code-block:: none
 
-    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:798: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:813: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
       plt.show()
     0.36169076485686813
 
@@ -287,7 +287,7 @@ that influence spectra. Gas orbitals 1,2, and 3 interact with the surface.
 
  .. code-block:: none
 
-    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:829: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:844: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
       plt.show()
 
 
@@ -309,21 +309,30 @@ s, pz, and dz2 orbitals. These are identified from first figure above
     #initialize a PDOS object for the nanoparticle
     nano_PDOS = VASP_DOS(nano_DOSCAR)
     #calculate orbital interactions
+    BULK_DOSCAR = os.path.join(example_path,'Pt_nano/Pt147/DOSCAR')
+    # VASP_DOS objects for both the gas (vacuum) and the adsorbate+surface system
+    GAS_PDOS = VASP_DOS(GAS_DOSCAR)
+    REFERENCE_PDOS = VASP_DOS(ADSORBATE_DOSCAR)
+    BULK_PDOS = VASP_DOS(BULK_DOSCAR)
     print('Interactions with 4sigma orbital')
     orbital_interaction = CO_overlap.calculate_orbital_interaction(gas_indices[0]\
                         , nano_PDOS, nano_indices[atom_types[...] == 'surface'][0]\
-                             , ['s','pz','dz2'], sum_density=False, sum_spin=True)
+                             , ['s','pz','dz2'], BULK_PDOS, bulk_atom=43\
+                                 , sum_density=False, sum_spin=True)
     print(orbital_interaction)
-    print('Interactions with 2pi orbital')
+    print('Interactions with 1pi orbital')
     orbital_interaction = CO_overlap.calculate_orbital_interaction(gas_indices[1]\
                         , nano_PDOS, nano_indices[atom_types[...] == 'surface'][0]\
-                             , ['dyz','dxz'], sum_density=False, sum_spin=True)
+                             , ['dyz','dxz'], BULK_PDOS, bulk_atom=43\
+                                 , sum_density=False, sum_spin=True)
     print(orbital_interaction)
     print('Interactions with 5sigma orbital')
     orbital_interaction = CO_overlap.calculate_orbital_interaction(gas_indices[2]\
                         , nano_PDOS, nano_indices[atom_types[...] == 'surface'][0]\
-                             , ['s','pz','dz2'], sum_density=False, sum_spin=True)
+                             , ['s','pz','dz2'], BULK_PDOS, bulk_atom=43\
+                                 , sum_density=False, sum_spin=True)
     print(orbital_interaction)
+
 
 
 
@@ -334,11 +343,11 @@ s, pz, and dz2 orbitals. These are identified from first figure above
  .. code-block:: none
 
     Interactions with 4sigma orbital
-    [0.1743923  0.03347815 0.25582473]
-    Interactions with 2pi orbital
-    [0.38170185 0.47014775]
+    [-0.71071628 -0.31695864 -0.15137432]
+    Interactions with 1pi orbital
+    [-0.30455614 -0.17911093]
     Interactions with 5sigma orbital
-    [1.09085004 0.13241574 1.30104949]
+    [-0.41681493 -0.11738777 -0.10148584]
 
 
 
@@ -346,7 +355,7 @@ s, pz, and dz2 orbitals. These are identified from first figure above
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  20.468 seconds)
+   **Total running time of the script:** ( 0 minutes  27.921 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_orbital_overlap_plot_orbital_overlap.py:

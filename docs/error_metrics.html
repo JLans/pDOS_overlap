@@ -162,6 +162,28 @@
   <div class="section" id="module-pdos_overlap.error_metrics">
 <span id="error-metrics"></span><h1>error_metrics<a class="headerlink" href="#module-pdos_overlap.error_metrics" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
+<dt id="pdos_overlap.error_metrics.get_continuous_wasserstein">
+<code class="sig-name descname">get_continuous_wasserstein</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y_true</span></em>, <em class="sig-param"><span class="n">y_pred</span></em>, <em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">individual</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/error_metrics.html#get_continuous_wasserstein"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.error_metrics.get_continuous_wasserstein" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the l2 wasserstein loss</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y_true</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – Ground truth (correct) values.</p></li>
+<li><p><strong>y_pred</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – Predicted values, as returned by a regression estimator.</p></li>
+<li><p><strong>individual</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If True, returns Wasserstein loss along last dimension.
+If False, returns average Wasserstein loss.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>loss</strong> – The degree to which the samples are correctly predicted.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="pdos_overlap.error_metrics.get_max_error">
 <code class="sig-name descname">get_max_error</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y_true</span></em>, <em class="sig-param"><span class="n">y_pred</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/error_metrics.html#get_max_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.error_metrics.get_max_error" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute maximum absolute error.</p>

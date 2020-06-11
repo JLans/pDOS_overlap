@@ -160,6 +160,7 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">cumtrapz</span>
 
 <div class="viewcode-block" id="get_r2"><a class="viewcode-back" href="../../error_metrics.html#pdos_overlap.error_metrics.get_r2">[docs]</a><span class="k">def</span> <span class="nf">get_r2</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;R2 or the error.</span>
@@ -247,6 +248,39 @@
     <span class="n">Tcum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">Pcum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">w_loss</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">y_true</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">Pcum</span><span class="o">-</span><span class="n">Tcum</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span><span class="o">**</span><span class="mf">0.5</span>
+    <span class="k">if</span> <span class="n">individual</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">w_loss</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">w_loss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span></div>
+    
+<div class="viewcode-block" id="get_continuous_wasserstein"><a class="viewcode-back" href="../../error_metrics.html#pdos_overlap.error_metrics.get_continuous_wasserstein">[docs]</a><span class="k">def</span> <span class="nf">get_continuous_wasserstein</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">individual</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute the l2 wasserstein loss</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y_true : numpy.ndarray or list</span>
+<span class="sd">        Ground truth (correct) values.</span>
+
+<span class="sd">    y_pred : numpy.ndarray or list</span>
+<span class="sd">        Predicted values, as returned by a regression estimator.</span>
+<span class="sd">        </span>
+<span class="sd">    individual : bool</span>
+<span class="sd">        If True, returns Wasserstein loss along last dimension.</span>
+<span class="sd">        If False, returns average Wasserstein loss.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    loss : float or numpy.ndarray</span>
+<span class="sd">        The degree to which the samples are correctly predicted.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">y_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">y_true</span><span class="p">))</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">y_pred</span><span class="p">))</span>
+    <span class="n">Tcum</span> <span class="o">=</span> <span class="n">cumtrapz</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">Pcum</span> <span class="o">=</span> <span class="n">cumtrapz</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">w_loss</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">y_true</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">Pcum</span><span class="o">-</span><span class="n">Tcum</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span><span class="o">**</span><span class="mf">0.5</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">y_true</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">Pcum</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">Tcum</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">individual</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">w_loss</span>
     <span class="k">else</span><span class="p">:</span>

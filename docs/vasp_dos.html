@@ -226,7 +226,7 @@
 <h2>The <code class="docutils literal notranslate"><span class="pre">get_band_center</span></code> function<a class="headerlink" href="#the-get-band-center-function" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pdos_overlap.vasp_dos.get_band_center">
-<code class="sig-name descname">get_band_center</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">energies</span></em>, <em class="sig-param"><span class="n">densities</span></em>, <em class="sig-param"><span class="n">max_energy</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/vasp_dos.html#get_band_center"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.vasp_dos.get_band_center" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_band_center</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">energies</span></em>, <em class="sig-param"><span class="n">densities</span></em>, <em class="sig-param"><span class="n">max_energy</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_energy</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/vasp_dos.html#get_band_center"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.vasp_dos.get_band_center" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get band center given energies and densities</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -234,6 +234,7 @@
 <li><p><strong>energies</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – discretized orbital energies</p></li>
 <li><p><strong>densities</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – projected state densities</p></li>
 <li><p><strong>max_energy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – cutoff energy (often the fermi energy)</p></li>
+<li><p><strong>min_energy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – cutoff energy (often the fermi energy)</p></li>
 <li><p><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – axis of densities on which to integrate</p></li>
 </ul>
 </dd>
@@ -318,7 +319,7 @@ site projected calculation was performed.</p></li>
 
 <dl class="py method">
 <dt id="pdos_overlap.vasp_dos.VASP_DOS.get_band_center">
-<code class="sig-name descname">get_band_center</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atom_indices</span></em>, <em class="sig-param"><span class="n">orbital_list</span></em>, <em class="sig-param"><span class="n">sum_density</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">max_energy</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/vasp_dos.html#VASP_DOS.get_band_center"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.vasp_dos.VASP_DOS.get_band_center" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_band_center</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atom_indices</span></em>, <em class="sig-param"><span class="n">orbital_list</span></em>, <em class="sig-param"><span class="n">sum_density</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">max_energy</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_energy</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/vasp_dos.html#VASP_DOS.get_band_center"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.vasp_dos.VASP_DOS.get_band_center" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get band center for a given atom and list of orbitals</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -327,12 +328,85 @@ site projected calculation was performed.</p></li>
 <li><p><strong>orbital_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>]</em>) – Which orbitals to return</p></li>
 <li><p><strong>sum_density</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – if a sub-level is provided instead of an orbital, sum_density
 indicates if the individual sub-level densities should be summed</p></li>
+<li><p><strong>sum_spin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – different spin densities are summed.</p></li>
 <li><p><strong>max_energy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – cutoff energy (often the fermi energy)</p></li>
+<li><p><strong>min_energy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – cutoff energy (often the fermi energy)</p></li>
 <li><p><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – axis of densities on which to integrate</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>band_center</strong> – center of the band(s) up to max_energy</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pdos_overlap.vasp_dos.VASP_DOS.get_band_width">
+<code class="sig-name descname">get_band_width</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atom_indices</span></em>, <em class="sig-param"><span class="n">orbital_list</span></em>, <em class="sig-param"><span class="n">sum_density</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">fraction</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/vasp_dos.html#VASP_DOS.get_band_width"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.vasp_dos.VASP_DOS.get_band_width" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get band width given energies and densities</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>atom_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>]</em>) – list of atom indices</p></li>
+<li><p><strong>orbital_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>]</em>) – Which orbitals to return</p></li>
+<li><p><strong>sum_density</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – if a sub-level is provided instead of an orbital, sum_density
+indicates if the individual sub-level densities should be summed</p></li>
+<li><p><strong>sum_spin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – different spin densities are summed.</p></li>
+<li><p><strong>fraction</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – maximum projected density considered part of a band</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>band_width</strong> – width of the band(s)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pdos_overlap.vasp_dos.VASP_DOS.get_bond_energy">
+<code class="sig-name descname">get_bond_energy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atom_indices</span></em>, <em class="sig-param"><span class="n">orbital_list</span></em>, <em class="sig-param"><span class="n">sum_density</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/vasp_dos.html#VASP_DOS.get_bond_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.vasp_dos.VASP_DOS.get_bond_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get second moment of the density projected onto atomic orbitals</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>atom_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>]</em>) – list of atom indices</p></li>
+<li><p><strong>orbital_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>]</em>) – Which orbitals to return</p></li>
+<li><p><strong>sum_density</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – if a sub-level is provided instead of an orbital, sum_density
+indicates if the individual sub-level densities should be summed</p></li>
+<li><p><strong>sum_spin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – different spin densities are summed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>bond_energy</strong> – bond enegy of the orbitals on atom_indices</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pdos_overlap.vasp_dos.VASP_DOS.get_center_width">
+<code class="sig-name descname">get_center_width</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">energy</span></em>, <em class="sig-param"><span class="n">atom_indices</span></em>, <em class="sig-param"><span class="n">orbital_list</span></em>, <em class="sig-param"><span class="n">sum_density</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/vasp_dos.html#VASP_DOS.get_center_width"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.vasp_dos.VASP_DOS.get_center_width" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get width between to band centers given a division</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>energy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – energy that divides band centers</p></li>
+<li><p><strong>atom_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>]</em>) – list of atom indices</p></li>
+<li><p><strong>orbital_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>]</em>) – Which orbitals to return</p></li>
+<li><p><strong>sum_density</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – if a sub-level is provided instead of an orbital, sum_density
+indicates if the individual sub-level densities should be summed</p></li>
+<li><p><strong>sum_spin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – different spin densities are summed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>center_width</strong> – width of two band centers separated by some ennergy</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
@@ -355,8 +429,34 @@ indicates if the individual sub-level densities should be summed</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt id="pdos_overlap.vasp_dos.VASP_DOS.get_filling">
+<code class="sig-name descname">get_filling</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atom_indices</span></em>, <em class="sig-param"><span class="n">orbital_list</span></em>, <em class="sig-param"><span class="n">sum_density</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">max_energy</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_energy</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/vasp_dos.html#VASP_DOS.get_filling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.vasp_dos.VASP_DOS.get_filling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get band center for a given atom and list of orbitals</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>atom_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>]</em>) – list of atom indices</p></li>
+<li><p><strong>orbital_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>]</em>) – Which orbitals to return</p></li>
+<li><p><strong>sum_density</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – if a sub-level is provided instead of an orbital, sum_density
+indicates if the individual sub-level densities should be summed</p></li>
+<li><p><strong>sum_spin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – different spin densities are summed.</p></li>
+<li><p><strong>max_energy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – cutoff energy (often the fermi energy)</p></li>
+<li><p><strong>min_energy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – cutoff energy (often the fermi energy)</p></li>
+<li><p><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – axis of densities on which to integrate</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>band_center</strong> – center of the band(s) up to max_energy</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pdos_overlap.vasp_dos.VASP_DOS.get_integrated_dos">
-<code class="sig-name descname">get_integrated_dos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/vasp_dos.html#VASP_DOS.get_integrated_dos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.vasp_dos.VASP_DOS.get_integrated_dos" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_integrated_dos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/vasp_dos.html#VASP_DOS.get_integrated_dos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.vasp_dos.VASP_DOS.get_integrated_dos" title="Permalink to this definition">¶</a></dt>
 <dd><p>method for obtaining total integrated density of states</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -369,8 +469,31 @@ indicates if the individual sub-level densities should be summed</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt id="pdos_overlap.vasp_dos.VASP_DOS.get_second_moment">
+<code class="sig-name descname">get_second_moment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atom_indices</span></em>, <em class="sig-param"><span class="n">orbital_list</span></em>, <em class="sig-param"><span class="n">sum_density</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/vasp_dos.html#VASP_DOS.get_second_moment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.vasp_dos.VASP_DOS.get_second_moment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get second moment of the density projected onto atomic orbitals</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>atom_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>]</em>) – list of atom indices</p></li>
+<li><p><strong>orbital_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>]</em>) – Which orbitals to return</p></li>
+<li><p><strong>sum_density</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – if a sub-level is provided instead of an orbital, sum_density
+indicates if the individual sub-level densities should be summed</p></li>
+<li><p><strong>sum_spin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – different spin densities are summed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>second_moment</strong> – width of two band centers separated by some ennergy</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pdos_overlap.vasp_dos.VASP_DOS.get_site_dos">
-<code class="sig-name descname">get_site_dos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atom_indices</span></em>, <em class="sig-param"><span class="n">orbital_list</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">sum_density</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/vasp_dos.html#VASP_DOS.get_site_dos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.vasp_dos.VASP_DOS.get_site_dos" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_site_dos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atom_indices</span></em>, <em class="sig-param"><span class="n">orbital_list</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">sum_density</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/vasp_dos.html#VASP_DOS.get_site_dos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.vasp_dos.VASP_DOS.get_site_dos" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an NDOSxM array with dos for the chosen atom and orbital(s).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -379,6 +502,7 @@ indicates if the individual sub-level densities should be summed</p></li>
 <li><p><strong>orbital_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>]</em>) – Which orbitals to return</p></li>
 <li><p><strong>sum_density</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – if a sub-level is provided instead of an orbital, sum_density
 indicates if the individual orbital densities should be summed</p></li>
+<li><p><strong>sum_spin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – different spin densities are summed.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -395,7 +519,7 @@ by both orbital and spin (if available)</p></li>
 
 <dl class="py method">
 <dt id="pdos_overlap.vasp_dos.VASP_DOS.get_total_dos">
-<code class="sig-name descname">get_total_dos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/vasp_dos.html#VASP_DOS.get_total_dos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.vasp_dos.VASP_DOS.get_total_dos" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_total_dos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/vasp_dos.html#VASP_DOS.get_total_dos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.vasp_dos.VASP_DOS.get_total_dos" title="Permalink to this definition">¶</a></dt>
 <dd><p>method for obtaining total density of states</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>

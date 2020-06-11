@@ -99,7 +99,37 @@ def get_band_center(energies, densities, max_energy=None, min_energy=None, axis=
         Integrated_Filling = np.trapz(densities[:,idx_start:idx_stop]\
                                       , energies[idx_start:idx_stop], axis=axis)
         band_center = Integrated_Energy/Integrated_Filling
+        if band_center.shape == (1,):
+            band_center = float(band_center)
         return band_center
+
+def get_bond_energy(energies, densities, e_fermi):
+        """ Get bond energy from density
+        
+        Parameters
+        ----------
+        energies : numpy.ndarray
+            discretized orbital energies
+        
+        densities : numpy.ndarray
+            projected state densities
+                    
+        Returns
+        -------
+        bond_energy : float or numpy.ndarray
+            total energy in the bonds   
+        """
+        if len(densities.shape) == 1:
+            densities = np.array([densities.copy()])
+        band_center = get_band_center(energies, densities)
+        if len(np.array(band_center).shape) == 1:
+            band_center = band_center.reshape(-1,1)
+        integrand = (energies - band_center) * densities
+        idx_stop = (np.abs(energies - e_fermi)).argmin()+1
+        bond_energy = 2 * np.trapz(integrand[:,0:idx_stop], energies[0:idx_stop])
+        if bond_energy.shape == (1,):
+            bond_energy = float(bond_energy)
+        return bond_energy
     
 def get_band_width(energies, densities, fraction=0):
         """ Get band width given energies and densities
@@ -155,6 +185,30 @@ def get_center_width(energies, densities, energy):
         center_upper = get_band_center(energies, densities, min_energy=energy)
         center_width = center_upper - center_lower
         return center_width
+
+def get_second_moment(energies, densities):
+        """ Get width between to band centers given a division
+        
+        Parameters
+        ----------
+        energies : numpy.ndarray
+            discretized orbital energies
+        
+        densities : numpy.ndarray
+            projected state densities
+                    
+        Returns
+        -------
+        second_moment : float or numpy.ndarray
+            second moment of the densities
+            
+        """
+        band_center = get_band_center(energies, densities)
+        if len(np.array(band_center).shape) == 1:
+            band_center = band_center.reshape(-1,1)
+        variance = (energies - band_center)**2 * densities
+        second_moment = np.trapz(variance, energies, axis=-1) / np.trapz(densities, energies)
+        return second_moment
     
 def get_filling(energies, densities, max_energy=None, min_energy=None, axis=-1):
         """ Get band center given energies and densities
@@ -178,8 +232,8 @@ def get_filling(energies, densities, max_energy=None, min_energy=None, axis=-1):
         
         Returns
         -------
-        band_center : float or numpy.ndarray
-            center of the band(s) up to max_energy
+        Integrated_Filling : float or numpy.ndarray
+            Total filling between min and max energy
             
         Notes
         -----
@@ -291,10 +345,6 @@ class VASP_DOS:
         """
         energies = self.get_energies()
         get_site_dos = self.get_site_dos
-        try:
-            len(atom_indices)
-        except:
-            atom_indices = [atom_indices]
         orbitals, density = get_site_dos(atom_indices,orbital_list\
                                          , sum_density=sum_density\
                                          , sum_spin=sum_spin)
@@ -337,10 +387,6 @@ class VASP_DOS:
         """
         energies = self.get_energies()
         get_site_dos = self.get_site_dos
-        try:
-            len(atom_indices)
-        except:
-            atom_indices = [atom_indices]
         orbitals, density = get_site_dos(atom_indices,orbital_list\
                                          , sum_density=sum_density\
                                          , sum_spin=sum_spin)
@@ -377,10 +423,6 @@ class VASP_DOS:
         """
         energies = self.get_energies()
         get_site_dos = self.get_site_dos
-        try:
-            len(atom_indices)
-        except:
-            atom_indices = [atom_indices]
         orbitals, densities = get_site_dos(atom_indices,orbital_list\
                                          , sum_density=sum_density\
                                          , sum_spin=sum_spin)
@@ -417,16 +459,81 @@ class VASP_DOS:
         """
         energies = self.get_energies()
         get_site_dos = self.get_site_dos
-        try:
-            len(atom_indices)
-        except:
-            atom_indices = [atom_indices]
         orbitals, densities = get_site_dos(atom_indices,orbital_list\
                                          , sum_density=sum_density\
                                          , sum_spin=sum_spin)
         
         center_width = get_center_width(energies, densities, energy)
         return center_width
+    
+    def get_second_moment(self, atom_indices, orbital_list, sum_density=False\
+                       , sum_spin=True):
+        """ Get second moment of the density projected onto atomic orbitals
+        
+        Parameters
+        ----------            
+        atom_indices : list[int]
+            list of atom indices
+            
+        orbital_list : list[str]
+            Which orbitals to return
+            
+        sum_density : bool
+            if a sub-level is provided instead of an orbital, sum_density
+            indicates if the individual sub-level densities should be summed
+            
+        sum_spin : bool
+            different spin densities are summed.
+        
+        Returns
+        -------
+        second_moment : float or numpy.ndarray
+            width of two band centers separated by some ennergy
+            
+        """
+        energies = self.get_energies()
+        get_site_dos = self.get_site_dos
+        orbitals, densities = get_site_dos(atom_indices,orbital_list\
+                                         , sum_density=sum_density\
+                                         , sum_spin=sum_spin)
+        
+        second_moment = get_second_moment(energies, densities)
+        return second_moment
+    
+    def get_bond_energy(self, atom_indices, orbital_list, sum_density=False\
+                       , sum_spin=True):
+        """ Get second moment of the density projected onto atomic orbitals
+        
+        Parameters
+        ----------            
+        atom_indices : list[int]
+            list of atom indices
+            
+        orbital_list : list[str]
+            Which orbitals to return
+            
+        sum_density : bool
+            if a sub-level is provided instead of an orbital, sum_density
+            indicates if the individual sub-level densities should be summed
+            
+        sum_spin : bool
+            different spin densities are summed.
+        
+        Returns
+        -------
+        bond_energy : float or numpy.ndarray
+            bond enegy of the orbitals on atom_indices
+            
+        """
+        energies = self.get_energies()
+        get_site_dos = self.get_site_dos
+        e_fermi = self.e_fermi
+        orbitals, densities = get_site_dos(atom_indices,orbital_list\
+                                         , sum_density=sum_density\
+                                         , sum_spin=sum_spin)
+        
+        second_moment = get_bond_energy(energies, densities, e_fermi)
+        return second_moment
         
     def get_energies(self):
         """ method for obtaining energy levels

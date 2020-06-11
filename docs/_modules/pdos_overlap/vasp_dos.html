@@ -210,7 +210,7 @@
     <span class="n">CONTCAR_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="s1">&#39;CONTCAR&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">DOSCAR_directories</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">DOSCAR_files</span><span class="p">,</span> <span class="n">CONTCAR_files</span></div>
 
-<div class="viewcode-block" id="get_band_center"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.get_band_center">[docs]</a><span class="k">def</span> <span class="nf">get_band_center</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">,</span> <span class="n">max_energy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="get_band_center"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.get_band_center">[docs]</a><span class="k">def</span> <span class="nf">get_band_center</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">,</span> <span class="n">max_energy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_energy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get band center given energies and densities</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -222,6 +222,9 @@
 <span class="sd">            projected state densities</span>
 <span class="sd">            </span>
 <span class="sd">        max_energy : float</span>
+<span class="sd">            cutoff energy (often the fermi energy)</span>
+<span class="sd">            </span>
+<span class="sd">        min_energy : float</span>
 <span class="sd">            cutoff energy (often the fermi energy)</span>
 <span class="sd">            </span>
 <span class="sd">        axis : int</span>
@@ -244,10 +247,171 @@
             <span class="n">idx_stop</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">energies</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">idx_stop</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">energies</span><span class="o">-</span><span class="n">max_energy</span><span class="p">))</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span><span class="o">+</span><span class="mi">1</span>
-        <span class="n">Integrated_Energy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">densities</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="n">idx_stop</span><span class="p">]</span><span class="o">*</span><span class="n">energies</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">idx_stop</span><span class="p">],</span> <span class="n">energies</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">idx_stop</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
-        <span class="n">Integrated_Filling</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">densities</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="n">idx_stop</span><span class="p">],</span> <span class="n">energies</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">idx_stop</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">min_energy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">idx_start</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">idx_start</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">energies</span><span class="o">-</span><span class="n">min_energy</span><span class="p">))</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
+        <span class="n">Integrated_Energy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">densities</span><span class="p">[:,</span><span class="n">idx_start</span><span class="p">:</span><span class="n">idx_stop</span><span class="p">]</span>\
+                                     <span class="o">*</span> <span class="n">energies</span><span class="p">[</span><span class="n">idx_start</span><span class="p">:</span><span class="n">idx_stop</span><span class="p">]</span>\
+                                     <span class="p">,</span> <span class="n">energies</span><span class="p">[</span><span class="n">idx_start</span><span class="p">:</span><span class="n">idx_stop</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+        <span class="n">Integrated_Filling</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">densities</span><span class="p">[:,</span><span class="n">idx_start</span><span class="p">:</span><span class="n">idx_stop</span><span class="p">]</span>\
+                                      <span class="p">,</span> <span class="n">energies</span><span class="p">[</span><span class="n">idx_start</span><span class="p">:</span><span class="n">idx_stop</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
         <span class="n">band_center</span> <span class="o">=</span> <span class="n">Integrated_Energy</span><span class="o">/</span><span class="n">Integrated_Filling</span>
+        <span class="k">if</span> <span class="n">band_center</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,):</span>
+            <span class="n">band_center</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">band_center</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">band_center</span></div>
+
+<span class="k">def</span> <span class="nf">get_bond_energy</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">,</span> <span class="n">e_fermi</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get bond energy from density</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        energies : numpy.ndarray</span>
+<span class="sd">            discretized orbital energies</span>
+<span class="sd">        </span>
+<span class="sd">        densities : numpy.ndarray</span>
+<span class="sd">            projected state densities</span>
+<span class="sd">                    </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bond_energy : float or numpy.ndarray</span>
+<span class="sd">            total energy in the bonds   </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">densities</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">densities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">densities</span><span class="o">.</span><span class="n">copy</span><span class="p">()])</span>
+        <span class="n">band_center</span> <span class="o">=</span> <span class="n">get_band_center</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">band_center</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">band_center</span> <span class="o">=</span> <span class="n">band_center</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">integrand</span> <span class="o">=</span> <span class="p">(</span><span class="n">energies</span> <span class="o">-</span> <span class="n">band_center</span><span class="p">)</span> <span class="o">*</span> <span class="n">densities</span>
+        <span class="n">idx_stop</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">energies</span> <span class="o">-</span> <span class="n">e_fermi</span><span class="p">))</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span><span class="o">+</span><span class="mi">1</span>
+        <span class="n">bond_energy</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">integrand</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="n">idx_stop</span><span class="p">],</span> <span class="n">energies</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">idx_stop</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">bond_energy</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,):</span>
+            <span class="n">bond_energy</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">bond_energy</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bond_energy</span>
+    
+<span class="k">def</span> <span class="nf">get_band_width</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">,</span> <span class="n">fraction</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get band width given energies and densities</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        energies : numpy.ndarray</span>
+<span class="sd">            discretized orbital energies</span>
+<span class="sd">        </span>
+<span class="sd">        densities : numpy.ndarray</span>
+<span class="sd">            projected state densities</span>
+<span class="sd">            </span>
+<span class="sd">        fraction : float</span>
+<span class="sd">            maximum projected density considered part of a band</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        band_width : float or numpy.ndarray</span>
+<span class="sd">            width of the band(s)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">densities</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">densities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">densities</span><span class="o">.</span><span class="n">copy</span><span class="p">()])</span>
+        <span class="n">index_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">densities</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">min_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">densities</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">max_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">densities</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="n">density</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">densities</span><span class="p">):</span>
+            <span class="n">min_index</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">index_values</span><span class="p">[</span><span class="n">density</span> <span class="o">&gt;</span> <span class="n">fraction</span> <span class="o">*</span> <span class="n">density</span><span class="o">.</span><span class="n">max</span><span class="p">()])</span>
+            <span class="n">max_index</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">index_values</span><span class="p">[</span><span class="n">density</span> <span class="o">&gt;</span> <span class="n">fraction</span> <span class="o">*</span> <span class="n">density</span><span class="o">.</span><span class="n">max</span><span class="p">()])</span>
+        <span class="n">band_width</span> <span class="o">=</span> <span class="n">energies</span><span class="p">[</span><span class="n">max_index</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)]</span> <span class="o">-</span> <span class="n">energies</span><span class="p">[</span><span class="n">min_index</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">band_width</span>
+    
+<span class="k">def</span> <span class="nf">get_center_width</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">,</span> <span class="n">energy</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get width between to band centers given a division</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        energies : numpy.ndarray</span>
+<span class="sd">            discretized orbital energies</span>
+<span class="sd">        </span>
+<span class="sd">        densities : numpy.ndarray</span>
+<span class="sd">            projected state densities</span>
+<span class="sd">            </span>
+<span class="sd">        energy : int</span>
+<span class="sd">            energy that divides band centers</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        center_width : float or numpy.ndarray</span>
+<span class="sd">            width of two band centers separated by some ennergy</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">center_lower</span> <span class="o">=</span> <span class="n">get_band_center</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">,</span> <span class="n">max_energy</span><span class="o">=</span><span class="n">energy</span><span class="p">)</span>
+        <span class="n">center_upper</span> <span class="o">=</span> <span class="n">get_band_center</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">,</span> <span class="n">min_energy</span><span class="o">=</span><span class="n">energy</span><span class="p">)</span>
+        <span class="n">center_width</span> <span class="o">=</span> <span class="n">center_upper</span> <span class="o">-</span> <span class="n">center_lower</span>
+        <span class="k">return</span> <span class="n">center_width</span>
+
+<span class="k">def</span> <span class="nf">get_second_moment</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get width between to band centers given a division</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        energies : numpy.ndarray</span>
+<span class="sd">            discretized orbital energies</span>
+<span class="sd">        </span>
+<span class="sd">        densities : numpy.ndarray</span>
+<span class="sd">            projected state densities</span>
+<span class="sd">                    </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        second_moment : float or numpy.ndarray</span>
+<span class="sd">            second moment of the densities</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">band_center</span> <span class="o">=</span> <span class="n">get_band_center</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">band_center</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">band_center</span> <span class="o">=</span> <span class="n">band_center</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">variance</span> <span class="o">=</span> <span class="p">(</span><span class="n">energies</span> <span class="o">-</span> <span class="n">band_center</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">densities</span>
+        <span class="n">second_moment</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">variance</span><span class="p">,</span> <span class="n">energies</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">densities</span><span class="p">,</span> <span class="n">energies</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">second_moment</span>
+    
+<span class="k">def</span> <span class="nf">get_filling</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">,</span> <span class="n">max_energy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_energy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get band center given energies and densities</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        energies : numpy.ndarray</span>
+<span class="sd">            discretized orbital energies</span>
+<span class="sd">        </span>
+<span class="sd">        densities : numpy.ndarray</span>
+<span class="sd">            projected state densities</span>
+<span class="sd">            </span>
+<span class="sd">        max_energy : float</span>
+<span class="sd">            cutoff energy (often the fermi energy)</span>
+<span class="sd">            </span>
+<span class="sd">        min_energy : float</span>
+<span class="sd">            cutoff energy (often the fermi energy)</span>
+<span class="sd">            </span>
+<span class="sd">        axis : int</span>
+<span class="sd">            axis of densities on which to integrate</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Integrated_Filling : float or numpy.ndarray</span>
+<span class="sd">            Total filling between min and max energy</span>
+<span class="sd">            </span>
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        trapezoidal rule is better for narrow gaussian peaks and for &quot;rough&quot; functions</span>
+<span class="sd">        https://doi.org/10.1016/j.chemolab.2018.06.001</span>
+<span class="sd">        http://emis.icm.edu.pl/journals/JIPAM/v3n4/031_02.html</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">densities</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">densities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">densities</span><span class="o">.</span><span class="n">copy</span><span class="p">()])</span>
+        <span class="k">if</span> <span class="n">max_energy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">idx_stop</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">energies</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">idx_stop</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">energies</span><span class="o">-</span><span class="n">max_energy</span><span class="p">))</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span><span class="o">+</span><span class="mi">1</span>
+        <span class="k">if</span> <span class="n">min_energy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">idx_start</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">idx_start</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">energies</span><span class="o">-</span><span class="n">min_energy</span><span class="p">))</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
+        <span class="n">Integrated_Filling</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">densities</span><span class="p">[:,</span><span class="n">idx_start</span><span class="p">:</span><span class="n">idx_stop</span><span class="p">]</span>\
+                                      <span class="p">,</span> <span class="n">energies</span><span class="p">[</span><span class="n">idx_start</span><span class="p">:</span><span class="n">idx_stop</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Integrated_Filling</span>
 
 <div class="viewcode-block" id="VASP_DOS"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS">[docs]</a><span class="k">class</span> <span class="nc">VASP_DOS</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Class for extracting projected density of states from VASP&quot;&quot;&quot;</span>
@@ -304,7 +468,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">m_projected</span> <span class="o">=</span> <span class="n">m_projected</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">orbital_dictionary</span> <span class="o">=</span> <span class="n">orbital_dictionary</span>
         
-<div class="viewcode-block" id="VASP_DOS.get_band_center"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.get_band_center">[docs]</a>    <span class="k">def</span> <span class="nf">get_band_center</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom_indices</span><span class="p">,</span> <span class="n">orbital_list</span><span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">max_energy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="VASP_DOS.get_band_center"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.get_band_center">[docs]</a>    <span class="k">def</span> <span class="nf">get_band_center</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom_indices</span><span class="p">,</span> <span class="n">orbital_list</span><span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span>\
+                        <span class="p">,</span> <span class="n">max_energy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_energy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get band center for a given atom and list of orbitals</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -319,7 +484,13 @@
 <span class="sd">            if a sub-level is provided instead of an orbital, sum_density</span>
 <span class="sd">            indicates if the individual sub-level densities should be summed</span>
 <span class="sd">            </span>
+<span class="sd">        sum_spin : bool</span>
+<span class="sd">            different spin densities are summed.</span>
+<span class="sd">            </span>
 <span class="sd">        max_energy : float</span>
+<span class="sd">            cutoff energy (often the fermi energy)</span>
+<span class="sd">        </span>
+<span class="sd">        min_energy : float</span>
 <span class="sd">            cutoff energy (often the fermi energy)</span>
 <span class="sd">            </span>
 <span class="sd">        axis : int</span>
@@ -332,15 +503,195 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">energies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_energies</span><span class="p">()</span>
         <span class="n">get_site_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_site_dos</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="nb">len</span><span class="p">(</span><span class="n">atom_indices</span><span class="p">)</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="n">atom_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom_indices</span><span class="p">]</span>
         <span class="n">orbitals</span><span class="p">,</span> <span class="n">density</span> <span class="o">=</span> <span class="n">get_site_dos</span><span class="p">(</span><span class="n">atom_indices</span><span class="p">,</span><span class="n">orbital_list</span>\
-                                         <span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="n">sum_density</span><span class="p">)</span>
+                                         <span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="n">sum_density</span>\
+                                         <span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="n">sum_spin</span><span class="p">)</span>
         <span class="n">band_center</span> <span class="o">=</span> <span class="n">get_band_center</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">density</span><span class="p">,</span> <span class="n">max_energy</span><span class="o">=</span><span class="n">max_energy</span>\
-                                      <span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+                                      <span class="p">,</span> <span class="n">min_energy</span> <span class="o">=</span> <span class="n">min_energy</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">band_center</span></div>
+    
+<div class="viewcode-block" id="VASP_DOS.get_filling"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.get_filling">[docs]</a>    <span class="k">def</span> <span class="nf">get_filling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom_indices</span><span class="p">,</span> <span class="n">orbital_list</span><span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span>\
+                        <span class="p">,</span> <span class="n">max_energy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_energy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get band center for a given atom and list of orbitals</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        atom_indices : list[int]</span>
+<span class="sd">            list of atom indices</span>
+<span class="sd">            </span>
+<span class="sd">        orbital_list : list[str]</span>
+<span class="sd">            Which orbitals to return</span>
+<span class="sd">            </span>
+<span class="sd">        sum_density : bool</span>
+<span class="sd">            if a sub-level is provided instead of an orbital, sum_density</span>
+<span class="sd">            indicates if the individual sub-level densities should be summed</span>
+<span class="sd">            </span>
+<span class="sd">        sum_spin : bool</span>
+<span class="sd">            different spin densities are summed.</span>
+<span class="sd">            </span>
+<span class="sd">        max_energy : float</span>
+<span class="sd">            cutoff energy (often the fermi energy)</span>
+<span class="sd">        </span>
+<span class="sd">        min_energy : float</span>
+<span class="sd">            cutoff energy (often the fermi energy)</span>
+<span class="sd">            </span>
+<span class="sd">        axis : int</span>
+<span class="sd">            axis of densities on which to integrate</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        band_center : float or numpy.ndarray</span>
+<span class="sd">            center of the band(s) up to max_energy</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">energies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_energies</span><span class="p">()</span>
+        <span class="n">get_site_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_site_dos</span>
+        <span class="n">orbitals</span><span class="p">,</span> <span class="n">density</span> <span class="o">=</span> <span class="n">get_site_dos</span><span class="p">(</span><span class="n">atom_indices</span><span class="p">,</span><span class="n">orbital_list</span>\
+                                         <span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="n">sum_density</span>\
+                                         <span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="n">sum_spin</span><span class="p">)</span>
+        <span class="n">filling</span> <span class="o">=</span> <span class="n">get_filling</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">density</span><span class="p">,</span> <span class="n">max_energy</span><span class="o">=</span><span class="n">max_energy</span>\
+                                      <span class="p">,</span> <span class="n">min_energy</span> <span class="o">=</span> <span class="n">min_energy</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">filling</span></div>
+
+<div class="viewcode-block" id="VASP_DOS.get_band_width"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.get_band_width">[docs]</a>    <span class="k">def</span> <span class="nf">get_band_width</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom_indices</span><span class="p">,</span> <span class="n">orbital_list</span><span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="kc">False</span>\
+                       <span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fraction</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get band width given energies and densities</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        atom_indices : list[int]</span>
+<span class="sd">            list of atom indices</span>
+<span class="sd">            </span>
+<span class="sd">        orbital_list : list[str]</span>
+<span class="sd">            Which orbitals to return</span>
+<span class="sd">            </span>
+<span class="sd">        sum_density : bool</span>
+<span class="sd">            if a sub-level is provided instead of an orbital, sum_density</span>
+<span class="sd">            indicates if the individual sub-level densities should be summed</span>
+<span class="sd">            </span>
+<span class="sd">        sum_spin : bool</span>
+<span class="sd">            different spin densities are summed.</span>
+<span class="sd">            </span>
+<span class="sd">        fraction : float</span>
+<span class="sd">            maximum projected density considered part of a band</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        band_width : float or numpy.ndarray</span>
+<span class="sd">            width of the band(s)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">energies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_energies</span><span class="p">()</span>
+        <span class="n">get_site_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_site_dos</span>
+        <span class="n">orbitals</span><span class="p">,</span> <span class="n">densities</span> <span class="o">=</span> <span class="n">get_site_dos</span><span class="p">(</span><span class="n">atom_indices</span><span class="p">,</span><span class="n">orbital_list</span>\
+                                         <span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="n">sum_density</span>\
+                                         <span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="n">sum_spin</span><span class="p">)</span>
+        <span class="n">band_width</span> <span class="o">=</span> <span class="n">get_band_width</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">,</span> <span class="n">fraction</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">band_width</span></div>
+    
+<div class="viewcode-block" id="VASP_DOS.get_center_width"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.get_center_width">[docs]</a>    <span class="k">def</span> <span class="nf">get_center_width</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">atom_indices</span><span class="p">,</span> <span class="n">orbital_list</span><span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="kc">False</span>\
+                       <span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get width between to band centers given a division</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------            </span>
+<span class="sd">        energy : int</span>
+<span class="sd">            energy that divides band centers</span>
+<span class="sd">            </span>
+<span class="sd">        atom_indices : list[int]</span>
+<span class="sd">            list of atom indices</span>
+<span class="sd">            </span>
+<span class="sd">        orbital_list : list[str]</span>
+<span class="sd">            Which orbitals to return</span>
+<span class="sd">            </span>
+<span class="sd">        sum_density : bool</span>
+<span class="sd">            if a sub-level is provided instead of an orbital, sum_density</span>
+<span class="sd">            indicates if the individual sub-level densities should be summed</span>
+<span class="sd">            </span>
+<span class="sd">        sum_spin : bool</span>
+<span class="sd">            different spin densities are summed.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        center_width : float or numpy.ndarray</span>
+<span class="sd">            width of two band centers separated by some ennergy</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">energies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_energies</span><span class="p">()</span>
+        <span class="n">get_site_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_site_dos</span>
+        <span class="n">orbitals</span><span class="p">,</span> <span class="n">densities</span> <span class="o">=</span> <span class="n">get_site_dos</span><span class="p">(</span><span class="n">atom_indices</span><span class="p">,</span><span class="n">orbital_list</span>\
+                                         <span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="n">sum_density</span>\
+                                         <span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="n">sum_spin</span><span class="p">)</span>
+        
+        <span class="n">center_width</span> <span class="o">=</span> <span class="n">get_center_width</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">,</span> <span class="n">energy</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">center_width</span></div>
+    
+<div class="viewcode-block" id="VASP_DOS.get_second_moment"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.get_second_moment">[docs]</a>    <span class="k">def</span> <span class="nf">get_second_moment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom_indices</span><span class="p">,</span> <span class="n">orbital_list</span><span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="kc">False</span>\
+                       <span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get second moment of the density projected onto atomic orbitals</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------            </span>
+<span class="sd">        atom_indices : list[int]</span>
+<span class="sd">            list of atom indices</span>
+<span class="sd">            </span>
+<span class="sd">        orbital_list : list[str]</span>
+<span class="sd">            Which orbitals to return</span>
+<span class="sd">            </span>
+<span class="sd">        sum_density : bool</span>
+<span class="sd">            if a sub-level is provided instead of an orbital, sum_density</span>
+<span class="sd">            indicates if the individual sub-level densities should be summed</span>
+<span class="sd">            </span>
+<span class="sd">        sum_spin : bool</span>
+<span class="sd">            different spin densities are summed.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        second_moment : float or numpy.ndarray</span>
+<span class="sd">            width of two band centers separated by some ennergy</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">energies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_energies</span><span class="p">()</span>
+        <span class="n">get_site_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_site_dos</span>
+        <span class="n">orbitals</span><span class="p">,</span> <span class="n">densities</span> <span class="o">=</span> <span class="n">get_site_dos</span><span class="p">(</span><span class="n">atom_indices</span><span class="p">,</span><span class="n">orbital_list</span>\
+                                         <span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="n">sum_density</span>\
+                                         <span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="n">sum_spin</span><span class="p">)</span>
+        
+        <span class="n">second_moment</span> <span class="o">=</span> <span class="n">get_second_moment</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">second_moment</span></div>
+    
+<div class="viewcode-block" id="VASP_DOS.get_bond_energy"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.get_bond_energy">[docs]</a>    <span class="k">def</span> <span class="nf">get_bond_energy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom_indices</span><span class="p">,</span> <span class="n">orbital_list</span><span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="kc">False</span>\
+                       <span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get second moment of the density projected onto atomic orbitals</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------            </span>
+<span class="sd">        atom_indices : list[int]</span>
+<span class="sd">            list of atom indices</span>
+<span class="sd">            </span>
+<span class="sd">        orbital_list : list[str]</span>
+<span class="sd">            Which orbitals to return</span>
+<span class="sd">            </span>
+<span class="sd">        sum_density : bool</span>
+<span class="sd">            if a sub-level is provided instead of an orbital, sum_density</span>
+<span class="sd">            indicates if the individual sub-level densities should be summed</span>
+<span class="sd">            </span>
+<span class="sd">        sum_spin : bool</span>
+<span class="sd">            different spin densities are summed.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bond_energy : float or numpy.ndarray</span>
+<span class="sd">            bond enegy of the orbitals on atom_indices</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">energies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_energies</span><span class="p">()</span>
+        <span class="n">get_site_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_site_dos</span>
+        <span class="n">e_fermi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">e_fermi</span>
+        <span class="n">orbitals</span><span class="p">,</span> <span class="n">densities</span> <span class="o">=</span> <span class="n">get_site_dos</span><span class="p">(</span><span class="n">atom_indices</span><span class="p">,</span><span class="n">orbital_list</span>\
+                                         <span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="n">sum_density</span>\
+                                         <span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="n">sum_spin</span><span class="p">)</span>
+        
+        <span class="n">second_moment</span> <span class="o">=</span> <span class="n">get_bond_energy</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">,</span> <span class="n">e_fermi</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">second_moment</span></div>
         
 <div class="viewcode-block" id="VASP_DOS.get_energies"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.get_energies">[docs]</a>    <span class="k">def</span> <span class="nf">get_energies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; method for obtaining energy levels</span>
@@ -353,7 +704,7 @@
         <span class="n">energies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">energies</span></div>
     
-<div class="viewcode-block" id="VASP_DOS.get_total_dos"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.get_total_dos">[docs]</a>    <span class="k">def</span> <span class="nf">get_total_dos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="VASP_DOS.get_total_dos"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.get_total_dos">[docs]</a>    <span class="k">def</span> <span class="nf">get_total_dos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; method for obtaining total density of states</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
@@ -371,7 +722,7 @@
                 
         <span class="k">return</span> <span class="n">total_dos</span></div>
 
-<div class="viewcode-block" id="VASP_DOS.get_integrated_dos"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.get_integrated_dos">[docs]</a>    <span class="k">def</span> <span class="nf">get_integrated_dos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="VASP_DOS.get_integrated_dos"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.get_integrated_dos">[docs]</a>    <span class="k">def</span> <span class="nf">get_integrated_dos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; method for obtaining total integrated density of states</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
@@ -385,10 +736,10 @@
             <span class="k">if</span> <span class="n">sum_spin</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
                 <span class="n">integrated_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">integrated_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">integrated_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="p">:]</span>
         <span class="k">return</span> <span class="n">integrated_dos</span></div>
         
-<div class="viewcode-block" id="VASP_DOS.get_site_dos"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.get_site_dos">[docs]</a>    <span class="k">def</span> <span class="nf">get_site_dos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom_indices</span><span class="p">,</span> <span class="n">orbital_list</span><span class="o">=</span><span class="p">[],</span> <span class="n">sum_density</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="VASP_DOS.get_site_dos"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.get_site_dos">[docs]</a>    <span class="k">def</span> <span class="nf">get_site_dos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom_indices</span><span class="p">,</span> <span class="n">orbital_list</span><span class="o">=</span><span class="p">[],</span> <span class="n">sum_density</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return an NDOSxM array with dos for the chosen atom and orbital(s).</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -402,6 +753,9 @@
 <span class="sd">        sum_density : bool</span>
 <span class="sd">            if a sub-level is provided instead of an orbital, sum_density</span>
 <span class="sd">            indicates if the individual orbital densities should be summed</span>
+<span class="sd">            </span>
+<span class="sd">        sum_spin : bool</span>
+<span class="sd">            different spin densities are summed.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
