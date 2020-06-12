@@ -573,7 +573,8 @@ class PDOS_OVERLAP:
     
     def calculate_orbital_interaction(self,gas_orbital_index, PDOS, site_indices\
                          , atomic_orbitals, BULK_PDOS, bulk_atom=0\
-                             ,sum_density=False, sum_spin=True):
+                             , sum_density=False, sum_spin=True\
+                             , method='orbital_bond_energy'):
         """ Calculate surface and gas orbital interactions
         
         Parameters
@@ -604,7 +605,7 @@ class PDOS_OVERLAP:
         Returns
         -------
         orbital_interaction : numpy.ndarray
-            Integrated atomic orbital interactions with the gas molecular orbitls
+            Metal atomic orbital interactions with the gas molecular orbitals
             
         """
         gas_indices = [i for i in range(self.gas_2_adsorbate.shape[0])\
@@ -620,20 +621,19 @@ class PDOS_OVERLAP:
         energy_overlap = np.array([normalized_overlap[adsorbate_indices\
                                         ,overlap_orbitals.index(i)].sum()\
                                               for i in atomic_orbitals])
-        bulk_bond_energy = BULK_PDOS.get_bond_energy(bulk_atom,atomic_orbitals\
+        if method == 'orbital_bond_energy':
+            bulk_bond_energy = BULK_PDOS.get_bond_energy(bulk_atom,atomic_orbitals\
                                   , sum_density=sum_density, sum_spin=sum_spin)
-
-        bond_energy = PDOS.get_bond_energy(site_indices, atomic_orbitals\
+            bond_energy = PDOS.get_bond_energy(site_indices, atomic_orbitals\
                                 , sum_density=sum_density, sum_spin=sum_spin)
-            
-        #bulk_moment = BULK_PDOS.get_second_moment(bulk_atom, atomic_orbitals\
-        #                        , sum_density=sum_density, sum_spin=sum_spin)
+            orbital_interaction = (bulk_bond_energy - bond_energy) * energy_overlap
+        elif method == 'band_width':
+            bulk_moment = BULK_PDOS.get_second_moment(bulk_atom, atomic_orbitals\
+                                , sum_density=sum_density, sum_spin=sum_spin)
         
-        #moment = PDOS.get_second_moment(site_indices, atomic_orbitals\
-        #                        , sum_density=sum_density, sum_spin=sum_spin)
-            
-        orbital_interaction = (bulk_bond_energy - bond_energy) * energy_overlap
-        #orbital_interaction = (moment**0.5 - bulk_moment**0.5) * energy_overlap
+            moment = PDOS.get_second_moment(site_indices, atomic_orbitals\
+                                , sum_density=sum_density, sum_spin=sum_spin)
+            orbital_interaction = (moment**0.5 - bulk_moment**0.5) * energy_overlap
         return orbital_interaction
     
     @staticmethod

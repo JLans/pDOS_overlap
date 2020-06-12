@@ -80,7 +80,7 @@ for count, color in enumerate(colors):
 plt.legend([r'${\epsilon}_{s}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
 ,r'${\epsilon}_{p}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])
 ,r'${\epsilon}_{d}$=%.2fGCN + %.2f eV' %(Efit[2][0],Efit[2][1])]
-,loc=3,prop={'size':14},frameon=False)
+,loc='best',prop={'size':14},frameon=False)
 plt.xlabel('Generalized coordination number (GCN)')
 plt.ylabel('Band center (${\epsilon}$ - ${\epsilon}_{fermi}$) [eV]')
 plt.show()
@@ -97,7 +97,7 @@ for count, color in enumerate(colors):
 plt.legend([r'${\epsilon}_{s}^{*}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
 ,r'${\epsilon}_{p}^{*}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])
 ,r'${\epsilon}_{d}^{*}$=%.2fGCN + %.2f eV' %(Efit[2][0],Efit[2][1])]
-,loc=3,prop={'size':14},frameon=False)
+,loc='best',prop={'size':14},frameon=False)
 plt.xlabel('Generalized coordination number (GCN)')
 plt.ylabel('Occupied band center (${\epsilon}^{*}$ - ${\epsilon}_{fermi}$) [eV]')
 plt.show()
@@ -114,7 +114,7 @@ for count, color in enumerate(colors):
 plt.legend([r'${\epsilon}_{s}^{un}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
 ,r'${\epsilon}_{p}^{un}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])
 ,r'${\epsilon}_{d}^{un}$=%.2fGCN + %.2f eV' %(Efit[2][0],Efit[2][1])]
-,loc=3,prop={'size':14},frameon=False)
+,loc='best',prop={'size':14},frameon=False)
 plt.xlabel('Generalized coordination number (GCN)')
 plt.ylabel('Unoccupied band center (${\epsilon}^{un}$ - ${\epsilon}_{fermi}$) [eV]')
 plt.show()
@@ -131,7 +131,7 @@ for count, color in enumerate(colors):
 plt.legend([r'${\epsilon}_{s}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
 ,r'${\epsilon}_{p}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])
 ,r'${\epsilon}_{d}$=%.2fGCN + %.2f eV' %(Efit[2][0],Efit[2][1])]
-,loc=3,prop={'size':14},frameon=False)
+,loc='best',prop={'size':14},frameon=False)
 plt.xlabel('Generalized coordination number (GCN)')
 plt.ylabel('Band width (${\epsilon}$) [eV]')
 plt.show()
@@ -153,7 +153,7 @@ for count, color in enumerate(colors):
 plt.legend([r'${\epsilon}_{s}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
 ,r'${\epsilon}_{p}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])
 ,r'${\epsilon}_{d}$=%.2fGCN + %.2f eV' %(Efit[2][0],Efit[2][1])]
-,loc=3,prop={'size':14},frameon=False)
+,loc='best',prop={'size':14},frameon=False)
 plt.xlabel('Generalized coordination number (GCN)')
 plt.ylabel('Band center (${\epsilon}$ - ${\epsilon}_{fermi}$) [eV]')
 plt.show()
@@ -173,7 +173,7 @@ for count, color in enumerate(colors):
 plt.legend([r'${filling}_{s}$=%.2fGCN + %.2f states' %(Efit[0][0],Efit[0][1])
 ,r'${filling}_{p}$=%.2fGCN + %.2f states' %(Efit[1][0],Efit[1][1])
 ,r'${filling}_{d}$=%.2fGCN + %.2f states' %(Efit[2][0],Efit[2][1])]
-,loc=3,prop={'size':14},frameon=False)
+,loc='best',prop={'size':14},frameon=False)
 plt.xlabel('Generalized coordination number (GCN)')
 plt.ylabel('Filling [states]')
 plt.show()
@@ -193,7 +193,7 @@ for count, color in enumerate(colors):
 plt.legend([r'${\epsilon}_{s}^{*}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
 ,r'${\epsilon}_{p}^{*}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])
 ,r'${\epsilon}_{d}^{*}$=%.2fGCN + %.2f eV' %(Efit[2][0],Efit[2][1])]
-,loc=3,prop={'size':14},frameon=False)
+,loc='best',prop={'size':14},frameon=False)
 plt.xlabel('Generalized coordination number (GCN)')
 plt.ylabel('Occupied band center (${\epsilon}^{*}$ - ${\epsilon}_{fermi}$) [eV]')
 plt.show()
@@ -213,7 +213,7 @@ for count, color in enumerate(colors):
 plt.legend([r'${\epsilon}_{s}^{un}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
 ,r'${\epsilon}_{p}^{un}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])
 ,r'${\epsilon}_{d}^{un}$=%.2fGCN + %.2f eV' %(Efit[2][0],Efit[2][1])]
-,loc=3,prop={'size':14},frameon=False)
+,loc='best',prop={'size':14},frameon=False)
 plt.xlabel('Generalized coordination number (GCN)')
 plt.ylabel('Unoccupied band center (${\epsilon}^{un}$ - ${\epsilon}_{fermi}$) [eV]')
 plt.show()
@@ -234,7 +234,7 @@ for count, color in enumerate(colors):
 plt.legend([r'${\epsilon}_{s}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
 ,r'${\epsilon}_{p}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])
 ,r'${\epsilon}_{d}$=%.2fGCN + %.2f eV' %(Efit[2][0],Efit[2][1])]
-,loc=3,prop={'size':14},frameon=False)
+,loc='best',prop={'size':14},frameon=False)
 plt.xlabel('Generalized coordination number (GCN)')
 plt.ylabel('Band width [eV]')
 plt.show()
@@ -254,7 +254,7 @@ for count, color in enumerate(colors):
 plt.legend([r'${\epsilon}_{s}$=%.2fGCN + %.2f eV$^{2}$' %(Efit[0][0],Efit[0][1])
 ,r'${\epsilon}_{p}$=%.2fGCN + %.2f eV$^{2}$' %(Efit[1][0],Efit[1][1])
 ,r'${\epsilon}_{d}$=%.2fGCN + %.2f eV$^{2}$' %(Efit[2][0],Efit[2][1])]
-,loc=3,prop={'size':14},frameon=False)
+,loc='best',prop={'size':14},frameon=False)
 plt.xlabel('Generalized coordination number (GCN)')
 plt.ylabel('Second moment [eV$^{2}$]')
 plt.show()
@@ -274,7 +274,7 @@ for count, color in enumerate(colors):
 plt.legend([r'${be}_{s}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
 ,r'${be}_{p}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])
 ,r'${be}_{d}$=%.2fGCN + %.2f eV' %(Efit[2][0],Efit[2][1])]
-,loc=3,prop={'size':14},frameon=False)
+,loc='best',prop={'size':14},frameon=False)
 plt.xlabel('Generalized coordination number (GCN)')
 plt.ylabel('Bond energy [eV]')
 plt.show()

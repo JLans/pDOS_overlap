@@ -58,11 +58,14 @@ for nano_DOSCAR, nano_CONTCAR in zip(DOSCAR_files, CONTCAR_files):
     nano_PDOS = VASP_DOS(nano_DOSCAR)   
     for atom_index in nano_indices[atom_types[...] == 'surface']:
         four_sigma = CO_overlap.calculate_orbital_interaction(1\
-                            , nano_PDOS, atom_index, ['s','pz','dz2'], BULK_PDOS, bulk_atom=43)
+                            , nano_PDOS, atom_index, ['s','pz','dz2']\
+                                , BULK_PDOS, bulk_atom=43, method='orbital_bond_energy')
         one_pi = CO_overlap.calculate_orbital_interaction(2\
-                            , nano_PDOS, atom_index, ['dyz','dxz'], BULK_PDOS, bulk_atom=43)
+                            , nano_PDOS, atom_index, ['dyz','dxz']\
+                                , BULK_PDOS, bulk_atom=43, method='orbital_bond_energy')
         five_sigma = CO_overlap.calculate_orbital_interaction(3\
-                            , nano_PDOS, atom_index, ['s','pz','dz2'], BULK_PDOS, bulk_atom=43)
+                            , nano_PDOS, atom_index, ['s','pz','dz2']\
+                                , BULK_PDOS, bulk_atom=43, method='orbital_bond_energy')
         
             
         four_sigma_list.append(four_sigma)
