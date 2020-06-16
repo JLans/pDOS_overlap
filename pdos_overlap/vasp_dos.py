@@ -186,6 +186,36 @@ def get_center_width(energies, densities, energy):
         center_width = center_upper - center_lower
         return center_width
 
+def get_orbital_proximity(energies, densities, energy, moment=1):
+        """ Get width between to band centers given a division
+        
+        Parameters
+        ----------
+        energies : numpy.ndarray
+            discretized orbital energies
+        
+        densities : numpy.ndarray
+            projected state densities
+            
+        energy : int
+            some energy with which the proximity of states is calculated
+            
+        moment : int
+            moment with which to calculate the orbital proximity
+        
+        Returns
+        -------
+        orbital_proximity : float or numpy.ndarray
+            proximity of orbitals to some energy
+            
+        """
+        if moment == 1:
+            integrand = np.abs(energies - energy) * densities
+        else:
+            integrand = (energies - energy)**moment * densities
+        orbital_proximity = np.trapz(integrand, energies) / np.trapz(densities, energies)
+        return orbital_proximity
+
 def get_second_moment(energies, densities):
         """ Get width between to band centers given a division
         
@@ -202,6 +232,9 @@ def get_second_moment(energies, densities):
         second_moment : float or numpy.ndarray
             second moment of the densities
             
+        Notes
+        -----
+        Similar to get_orbital_proximty method with moment=2
         """
         band_center = get_band_center(energies, densities)
         if len(np.array(band_center).shape) == 1:
@@ -465,6 +498,46 @@ class VASP_DOS:
         
         center_width = get_center_width(energies, densities, energy)
         return center_width
+    
+    def get_orbital_proximty(self, energy, atom_indices, orbital_list, moment=1
+                         , sum_density=False, sum_spin=True):
+        """ Get width between to band centers given a division
+        
+        Parameters
+        ----------            
+        energy : int
+            some energy with which the proximity of states is calculated
+            
+        moment : int
+            moment with which to calculate the orbital proximity
+            
+        atom_indices : list[int]
+            list of atom indices
+            
+        orbital_list : list[str]
+            Which orbitals to return
+            
+        sum_density : bool
+            if a sub-level is provided instead of an orbital, sum_density
+            indicates if the individual sub-level densities should be summed
+            
+        sum_spin : bool
+            different spin densities are summed.
+        
+        Returns
+        -------
+        orbital_proximity : float or numpy.ndarray
+            proximity of orbitals to some energy
+            
+        """
+        
+        energies = self.get_energies()
+        get_site_dos = self.get_site_dos
+        orbitals, densities = get_site_dos(atom_indices,orbital_list\
+                                         , sum_density=sum_density\
+                                         , sum_spin=sum_spin)
+        orbital_proximity = get_orbital_proximity(energies, densities, energy, moment)
+        return orbital_proximity
     
     def get_second_moment(self, atom_indices, orbital_list, sum_density=False\
                        , sum_spin=True):

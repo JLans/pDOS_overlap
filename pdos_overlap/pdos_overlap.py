@@ -566,15 +566,16 @@ class PDOS_OVERLAP:
                                          ,PDOS.get_energies())
             else:
                 energy_overlap[i] = np.trapz(molecular_orbitals[i]**0.5 * TOTAL_PDOS**0.5\
-                                         ,PDOS.get_energies())\
-                                    /(np.trapz(molecular_orbitals[i],PDOS.get_energies())\
-                                      * np.trapz(TOTAL_PDOS,PDOS.get_energies()))
+                                         , PDOS.get_energies())\
+                    / (np.trapz(molecular_orbitals[i], PDOS.get_energies())\
+                       * np.trapz(TOTAL_PDOS, PDOS.get_energies()) )
         return overlap_orbitals, energy_overlap
     
     def calculate_orbital_interaction(self,gas_orbital_index, PDOS, site_indices\
-                         , atomic_orbitals, BULK_PDOS, bulk_atom=0\
+                             , atomic_orbitals, BULK_PDOS, bulk_atom=0\
                              , sum_density=False, sum_spin=True\
-                             , method='orbital_bond_energy'):
+                             , method='orbital_bond_energy'\
+                             , use_orbital_proximity=False):
         """ Calculate surface and gas orbital interactions
         
         Parameters
@@ -608,9 +609,12 @@ class PDOS_OVERLAP:
             Metal atomic orbital interactions with the gas molecular orbitals
             
         """
-        gas_indices = [i for i in range(self.gas_2_adsorbate.shape[0])\
+        #get positions of the gas indices in the conversion matrix
+        gas_positions = [i for i in range(self.gas_2_adsorbate.shape[0])\
                        if self.gas_2_adsorbate[i][0] == gas_orbital_index]
-        adsorbate_indices = self.gas_2_adsorbate[gas_indices,1].astype('int')
+        gas_energy = self.gas_band_centers[gas_orbital_index]
+        #get the adsorbate indices
+        adsorbate_indices = self.gas_2_adsorbate[gas_positions,1].astype('int')
         overlap_orbitals, normalized_overlap = self._calculate_overlap(
                                                    self.adsorbate_orbitals\
                                                     , self.REFERENCE_PDOS\
@@ -621,19 +625,31 @@ class PDOS_OVERLAP:
         energy_overlap = np.array([normalized_overlap[adsorbate_indices\
                                         ,overlap_orbitals.index(i)].sum()\
                                               for i in atomic_orbitals])
+        if use_orbital_proximity == True:
+            orbital_proximity = PDOS.get_orbital_proximty(gas_energy\
+                                               , site_indices, atomic_orbitals\
+                                  , sum_density=sum_density, sum_spin=sum_spin)
+            bulk_proximity = BULK_PDOS.get_orbital_proximty(gas_energy\
+                                               , bulk_atom, atomic_orbitals\
+                                  , sum_density=sum_density, sum_spin=sum_spin)
+            scaling_factor = bulk_proximity / orbital_proximity
+        else:
+            scaling_factor = 1
         if method == 'orbital_bond_energy':
             bulk_bond_energy = BULK_PDOS.get_bond_energy(bulk_atom,atomic_orbitals\
                                   , sum_density=sum_density, sum_spin=sum_spin)
             bond_energy = PDOS.get_bond_energy(site_indices, atomic_orbitals\
                                 , sum_density=sum_density, sum_spin=sum_spin)
-            orbital_interaction = (bulk_bond_energy - bond_energy) * energy_overlap
+            orbital_interaction = (bulk_bond_energy - bond_energy)\
+                                  * energy_overlap * scaling_factor
         elif method == 'band_width':
             bulk_moment = BULK_PDOS.get_second_moment(bulk_atom, atomic_orbitals\
                                 , sum_density=sum_density, sum_spin=sum_spin)
         
             moment = PDOS.get_second_moment(site_indices, atomic_orbitals\
                                 , sum_density=sum_density, sum_spin=sum_spin)
-            orbital_interaction = (moment**0.5 - bulk_moment**0.5) * energy_overlap
+            orbital_interaction = (moment**0.5 - bulk_moment**0.5)\
+                                  * energy_overlap * scaling_factor
         return orbital_interaction
     
     @staticmethod
