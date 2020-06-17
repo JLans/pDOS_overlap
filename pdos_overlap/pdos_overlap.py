@@ -12,7 +12,6 @@ from .vasp_dos import get_band_center
 from ase.io import read
 from .coordination import Coordination
 from .plotting_tools import set_figure_settings
-from .error_metrics import get_continuous_wasserstein
 from scipy.optimize import minimize_scalar
 
 

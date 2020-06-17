@@ -26,10 +26,10 @@ def get_example_data():
     
     Returns
     -------
-    example_data_path : str
+    data_path : str
         path to example VASP data
     """
-    data_path = pkg_resources.resource_filename(__name__, 'data/example_data')
+    data_path = pkg_resources.resource_filename(__name__, 'data/pdos')
     return data_path
 
 def get_all_VASP_files(directory):
@@ -42,8 +42,11 @@ def get_all_VASP_files(directory):
     
     Returns
     -------
-    example_data_path : str
-        path to example VASP data
+    DOSCAR_files : list
+        list of all DOSCAR files
+        
+    CONTCAR_files : list
+        list of all CONTCAR files
     """
     DOSCAR_directories = [os.path.join(r,subdirectory) for r,d,f in os.walk(directory) \
               for subdirectory in d \

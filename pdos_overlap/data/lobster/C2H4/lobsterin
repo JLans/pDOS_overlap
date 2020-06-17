@@ -1,0 +1,12 @@
+COHPstartEnergy -13.061175
+COHPendEnergy 8.02818194
+COHPSteps 9999
+basisSet pbeVaspFit2015
+basisfunctions C 2s 2p
+basisfunctions H 1s
+gaussianSmearingWidth 0.003
+cohpbetween atom 1 atom 2
+cohpbetween atom 1 atom 3
+cohpbetween atom 1 atom 4
+cohpbetween atom 2 atom 5
+cohpbetween atom 2 atom 6
