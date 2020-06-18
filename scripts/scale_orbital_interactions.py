@@ -11,8 +11,8 @@ import os
 from pdos_overlap.coordination import get_geometric_data
 import numpy as np
 import matplotlib.pyplot as plt
-from pdos_overlap import VASP_DOS
-from pdos_overlap import get_all_VASP_files
+from pdos_overlap.vasp_dos import VASP_DOS
+from pdos_overlap.vasp_dos import get_all_VASP_files
 from pdos_overlap import set_figure_settings
 from pdos_overlap import get_adsorbate_indices
 from pdos_overlap import PDOS_OVERLAP

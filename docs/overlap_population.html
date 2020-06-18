@@ -1,0 +1,458 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>overlap_population &mdash; pdos_overlap 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery-dataframe.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="coordination" href="coordination.html" />
+    <link rel="prev" title="vasp_dos" href="vasp_dos.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pdos_overlap
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting Started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="includeme.html">pdos_overlap</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="pdos_overlap.html">pdos_overlap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vasp_dos.html">vasp_dos</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">overlap_population</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-write-lobster-in-function">The <code class="docutils literal notranslate"><span class="pre">write_lobster_in</span></code> function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-get-example-data-function">The <code class="docutils literal notranslate"><span class="pre">get_example_data</span></code> function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-get-all-lobster-files-function">The <code class="docutils literal notranslate"><span class="pre">get_all_lobster_files</span></code> function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-get-bonding-fraction-function">The <code class="docutils literal notranslate"><span class="pre">get_bonding_fraction</span></code> function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-overlap-population-class">The <code class="docutils literal notranslate"><span class="pre">OVERLAP_POPULATION</span></code> class</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="coordination.html">coordination</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotting_tools.html">plotting_tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="error_metrics.html">error_metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pdos_overlap</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>overlap_population</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/overlap_population.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="overlap-population">
+<h1>overlap_population<a class="headerlink" href="#overlap-population" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="the-write-lobster-in-function">
+<h2>The <code class="docutils literal notranslate"><span class="pre">write_lobster_in</span></code> function<a class="headerlink" href="#the-write-lobster-in-function" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pdos_overlap.overlap_population.write_lobsterin">
+<code class="sig-name descname">write_lobsterin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">directory</span><span class="o">=</span><span class="default_value">'.'</span></em>, <em class="sig-param"><span class="n">adsorbate_atoms</span><span class="o">=</span><span class="default_value">['C', 'H', 'O', 'N']</span></em>, <em class="sig-param"><span class="n">basisSet</span><span class="o">=</span><span class="default_value">'pbeVaspFit2015'</span></em>, <em class="sig-param"><span class="n">basisfunctions</span><span class="o">=</span><span class="default_value">{'C': '2s 2p', 'H': '1s', 'N': '2s 2p', 'O': '2s 2p', 'Pt': '5d 6s'}</span></em>, <em class="sig-param"><span class="n">gaussianSmearingWidth</span><span class="o">=</span><span class="default_value">0.003</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/overlap_population.html#write_lobsterin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.overlap_population.write_lobsterin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a lobster input file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – directory to write the lobsterin file. Must also contain a CONTCAR and
+DOSCAR file</p></li>
+<li><p><strong>adsorbate_atoms</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>]</em>) – adsorbate atom symbols or indices</p></li>
+<li><p><strong>basisSet</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – basis used to projected density onto orbitals</p></li>
+<li><p><strong>basisfunctions</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – dictionary of atomic symbols and corresponding basis functions</p></li>
+<li><p><strong>gaussianSmearingWidth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – float if Gaussian smearing is used. If tetrahedron method is used then
+set to None</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="the-get-example-data-function">
+<h2>The <code class="docutils literal notranslate"><span class="pre">get_example_data</span></code> function<a class="headerlink" href="#the-get-example-data-function" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pdos_overlap.overlap_population.get_example_data">
+<code class="sig-name descname">get_example_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/overlap_population.html#get_example_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.overlap_population.get_example_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get default path to experimental crystal ovelap populaiton data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>data_path</strong> – path to example lobster data</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="the-get-all-lobster-files-function">
+<h2>The <code class="docutils literal notranslate"><span class="pre">get_all_lobster_files</span></code> function<a class="headerlink" href="#the-get-all-lobster-files-function" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pdos_overlap.overlap_population.get_all_lobster_files">
+<code class="sig-name descname">get_all_lobster_files</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">directory</span></em>, <em class="sig-param"><span class="n">file_type</span><span class="o">=</span><span class="default_value">'COOPCAR.lobster'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/overlap_population.html#get_all_lobster_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.overlap_population.get_all_lobster_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all DOSCAR and CONTCAR file paths</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – root directory to look for DOSCAR files</p></li>
+<li><p><strong>file_type</strong> (<em>string</em>) – file type for which to search and return file path</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>lobster_files</strong> – list of paths to lobster files of type file_type</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="the-get-bonding-fraction-function">
+<h2>The <code class="docutils literal notranslate"><span class="pre">get_bonding_fraction</span></code> function<a class="headerlink" href="#the-get-bonding-fraction-function" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pdos_overlap.overlap_population.get_bonding_fraction">
+<code class="sig-name descname">get_bonding_fraction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dos</span></em>, <em class="sig-param"><span class="n">dos_energies</span></em>, <em class="sig-param"><span class="n">pcoop</span></em>, <em class="sig-param"><span class="n">pcoop_energies</span></em>, <em class="sig-param"><span class="n">set_antibonding_zero</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/overlap_population.html#get_bonding_fraction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.overlap_population.get_bonding_fraction" title="Permalink to this definition">¶</a></dt>
+<dd><p>method for obtaining bonding fraction of dos or dos-like array</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dos</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – density of states</p></li>
+<li><p><strong>dos_energies</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – energies at which dos is calculated</p></li>
+<li><p><strong>pcoop</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – projected orbital overlap populations</p></li>
+<li><p><strong>pcoop_energies</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – energies at which the pcoop is calculated</p></li>
+<li><p><strong>set_antibonding_zero</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – if true, set antibonding populations to zero to look at total
+instead of net bonding characteristics</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>dos_bonding</strong> – 1-D array of the relative bonding for either dos-like array</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="the-overlap-population-class">
+<h2>The <code class="docutils literal notranslate"><span class="pre">OVERLAP_POPULATION</span></code> class<a class="headerlink" href="#the-overlap-population-class" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pdos_overlap.overlap_population.OVERLAP_POPULATION">
+<em class="property">class </em><code class="sig-name descname">OVERLAP_POPULATION</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_name</span><span class="o">=</span><span class="default_value">'COOPCAR.lobster'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/overlap_population.html#OVERLAP_POPULATION"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.overlap_population.OVERLAP_POPULATION" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for analyzing overlap population bonding data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – full lobster file location</p>
+</dd>
+<dt class="field-even">Variables</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>emax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – maximum energy level</p></li>
+<li><p><strong>emin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – minimum energy level</p></li>
+<li><p><strong>ndos</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – number of descritized energy levels</p></li>
+<li><p><strong>e_fermi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – highest occupied energy level</p></li>
+<li><p><strong>is_spin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – indicates if projected density is spin resolved</p></li>
+<li><p><strong>num_interactions</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – number of interactions in COOP</p></li>
+<li><p><strong>interactions</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>]</em>) – list of the interactions included in the file</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="pdos_overlap.overlap_population.OVERLAP_POPULATION._read_coopcar">
+<code class="sig-name descname">_read_coopcar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_name</span><span class="o">=</span><span class="default_value">'COOPCAR.lobster'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/overlap_population.html#OVERLAP_POPULATION._read_coopcar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.overlap_population.OVERLAP_POPULATION._read_coopcar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read lobster COOPCAR and extract projected overlap</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – file location of the COOPCAR.lobster file file</p>
+</dd>
+<dt class="field-even">Variables</dt>
+<dd class="field-even"><p><strong>_pcoop</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – numpy array that contains the energy of levels and the projected
+crystal orbital overlap population densities</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>emax</strong> (<em>float</em>) – maximum energy level</p></li>
+<li><p><strong>emin</strong> (<em>float</em>) – minimum energy level</p></li>
+<li><p><strong>ndos</strong> (<em>int</em>) – number of descritized energy levels</p></li>
+<li><p><strong>e_fermi</strong> (<em>float</em>) – highest occupied energy level</p></li>
+<li><p><strong>is_spin</strong> (<em>bool</em>) – indicates if projected density is spin resolved</p></li>
+<li><p><strong>num_interactions</strong> (<em>int</em>) – number of interactions in COOP</p></li>
+<li><p><strong>interactions</strong> (<em>list[str]</em>) – list of the interactions included in the file</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pdos_overlap.overlap_population.OVERLAP_POPULATION.get_average_int_pcoop">
+<code class="sig-name descname">get_average_int_pcoop</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/overlap_population.html#OVERLAP_POPULATION.get_average_int_pcoop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.overlap_population.OVERLAP_POPULATION.get_average_int_pcoop" title="Permalink to this definition">¶</a></dt>
+<dd><p>obtain average integrated overlap population for all atom pairs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sum_spin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – indicates whether data of different spins should be summed</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>average_int_pcoop</strong> – 1-D or 2-D array of average integrated pcoop for all interactions</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pdos_overlap.overlap_population.OVERLAP_POPULATION.get_average_pcoop">
+<code class="sig-name descname">get_average_pcoop</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/overlap_population.html#OVERLAP_POPULATION.get_average_pcoop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.overlap_population.OVERLAP_POPULATION.get_average_pcoop" title="Permalink to this definition">¶</a></dt>
+<dd><p>obtain average overlap population for all atom pairs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sum_spin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – indicates whether data of different spins should be summed</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>average_pcoop</strong> – 1-D or 2-D array of average pcoop for all interactions</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pdos_overlap.overlap_population.OVERLAP_POPULATION.get_energies">
+<code class="sig-name descname">get_energies</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/overlap_population.html#OVERLAP_POPULATION.get_energies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.overlap_population.OVERLAP_POPULATION.get_energies" title="Permalink to this definition">¶</a></dt>
+<dd><p>method for obtaining energy levels</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>energies</strong> – 1-D array of energies</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pdos_overlap.overlap_population.OVERLAP_POPULATION.get_integrated_pcoop">
+<code class="sig-name descname">get_integrated_pcoop</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">interactions</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">sum_pcoop</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">set_antibonding_zero</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/overlap_population.html#OVERLAP_POPULATION.get_integrated_pcoop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.overlap_population.OVERLAP_POPULATION.get_integrated_pcoop" title="Permalink to this definition">¶</a></dt>
+<dd><p>obtain integrated projected crystal orbital overlap populations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>interactions</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – indices of interactions for which to find the integrated pcoop</p></li>
+<li><p><strong>sum_pcoop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – indicates whether all pcoop should be summed</p></li>
+<li><p><strong>sum_spin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – indicates whether data of different spins should be summed</p></li>
+<li><p><strong>set_antibonding_zero</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – if true, set antibonding populations to zero to look at total
+instead of net bonding characteristics</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>integrated_pcoop</strong> – 1-D or 2-D array of integrated pcoop for all interactions</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pdos_overlap.overlap_population.OVERLAP_POPULATION.get_pcoop">
+<code class="sig-name descname">get_pcoop</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">interactions</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">sum_pcoop</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">set_antibonding_zero</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/overlap_population.html#OVERLAP_POPULATION.get_pcoop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.overlap_population.OVERLAP_POPULATION.get_pcoop" title="Permalink to this definition">¶</a></dt>
+<dd><p>method for obtaining projected crystal orbital overlap populations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>interactions</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – indices of interactions for which to find the integrated pcoop</p></li>
+<li><p><strong>sum_pcoop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – indicates whether all pcoop should be summed</p></li>
+<li><p><strong>sum_spin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – indicates whether data of different spins should be summed</p></li>
+<li><p><strong>set_antibonding_zero</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – if true, set antibonding populations to zero to look at total
+instead of net bonding characteristics</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>pcoop</strong> – 1-D or 2-D array of pcoop for all interactions</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="coordination.html" class="btn btn-neutral float-right" title="coordination" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="vasp_dos.html" class="btn btn-neutral float-left" title="vasp_dos" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Joshua Lansford
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -17,6 +17,8 @@ Welcome to pdos_overlap's documentation!
 
    vasp_dos
 
+   overlap_population
+
    coordination
 
    plotting_tools

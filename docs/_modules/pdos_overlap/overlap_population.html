@@ -1,0 +1,612 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pdos_overlap.overlap_population &mdash; pdos_overlap 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pdos_overlap
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting Started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../includeme.html">pdos_overlap</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../pdos_overlap.html">pdos_overlap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../vasp_dos.html">vasp_dos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overlap_population.html">overlap_population</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../coordination.html">coordination</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plotting_tools.html">plotting_tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../error_metrics.html">error_metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../auto_examples/index.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pdos_overlap</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>pdos_overlap.overlap_population</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pdos_overlap.overlap_population</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Tue May 19 22:28:09 2020</span>
+
+<span class="sd">@author: lansf</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pkg_resources</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">ase.io</span> <span class="kn">import</span> <span class="n">read</span>
+<span class="kn">from</span> <span class="nn">.vasp_dos</span> <span class="kn">import</span> <span class="n">VASP_DOS</span>
+<span class="kn">from</span> <span class="nn">.coordination</span> <span class="kn">import</span> <span class="n">Coordination</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+
+<div class="viewcode-block" id="write_lobsterin"><a class="viewcode-back" href="../../overlap_population.html#pdos_overlap.overlap_population.write_lobsterin">[docs]</a><span class="k">def</span> <span class="nf">write_lobsterin</span><span class="p">(</span><span class="n">directory</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">adsorbate_atoms</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">,</span><span class="s1">&#39;H&#39;</span><span class="p">,</span><span class="s1">&#39;O&#39;</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">]</span>\
+                    <span class="p">,</span><span class="n">basisSet</span><span class="o">=</span><span class="s1">&#39;pbeVaspFit2015&#39;</span>\
+                    <span class="p">,</span> <span class="n">basisfunctions</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;C&#39;</span><span class="p">:</span><span class="s1">&#39;2s 2p&#39;</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">:</span><span class="s1">&#39;2s 2p&#39;</span>\
+                                      <span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span><span class="s1">&#39;2s 2p&#39;</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span><span class="s1">&#39;1s&#39;</span>\
+                                      <span class="p">,</span><span class="s1">&#39;Pt&#39;</span><span class="p">:</span><span class="s1">&#39;5d 6s&#39;</span><span class="p">}</span>\
+                    <span class="p">,</span> <span class="n">gaussianSmearingWidth</span><span class="o">=</span><span class="mf">0.003</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Write a lobster input file</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    directory : str</span>
+<span class="sd">        directory to write the lobsterin file. Must also contain a CONTCAR and</span>
+<span class="sd">        DOSCAR file</span>
+<span class="sd">        </span>
+<span class="sd">    adsorbate_atoms : list[str or int]</span>
+<span class="sd">        adsorbate atom symbols or indices</span>
+<span class="sd">        </span>
+<span class="sd">    basisSet : str</span>
+<span class="sd">        basis used to projected density onto orbitals</span>
+<span class="sd">        </span>
+<span class="sd">    basisfunctions : dict</span>
+<span class="sd">        dictionary of atomic symbols and corresponding basis functions</span>
+<span class="sd">        </span>
+<span class="sd">    gaussianSmearingWidth : float</span>
+<span class="sd">        float if Gaussian smearing is used. If tetrahedron method is used then</span>
+<span class="sd">        set to None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">adsorbate_atoms</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">CONTCAR</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span><span class="s1">&#39;CONTCAR&#39;</span><span class="p">))</span>
+        <span class="n">all_symbols</span> <span class="o">=</span> <span class="n">CONTCAR</span><span class="o">.</span><span class="n">get_chemical_symbols</span><span class="p">()</span>
+        <span class="n">adsorbate_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">all_symbols</span><span class="p">))[</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">all_symbols</span><span class="p">,</span><span class="n">adsorbate_atoms</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">adsorbate_indices</span> <span class="o">=</span> <span class="n">adsorbate_atoms</span>
+    <span class="n">CN</span> <span class="o">=</span> <span class="n">Coordination</span><span class="p">(</span><span class="n">CONTCAR</span><span class="p">,</span><span class="n">exclude</span><span class="o">=</span><span class="n">adsorbate_indices</span><span class="p">,</span><span class="n">cutoff</span><span class="o">=</span><span class="mf">1.25</span><span class="p">)</span>
+    <span class="n">bonded</span> <span class="o">=</span> <span class="n">CN</span><span class="o">.</span><span class="n">get_bonded</span><span class="p">()</span>
+    <span class="n">site_indices</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">adsorbate_indices</span><span class="p">:</span>
+        <span class="n">site_indices</span> <span class="o">+=</span> <span class="n">bonded</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">atom_pairs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">site_index</span> <span class="ow">in</span> <span class="n">site_indices</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">adsorbate_index</span> <span class="ow">in</span> <span class="n">adsorbate_indices</span><span class="p">:</span>
+            <span class="n">atom_pairs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">site_index</span><span class="p">,</span> <span class="n">adsorbate_index</span><span class="p">))</span>
+    <span class="n">atom_pairs</span> <span class="o">+=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">adsorbate_indices</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">DOSCAR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span><span class="s1">&#39;DOSCAR&#39;</span><span class="p">)</span>
+    <span class="n">DOS</span> <span class="o">=</span> <span class="n">VASP_DOS</span><span class="p">(</span><span class="n">DOSCAR</span><span class="p">)</span>
+    <span class="n">COHPstartEnergy</span> <span class="o">=</span> <span class="n">DOS</span><span class="o">.</span><span class="n">emin</span> <span class="o">-</span> <span class="n">DOS</span><span class="o">.</span><span class="n">e_fermi</span>
+    <span class="n">COHPendEnergy</span> <span class="o">=</span> <span class="n">DOS</span><span class="o">.</span><span class="n">emax</span> <span class="o">-</span> <span class="n">DOS</span><span class="o">.</span><span class="n">e_fermi</span>
+    <span class="n">COHPSteps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">DOS</span><span class="o">.</span><span class="n">ndos</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">basisSet</span> <span class="o">=</span> <span class="n">basisSet</span>
+    <span class="n">basisfunctions</span> <span class="o">=</span> <span class="n">basisfunctions</span>
+    <span class="n">gaussianSmearingWidth</span> <span class="o">=</span> <span class="n">gaussianSmearingWidth</span>
+    <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span><span class="s1">&#39;lobsterin&#39;</span><span class="p">)</span>
+    <span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;COHPstartEnergy &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">COHPstartEnergy</span><span class="p">))</span>
+    <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;COHPendEnergy &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">COHPendEnergy</span><span class="p">))</span>
+    <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;COHPSteps &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">COHPSteps</span><span class="p">))</span>
+    <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;basisSet &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">basisSet</span><span class="p">))</span>
+    <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">gaussianSmearingWidth</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;gaussianSmearingWidth &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">gaussianSmearingWidth</span><span class="p">))</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">basisfunctions</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;basisfunctions &#39;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">basisfunctions</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">atom_pairs</span><span class="p">:</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;cohpbetween &#39;</span> <span class="o">+</span> <span class="s1">&#39;atom &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39; atom &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="get_example_data"><a class="viewcode-back" href="../../overlap_population.html#pdos_overlap.overlap_population.get_example_data">[docs]</a><span class="k">def</span> <span class="nf">get_example_data</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Get default path to experimental crystal ovelap populaiton data</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    data_path : str</span>
+<span class="sd">        path to example lobster data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data_path</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="s1">&#39;data/lobster&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data_path</span></div>
+
+<div class="viewcode-block" id="get_all_lobster_files"><a class="viewcode-back" href="../../overlap_population.html#pdos_overlap.overlap_population.get_all_lobster_files">[docs]</a><span class="k">def</span> <span class="nf">get_all_lobster_files</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">file_type</span><span class="o">=</span><span class="s1">&#39;COOPCAR.lobster&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Get all DOSCAR and CONTCAR file paths</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    directory : str</span>
+<span class="sd">        root directory to look for DOSCAR files</span>
+<span class="sd">        </span>
+<span class="sd">    file_type : string</span>
+<span class="sd">        file type for which to search and return file path</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    lobster_files : list[str]</span>
+<span class="sd">        list of paths to lobster files of type file_type</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">lobster_directories</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">subdirectory</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span> \
+              <span class="k">for</span> <span class="n">subdirectory</span> <span class="ow">in</span> <span class="n">d</span> \
+              <span class="k">if</span> <span class="n">file_type</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">subdirectory</span><span class="p">))]</span>
+    <span class="n">lobster_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">file_type</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">lobster_directories</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">lobster_files</span></div>
+
+<div class="viewcode-block" id="get_bonding_fraction"><a class="viewcode-back" href="../../overlap_population.html#pdos_overlap.overlap_population.get_bonding_fraction">[docs]</a><span class="k">def</span> <span class="nf">get_bonding_fraction</span><span class="p">(</span><span class="n">dos</span><span class="p">,</span> <span class="n">dos_energies</span><span class="p">,</span> <span class="n">pcoop</span><span class="p">,</span> <span class="n">pcoop_energies</span>\
+                             <span class="p">,</span> <span class="n">set_antibonding_zero</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; method for obtaining bonding fraction of dos or dos-like array</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dos : numpy.ndarray</span>
+<span class="sd">            density of states</span>
+<span class="sd">            </span>
+<span class="sd">        dos_energies : numpy.ndarray</span>
+<span class="sd">            energies at which dos is calculated</span>
+<span class="sd">            </span>
+<span class="sd">        pcoop : numpy.ndarray</span>
+<span class="sd">             projected orbital overlap populations</span>
+<span class="sd">        </span>
+<span class="sd">        pcoop_energies : numpy.ndarray</span>
+<span class="sd">            energies at which the pcoop is calculated</span>
+<span class="sd">            </span>
+<span class="sd">        set_antibonding_zero : bool</span>
+<span class="sd">            if true, set antibonding populations to zero to look at total</span>
+<span class="sd">            instead of net bonding characteristics</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dos_bonding : numpy.ndarray</span>
+<span class="sd">            1-D array of the relative bonding for either dos-like array</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">set_antibonding_zero</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">pcoop</span><span class="p">[</span><span class="n">pcoop</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">pcoop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">dos_energies</span><span class="p">,</span> <span class="n">pcoop_energies</span><span class="p">,</span><span class="n">pcoop</span><span class="p">)</span>
+        <span class="n">dos_bonding</span> <span class="o">=</span> <span class="n">dos</span> <span class="o">*</span> <span class="n">pcoop</span>
+        <span class="n">dos_bonding</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">dos_bonding</span><span class="p">,</span> <span class="n">dos_energies</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dos_bonding</span></div>
+
+<div class="viewcode-block" id="OVERLAP_POPULATION"><a class="viewcode-back" href="../../overlap_population.html#pdos_overlap.overlap_population.OVERLAP_POPULATION">[docs]</a><span class="k">class</span> <span class="nc">OVERLAP_POPULATION</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class for analyzing overlap population bonding data&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;COOPCAR.lobster&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_name : str</span>
+<span class="sd">            full lobster file location</span>
+<span class="sd">        </span>
+<span class="sd">        Attributes</span>
+<span class="sd">        ----------</span>
+<span class="sd">        emax : float</span>
+<span class="sd">            maximum energy level</span>
+<span class="sd">            </span>
+<span class="sd">        emin : float</span>
+<span class="sd">            minimum energy level</span>
+<span class="sd">            </span>
+<span class="sd">        ndos : int</span>
+<span class="sd">            number of descritized energy levels</span>
+<span class="sd">            </span>
+<span class="sd">        e_fermi : float</span>
+<span class="sd">            highest occupied energy level</span>
+<span class="sd">            </span>
+<span class="sd">        is_spin : bool</span>
+<span class="sd">            indicates if projected density is spin resolved</span>
+<span class="sd">            </span>
+<span class="sd">        num_interactions : int</span>
+<span class="sd">            number of interactions in COOP</span>
+<span class="sd">        </span>
+<span class="sd">        interactions : list[str]</span>
+<span class="sd">            list of the interactions included in the file</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1">#conditional read statements can be added</span>
+        <span class="n">num_interactions</span><span class="p">,</span> <span class="n">interactions</span><span class="p">,</span> <span class="n">is_spin</span><span class="p">,</span> <span class="n">ndos</span><span class="p">,</span> <span class="n">e_fermi</span><span class="p">,</span> <span class="n">e_min</span><span class="p">,</span> <span class="n">e_max</span>\
+            <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_coopcar</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_interactions</span> <span class="o">=</span> <span class="n">num_interactions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interactions</span> <span class="o">=</span> <span class="n">interactions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_spin</span> <span class="o">=</span> <span class="n">is_spin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ndos</span> <span class="o">=</span> <span class="n">ndos</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">e_fermi</span> <span class="o">=</span> <span class="n">e_fermi</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">e_min</span> <span class="o">=</span> <span class="n">e_min</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">e_max</span> <span class="o">=</span> <span class="n">e_max</span>
+        
+<div class="viewcode-block" id="OVERLAP_POPULATION.get_energies"><a class="viewcode-back" href="../../overlap_population.html#pdos_overlap.overlap_population.OVERLAP_POPULATION.get_energies">[docs]</a>    <span class="k">def</span> <span class="nf">get_energies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; method for obtaining energy levels</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        energies : numpy.ndarray</span>
+<span class="sd">            1-D array of energies    </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">energies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcoop</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">energies</span></div>
+    
+<div class="viewcode-block" id="OVERLAP_POPULATION.get_average_pcoop"><a class="viewcode-back" href="../../overlap_population.html#pdos_overlap.overlap_population.OVERLAP_POPULATION.get_average_pcoop">[docs]</a>    <span class="k">def</span> <span class="nf">get_average_pcoop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; obtain average overlap population for all atom pairs</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sum_spin : bool</span>
+<span class="sd">            indicates whether data of different spins should be summed</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        average_pcoop : numpy.ndarray</span>
+<span class="sd">            1-D or 2-D array of average pcoop for all interactions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_spin</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">sum_spin</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="n">average_pcoop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcoop</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_interactions</span> <span class="o">+</span> <span class="mi">3</span><span class="p">],</span> <span class="p">:]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">average_pcoop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcoop</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcoop</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_interactions</span> <span class="o">+</span> <span class="mi">3</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">average_pcoop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcoop</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="k">return</span> <span class="n">average_pcoop</span></div>
+
+<div class="viewcode-block" id="OVERLAP_POPULATION.get_average_int_pcoop"><a class="viewcode-back" href="../../overlap_population.html#pdos_overlap.overlap_population.OVERLAP_POPULATION.get_average_int_pcoop">[docs]</a>    <span class="k">def</span> <span class="nf">get_average_int_pcoop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;obtain average integrated overlap population for all atom pairs</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sum_spin : bool</span>
+<span class="sd">            indicates whether data of different spins should be summed</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        average_int_pcoop : numpy.ndarray</span>
+<span class="sd">            1-D or 2-D array of average integrated pcoop for all interactions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_spin</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">sum_spin</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="n">average_int_pcoop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcoop</span><span class="p">[[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_interactions</span> <span class="o">+</span> <span class="mi">4</span><span class="p">],</span> <span class="p">:]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">average_int_pcoop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcoop</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcoop</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_interactions</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">average_int_pcoop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcoop</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="k">return</span> <span class="n">average_int_pcoop</span></div>
+    
+<div class="viewcode-block" id="OVERLAP_POPULATION.get_integrated_pcoop"><a class="viewcode-back" href="../../overlap_population.html#pdos_overlap.overlap_population.OVERLAP_POPULATION.get_integrated_pcoop">[docs]</a>    <span class="k">def</span> <span class="nf">get_integrated_pcoop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interactions</span><span class="o">=</span><span class="p">[],</span> <span class="n">sum_pcoop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span>
+                             <span class="p">,</span> <span class="n">set_antibonding_zero</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; obtain integrated projected crystal orbital overlap populations</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        interactions : list</span>
+<span class="sd">            indices of interactions for which to find the integrated pcoop</span>
+<span class="sd">            </span>
+<span class="sd">        sum_pcoop : bool</span>
+<span class="sd">            indicates whether all pcoop should be summed</span>
+<span class="sd">        </span>
+<span class="sd">        sum_spin : bool</span>
+<span class="sd">            indicates whether data of different spins should be summed</span>
+<span class="sd">            </span>
+<span class="sd">        set_antibonding_zero : bool</span>
+<span class="sd">            if true, set antibonding populations to zero to look at total</span>
+<span class="sd">            instead of net bonding characteristics</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        integrated_pcoop : numpy.ndarray</span>
+<span class="sd">            1-D or 2-D array of integrated pcoop for all interactions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">interactions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">interactions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_interactions</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_spin</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">spin_up</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcoop</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_interactions</span> <span class="o">+</span> <span class="mi">3</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="p">:][</span><span class="n">interactions</span><span class="p">]</span>
+            <span class="n">spin_down</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcoop</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_interactions</span> <span class="o">+</span> <span class="mi">6</span><span class="p">::</span><span class="mi">2</span><span class="p">,</span> <span class="p">:][</span><span class="n">interactions</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">set_antibonding_zero</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">spin_up</span><span class="p">[</span><span class="n">spin_up</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">spin_down</span><span class="p">[</span><span class="n">spin_down</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="n">sum_spin</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">integrated_pcoop</span> <span class="o">=</span> <span class="n">spin_up</span> <span class="o">+</span> <span class="n">spin_down</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">integrated_pcoop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">spin_up</span><span class="p">,</span> <span class="n">spin_down</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">integrated_pcoop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcoop</span><span class="p">[</span><span class="mi">4</span><span class="p">::</span><span class="mi">2</span><span class="p">,</span> <span class="p">:][</span><span class="n">interactions</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">set_antibonding_zero</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">integrated_pcoop</span><span class="p">[</span><span class="n">integrated_pcoop</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">sum_pcoop</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">interactions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">axis</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">integrated_pcoop</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span>
+            <span class="n">integrated_pcoop</span> <span class="o">=</span> <span class="n">integrated_pcoop</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">integrated_pcoop</span></div>
+    
+<div class="viewcode-block" id="OVERLAP_POPULATION.get_pcoop"><a class="viewcode-back" href="../../overlap_population.html#pdos_overlap.overlap_population.OVERLAP_POPULATION.get_pcoop">[docs]</a>    <span class="k">def</span> <span class="nf">get_pcoop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interactions</span><span class="o">=</span><span class="p">[],</span> <span class="n">sum_pcoop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span>\
+                  <span class="p">,</span> <span class="n">set_antibonding_zero</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; method for obtaining projected crystal orbital overlap populations</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        interactions : list</span>
+<span class="sd">            indices of interactions for which to find the integrated pcoop</span>
+<span class="sd">            </span>
+<span class="sd">        sum_pcoop : bool</span>
+<span class="sd">            indicates whether all pcoop should be summed</span>
+<span class="sd">        </span>
+<span class="sd">        sum_spin : bool</span>
+<span class="sd">            indicates whether data of different spins should be summed</span>
+<span class="sd">            </span>
+<span class="sd">        set_antibonding_zero : bool</span>
+<span class="sd">            if true, set antibonding populations to zero to look at total</span>
+<span class="sd">            instead of net bonding characteristics</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pcoop : numpy.ndarray</span>
+<span class="sd">            1-D or 2-D array of pcoop for all interactions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">interactions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">interactions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_interactions</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_spin</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">spin_up</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcoop</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_interactions</span> <span class="o">+</span> <span class="mi">3</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="p">:][</span><span class="n">interactions</span><span class="p">]</span>
+            <span class="n">spin_down</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcoop</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_interactions</span> <span class="o">+</span> <span class="mi">5</span><span class="p">::</span><span class="mi">2</span><span class="p">,</span> <span class="p">:][</span><span class="n">interactions</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">set_antibonding_zero</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">spin_up</span><span class="p">[</span><span class="n">spin_up</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">spin_down</span><span class="p">[</span><span class="n">spin_down</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="n">sum_spin</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">pcoop</span> <span class="o">=</span> <span class="n">spin_up</span> <span class="o">+</span> <span class="n">spin_down</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">pcoop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">spin_up</span><span class="p">,</span> <span class="n">spin_down</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">set_antibonding_zero</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">pcoop</span><span class="p">[</span><span class="n">pcoop</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">pcoop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcoop</span><span class="p">[</span><span class="mi">3</span><span class="p">::</span><span class="mi">2</span><span class="p">,</span> <span class="p">:][</span><span class="n">interactions</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">sum_pcoop</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">interactions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">axis</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pcoop</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span>
+            <span class="n">pcoop</span> <span class="o">=</span> <span class="n">pcoop</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pcoop</span></div>
+    
+<div class="viewcode-block" id="OVERLAP_POPULATION._read_coopcar"><a class="viewcode-back" href="../../overlap_population.html#pdos_overlap.overlap_population.OVERLAP_POPULATION._read_coopcar">[docs]</a>    <span class="k">def</span> <span class="nf">_read_coopcar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;COOPCAR.lobster&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read lobster COOPCAR and extract projected overlap</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_name : str</span>
+<span class="sd">            file location of the COOPCAR.lobster file file</span>
+<span class="sd">            </span>
+<span class="sd">        Attributes</span>
+<span class="sd">        ----------</span>
+<span class="sd">        _pcoop : numpy.ndarray</span>
+<span class="sd">            numpy array that contains the energy of levels and the projected</span>
+<span class="sd">            crystal orbital overlap population densities</span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        emax : float</span>
+<span class="sd">            maximum energy level</span>
+<span class="sd">            </span>
+<span class="sd">        emin : float</span>
+<span class="sd">            minimum energy level</span>
+<span class="sd">            </span>
+<span class="sd">        ndos : int</span>
+<span class="sd">            number of descritized energy levels</span>
+<span class="sd">            </span>
+<span class="sd">        e_fermi : float</span>
+<span class="sd">            highest occupied energy level</span>
+<span class="sd">            </span>
+<span class="sd">        is_spin : bool</span>
+<span class="sd">            indicates if projected density is spin resolved</span>
+<span class="sd">            </span>
+<span class="sd">        num_interactions : int</span>
+<span class="sd">            number of interactions in COOP</span>
+<span class="sd">        </span>
+<span class="sd">        interactions : list[str]</span>
+<span class="sd">            list of the interactions included in the file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span> <span class="c1">#skip the first line</span>
+        <span class="n">descriptive_line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">num_interactions</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">descriptive_line</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">is_spin</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">descriptive_line</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">is_spin</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">is_spin</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">is_spin</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">ndos</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">descriptive_line</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">e_fermi</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">descriptive_line</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>
+        <span class="n">e_min</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">descriptive_line</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">e_max</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">descriptive_line</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span> <span class="c1">#skip the line saying average</span>
+        <span class="n">interactions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_interactions</span><span class="p">):</span>
+            <span class="n">interactions</span> <span class="o">+=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">pcoop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">ndos</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)))</span>
+        <span class="n">pcoop</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">nd</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">ndos</span><span class="p">):</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="n">pcoop</span><span class="p">[</span><span class="n">nd</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="n">pcoop</span> <span class="o">=</span> <span class="n">pcoop</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">pcoop</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">e_fermi</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pcoop</span> <span class="o">=</span> <span class="n">pcoop</span>
+        <span class="k">return</span> <span class="n">num_interactions</span><span class="p">,</span> <span class="n">interactions</span><span class="p">,</span> <span class="n">is_spin</span><span class="p">,</span> <span class="n">ndos</span><span class="p">,</span> <span class="n">e_fermi</span><span class="p">,</span> <span class="n">e_min</span><span class="p">,</span> <span class="n">e_max</span></div></div>
+        
+        
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Joshua Lansford
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

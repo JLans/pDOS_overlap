@@ -84,6 +84,40 @@ This contains an example of calculating orbital overlap.
 
 
 
+.. _sphx_glr_auto_examples_plot_overlap_population:
+
+Overlap population examples
+---------------------------
+
+This contains an example of plotting crystal orbital overlap population analysis.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to plot overlap population data See http://www.cohp.de/ for details">
+
+.. only:: html
+
+ .. figure:: /auto_examples/plot_overlap_population/images/thumb/sphx_glr_plot_overlap_population_thumb.png
+
+     :ref:`sphx_glr_auto_examples_plot_overlap_population_plot_overlap_population.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_overlap_population/plot_overlap_population
+.. raw:: html
+
+    <div class="sphx-glr-clear"></div>
+
+
+
 .. _sphx_glr_auto_examples_plot_projected_density:
 
 Projected density examples

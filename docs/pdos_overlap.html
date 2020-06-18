@@ -90,10 +90,12 @@
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">pdos_overlap</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-get-adsorbate-indices-function">The <code class="docutils literal notranslate"><span class="pre">get_adsorbate_indices</span></code> function</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#the-pdos-overlap-class">The <code class="docutils literal notranslate"><span class="pre">PDOS_OVERLAP</span></code> class</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="vasp_dos.html">vasp_dos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overlap_population.html">overlap_population</a></li>
 <li class="toctree-l1"><a class="reference internal" href="coordination.html">coordination</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plotting_tools.html">plotting_tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="error_metrics.html">error_metrics</a></li>
@@ -164,6 +166,32 @@
             
   <div class="section" id="pdos-overlap">
 <h1>pdos_overlap<a class="headerlink" href="#pdos-overlap" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="the-get-adsorbate-indices-function">
+<h2>The <code class="docutils literal notranslate"><span class="pre">get_adsorbate_indices</span></code> function<a class="headerlink" href="#the-get-adsorbate-indices-function" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pdos_overlap.pdos_overlap.get_adsorbate_indices">
+<code class="sig-name descname">get_adsorbate_indices</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">GAS_CONTCAR</span></em>, <em class="sig-param"><span class="n">ADSORBATE_CONTCAR</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/pdos_overlap.html#get_adsorbate_indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.pdos_overlap.get_adsorbate_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identify the adsorbate and adsorption site indices</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>GAS_CONTCAR</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Location to VASP CONTCAR file for a gas molecule.</p></li>
+<li><p><strong>ADSORBATE_CONTCAR</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Location to VASP CONTCAR file for an adsorbate + surface</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>adsorbate_indices</strong> (<em>list[int]</em>) – Index (indices) of adsorbate atom(s) in REFERENCE_PDOS. Obtained
+from pdos_overlap.get_adsorbate_indices.</p></li>
+<li><p><strong>site_indices</strong> (<em>list[int]</em>) – Index (indices) of adsorbation site atom(s) in REFERENCE_PDOS.
+Obtained from pdos_overlap.get_adsorbate_indices.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
 <div class="section" id="the-pdos-overlap-class">
 <h2>The <code class="docutils literal notranslate"><span class="pre">PDOS_OVERLAP</span></code> class<a class="headerlink" href="#the-pdos-overlap-class" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
@@ -403,7 +431,7 @@ orbitals are shifted before pairing</p>
 
 <dl class="py method">
 <dt id="pdos_overlap.pdos_overlap.PDOS_OVERLAP.calculate_orbital_interaction">
-<code class="sig-name descname">calculate_orbital_interaction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gas_orbital_index</span></em>, <em class="sig-param"><span class="n">PDOS</span></em>, <em class="sig-param"><span class="n">site_indices</span></em>, <em class="sig-param"><span class="n">atomic_orbitals</span></em>, <em class="sig-param"><span class="n">BULK_PDOS</span></em>, <em class="sig-param"><span class="n">bulk_atom</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">sum_density</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'orbital_bond_energy'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/pdos_overlap.html#PDOS_OVERLAP.calculate_orbital_interaction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.pdos_overlap.PDOS_OVERLAP.calculate_orbital_interaction" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">calculate_orbital_interaction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gas_orbital_index</span></em>, <em class="sig-param"><span class="n">PDOS</span></em>, <em class="sig-param"><span class="n">site_indices</span></em>, <em class="sig-param"><span class="n">atomic_orbitals</span></em>, <em class="sig-param"><span class="n">BULK_PDOS</span></em>, <em class="sig-param"><span class="n">bulk_atom</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">sum_density</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'orbital_bond_energy'</span></em>, <em class="sig-param"><span class="n">use_orbital_proximity</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/pdos_overlap.html#PDOS_OVERLAP.calculate_orbital_interaction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.pdos_overlap.PDOS_OVERLAP.calculate_orbital_interaction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate surface and gas orbital interactions</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

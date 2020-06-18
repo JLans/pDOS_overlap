@@ -10,7 +10,7 @@ with an adsorbate and surface atom.
 
 import os
 import numpy as np
-from pdos_overlap import VASP_DOS
+from pdos_overlap.vasp_dos import VASP_DOS
 from pdos_overlap.plotting_tools import set_figure_settings
 from pdos_overlap import get_adsorbate_indices
 from pdos_overlap import PDOS_OVERLAP

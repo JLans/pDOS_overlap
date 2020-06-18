@@ -1,6 +1,10 @@
 pdos_overlap
 ============
 
+The ``get_adsorbate_indices`` function
+**************************************
+.. autofunction:: pdos_overlap.pdos_overlap.get_adsorbate_indices
+
 The ``PDOS_OVERLAP`` class
 **************************
 .. autoclass:: pdos_overlap.pdos_overlap.PDOS_OVERLAP

@@ -17,6 +17,26 @@ The ``get_band_center`` function
 ********************************
 .. autofunction:: pdos_overlap.vasp_dos.get_band_center
 
+The ``get_bond_energy`` function
+********************************
+.. autofunction:: pdos_overlap.vasp_dos.get_bond_energy
+
+The ``get_band_width`` function
+*******************************
+.. autofunction:: pdos_overlap.vasp_dos.get_band_width
+
+The ``get_orbital_proximity`` function
+**************************************
+.. autofunction:: pdos_overlap.vasp_dos.get_orbital_proximity
+
+The ``get_second_moment`` function
+**********************************
+.. autofunction:: pdos_overlap.vasp_dos.get_second_moment
+
+The ``get_filling`` function
+****************************
+.. autofunction:: pdos_overlap.vasp_dos.get_filling
+
 The ``VASP_DOS`` class
 **********************
 .. autoclass:: pdos_overlap.vasp_dos.VASP_DOS

@@ -89,6 +89,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../pdos_overlap.html">pdos_overlap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../vasp_dos.html">vasp_dos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overlap_population.html">overlap_population</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../coordination.html">coordination</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../plotting_tools.html">plotting_tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../error_metrics.html">error_metrics</a></li>
@@ -180,14 +181,14 @@
     <span class="k">return</span> <span class="n">data_path</span></div>
 
 <div class="viewcode-block" id="get_example_data"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.get_example_data">[docs]</a><span class="k">def</span> <span class="nf">get_example_data</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot; Get default paths to experimental data.</span>
+    <span class="sd">&quot;&quot;&quot; Get default path to vasp_dos data</span>
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    example_data_path : str</span>
+<span class="sd">    data_path : str</span>
 <span class="sd">        path to example VASP data</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">data_path</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="s1">&#39;data/example_data&#39;</span><span class="p">)</span>
+    <span class="n">data_path</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="s1">&#39;data/pdos&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data_path</span></div>
 
 <div class="viewcode-block" id="get_all_VASP_files"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.get_all_VASP_files">[docs]</a><span class="k">def</span> <span class="nf">get_all_VASP_files</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
@@ -200,8 +201,11 @@
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    example_data_path : str</span>
-<span class="sd">        path to example VASP data</span>
+<span class="sd">    DOSCAR_files : list</span>
+<span class="sd">        list of all DOSCAR files</span>
+<span class="sd">        </span>
+<span class="sd">    CONTCAR_files : list</span>
+<span class="sd">        list of all CONTCAR files</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">DOSCAR_directories</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">subdirectory</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span> \
               <span class="k">for</span> <span class="n">subdirectory</span> <span class="ow">in</span> <span class="n">d</span> \
@@ -261,7 +265,7 @@
             <span class="n">band_center</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">band_center</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">band_center</span></div>
 
-<span class="k">def</span> <span class="nf">get_bond_energy</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">,</span> <span class="n">e_fermi</span><span class="p">):</span>
+<div class="viewcode-block" id="get_bond_energy"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.get_bond_energy">[docs]</a><span class="k">def</span> <span class="nf">get_bond_energy</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">,</span> <span class="n">e_fermi</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get bond energy from density</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -287,9 +291,9 @@
         <span class="n">bond_energy</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">integrand</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="n">idx_stop</span><span class="p">],</span> <span class="n">energies</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">idx_stop</span><span class="p">])</span>
         <span class="k">if</span> <span class="n">bond_energy</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,):</span>
             <span class="n">bond_energy</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">bond_energy</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">bond_energy</span>
+        <span class="k">return</span> <span class="n">bond_energy</span></div>
     
-<span class="k">def</span> <span class="nf">get_band_width</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">,</span> <span class="n">fraction</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="get_band_width"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.get_band_width">[docs]</a><span class="k">def</span> <span class="nf">get_band_width</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">,</span> <span class="n">fraction</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get band width given energies and densities</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -317,7 +321,7 @@
             <span class="n">min_index</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">index_values</span><span class="p">[</span><span class="n">density</span> <span class="o">&gt;</span> <span class="n">fraction</span> <span class="o">*</span> <span class="n">density</span><span class="o">.</span><span class="n">max</span><span class="p">()])</span>
             <span class="n">max_index</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">index_values</span><span class="p">[</span><span class="n">density</span> <span class="o">&gt;</span> <span class="n">fraction</span> <span class="o">*</span> <span class="n">density</span><span class="o">.</span><span class="n">max</span><span class="p">()])</span>
         <span class="n">band_width</span> <span class="o">=</span> <span class="n">energies</span><span class="p">[</span><span class="n">max_index</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)]</span> <span class="o">-</span> <span class="n">energies</span><span class="p">[</span><span class="n">min_index</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)]</span>
-        <span class="k">return</span> <span class="n">band_width</span>
+        <span class="k">return</span> <span class="n">band_width</span></div>
     
 <span class="k">def</span> <span class="nf">get_center_width</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">,</span> <span class="n">energy</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get width between to band centers given a division</span>
@@ -344,8 +348,38 @@
         <span class="n">center_width</span> <span class="o">=</span> <span class="n">center_upper</span> <span class="o">-</span> <span class="n">center_lower</span>
         <span class="k">return</span> <span class="n">center_width</span>
 
-<span class="k">def</span> <span class="nf">get_second_moment</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">):</span>
+<div class="viewcode-block" id="get_orbital_proximity"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.get_orbital_proximity">[docs]</a><span class="k">def</span> <span class="nf">get_orbital_proximity</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">moment</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get width between to band centers given a division</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        energies : numpy.ndarray</span>
+<span class="sd">            discretized orbital energies</span>
+<span class="sd">        </span>
+<span class="sd">        densities : numpy.ndarray</span>
+<span class="sd">            projected state densities</span>
+<span class="sd">            </span>
+<span class="sd">        energy : int</span>
+<span class="sd">            some energy with which the proximity of states is calculated</span>
+<span class="sd">            </span>
+<span class="sd">        moment : int</span>
+<span class="sd">            moment with which to calculate the orbital proximity</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        orbital_proximity : float or numpy.ndarray</span>
+<span class="sd">            proximity of orbitals to some energy</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">moment</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">integrand</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">energies</span> <span class="o">-</span> <span class="n">energy</span><span class="p">)</span> <span class="o">*</span> <span class="n">densities</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">integrand</span> <span class="o">=</span> <span class="p">(</span><span class="n">energies</span> <span class="o">-</span> <span class="n">energy</span><span class="p">)</span><span class="o">**</span><span class="n">moment</span> <span class="o">*</span> <span class="n">densities</span>
+        <span class="n">orbital_proximity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">integrand</span><span class="p">,</span> <span class="n">energies</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">densities</span><span class="p">,</span> <span class="n">energies</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">orbital_proximity</span></div>
+
+<div class="viewcode-block" id="get_second_moment"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.get_second_moment">[docs]</a><span class="k">def</span> <span class="nf">get_second_moment</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the second moment</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -360,15 +394,18 @@
 <span class="sd">        second_moment : float or numpy.ndarray</span>
 <span class="sd">            second moment of the densities</span>
 <span class="sd">            </span>
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Similar to get_orbital_proximty method with moment=2</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">band_center</span> <span class="o">=</span> <span class="n">get_band_center</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">band_center</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">band_center</span> <span class="o">=</span> <span class="n">band_center</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">variance</span> <span class="o">=</span> <span class="p">(</span><span class="n">energies</span> <span class="o">-</span> <span class="n">band_center</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">densities</span>
         <span class="n">second_moment</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">variance</span><span class="p">,</span> <span class="n">energies</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">densities</span><span class="p">,</span> <span class="n">energies</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">second_moment</span>
+        <span class="k">return</span> <span class="n">second_moment</span></div>
     
-<span class="k">def</span> <span class="nf">get_filling</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">,</span> <span class="n">max_energy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_energy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="get_filling"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.get_filling">[docs]</a><span class="k">def</span> <span class="nf">get_filling</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">,</span> <span class="n">max_energy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_energy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get band center given energies and densities</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -411,7 +448,7 @@
             <span class="n">idx_start</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">energies</span><span class="o">-</span><span class="n">min_energy</span><span class="p">))</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
         <span class="n">Integrated_Filling</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">densities</span><span class="p">[:,</span><span class="n">idx_start</span><span class="p">:</span><span class="n">idx_stop</span><span class="p">]</span>\
                                       <span class="p">,</span> <span class="n">energies</span><span class="p">[</span><span class="n">idx_start</span><span class="p">:</span><span class="n">idx_stop</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">Integrated_Filling</span>
+        <span class="k">return</span> <span class="n">Integrated_Filling</span></div>
 
 <div class="viewcode-block" id="VASP_DOS"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS">[docs]</a><span class="k">class</span> <span class="nc">VASP_DOS</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Class for extracting projected density of states from VASP&quot;&quot;&quot;</span>
@@ -623,6 +660,46 @@
         
         <span class="n">center_width</span> <span class="o">=</span> <span class="n">get_center_width</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">,</span> <span class="n">energy</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">center_width</span></div>
+    
+<div class="viewcode-block" id="VASP_DOS.get_orbital_proximty"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.get_orbital_proximty">[docs]</a>    <span class="k">def</span> <span class="nf">get_orbital_proximty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">atom_indices</span><span class="p">,</span> <span class="n">orbital_list</span><span class="p">,</span> <span class="n">moment</span><span class="o">=</span><span class="mi">1</span>
+                         <span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get width between to band centers given a division</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------            </span>
+<span class="sd">        energy : int</span>
+<span class="sd">            some energy with which the proximity of states is calculated</span>
+<span class="sd">            </span>
+<span class="sd">        moment : int</span>
+<span class="sd">            moment with which to calculate the orbital proximity</span>
+<span class="sd">            </span>
+<span class="sd">        atom_indices : list[int]</span>
+<span class="sd">            list of atom indices</span>
+<span class="sd">            </span>
+<span class="sd">        orbital_list : list[str]</span>
+<span class="sd">            Which orbitals to return</span>
+<span class="sd">            </span>
+<span class="sd">        sum_density : bool</span>
+<span class="sd">            if a sub-level is provided instead of an orbital, sum_density</span>
+<span class="sd">            indicates if the individual sub-level densities should be summed</span>
+<span class="sd">            </span>
+<span class="sd">        sum_spin : bool</span>
+<span class="sd">            different spin densities are summed.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        orbital_proximity : float or numpy.ndarray</span>
+<span class="sd">            proximity of orbitals to some energy</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">energies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_energies</span><span class="p">()</span>
+        <span class="n">get_site_dos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_site_dos</span>
+        <span class="n">orbitals</span><span class="p">,</span> <span class="n">densities</span> <span class="o">=</span> <span class="n">get_site_dos</span><span class="p">(</span><span class="n">atom_indices</span><span class="p">,</span><span class="n">orbital_list</span>\
+                                         <span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="n">sum_density</span>\
+                                         <span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="n">sum_spin</span><span class="p">)</span>
+        <span class="n">orbital_proximity</span> <span class="o">=</span> <span class="n">get_orbital_proximity</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">densities</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">moment</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">orbital_proximity</span></div>
     
 <div class="viewcode-block" id="VASP_DOS.get_second_moment"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.get_second_moment">[docs]</a>    <span class="k">def</span> <span class="nf">get_second_moment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom_indices</span><span class="p">,</span> <span class="n">orbital_list</span><span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="kc">False</span>\
                        <span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>

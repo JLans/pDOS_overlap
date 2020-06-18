@@ -38,7 +38,7 @@
   <link rel="stylesheet" href="_static/gallery-dataframe.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="coordination" href="coordination.html" />
+    <link rel="next" title="overlap_population" href="overlap_population.html" />
     <link rel="prev" title="pdos_overlap" href="pdos_overlap.html" /> 
 </head>
 
@@ -95,9 +95,15 @@
 <li class="toctree-l2"><a class="reference internal" href="#the-get-example-data-function">The <code class="docutils literal notranslate"><span class="pre">get_example_data</span></code> function</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#the-get-all-vasp-files-function">The <code class="docutils literal notranslate"><span class="pre">get_all_VASP_files</span></code> function</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#the-get-band-center-function">The <code class="docutils literal notranslate"><span class="pre">get_band_center</span></code> function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-get-bond-energy-function">The <code class="docutils literal notranslate"><span class="pre">get_bond_energy</span></code> function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-get-band-width-function">The <code class="docutils literal notranslate"><span class="pre">get_band_width</span></code> function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-get-orbital-proximity-function">The <code class="docutils literal notranslate"><span class="pre">get_orbital_proximity</span></code> function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-get-second-moment-function">The <code class="docutils literal notranslate"><span class="pre">get_second_moment</span></code> function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-get-filling-function">The <code class="docutils literal notranslate"><span class="pre">get_filling</span></code> function</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#the-vasp-dos-class">The <code class="docutils literal notranslate"><span class="pre">VASP_DOS</span></code> class</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="overlap_population.html">overlap_population</a></li>
 <li class="toctree-l1"><a class="reference internal" href="coordination.html">coordination</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plotting_tools.html">plotting_tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="error_metrics.html">error_metrics</a></li>
@@ -190,10 +196,10 @@
 <dl class="py function">
 <dt id="pdos_overlap.vasp_dos.get_example_data">
 <code class="sig-name descname">get_example_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/vasp_dos.html#get_example_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.vasp_dos.get_example_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get default paths to experimental data.</p>
+<dd><p>Get default path to vasp_dos data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><strong>example_data_path</strong> – path to example VASP data</p>
+<dd class="field-odd"><p><strong>data_path</strong> – path to example VASP data</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></p>
@@ -213,10 +219,11 @@
 <dd class="field-odd"><p><strong>directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – root directory to look for DOSCAR files</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>example_data_path</strong> – path to example VASP data</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></p>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>DOSCAR_files</strong> (<em>list</em>) – list of all DOSCAR files</p></li>
+<li><p><strong>CONTCAR_files</strong> (<em>list</em>) – list of all CONTCAR files</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -240,6 +247,133 @@
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>band_center</strong> – center of the band(s) up to max_energy</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>trapezoidal rule is better for narrow gaussian peaks and for “rough” functions
+<a class="reference external" href="https://doi.org/10.1016/j.chemolab.2018.06.001">https://doi.org/10.1016/j.chemolab.2018.06.001</a>
+<a class="reference external" href="http://emis.icm.edu.pl/journals/JIPAM/v3n4/031_02.html">http://emis.icm.edu.pl/journals/JIPAM/v3n4/031_02.html</a></p>
+</dd></dl>
+
+</div>
+<div class="section" id="the-get-bond-energy-function">
+<h2>The <code class="docutils literal notranslate"><span class="pre">get_bond_energy</span></code> function<a class="headerlink" href="#the-get-bond-energy-function" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pdos_overlap.vasp_dos.get_bond_energy">
+<code class="sig-name descname">get_bond_energy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">energies</span></em>, <em class="sig-param"><span class="n">densities</span></em>, <em class="sig-param"><span class="n">e_fermi</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/vasp_dos.html#get_bond_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.vasp_dos.get_bond_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get bond energy from density</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>energies</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – discretized orbital energies</p></li>
+<li><p><strong>densities</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – projected state densities</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>bond_energy</strong> – total energy in the bonds</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="the-get-band-width-function">
+<h2>The <code class="docutils literal notranslate"><span class="pre">get_band_width</span></code> function<a class="headerlink" href="#the-get-band-width-function" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pdos_overlap.vasp_dos.get_band_width">
+<code class="sig-name descname">get_band_width</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">energies</span></em>, <em class="sig-param"><span class="n">densities</span></em>, <em class="sig-param"><span class="n">fraction</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/vasp_dos.html#get_band_width"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.vasp_dos.get_band_width" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get band width given energies and densities</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>energies</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – discretized orbital energies</p></li>
+<li><p><strong>densities</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – projected state densities</p></li>
+<li><p><strong>fraction</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – maximum projected density considered part of a band</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>band_width</strong> – width of the band(s)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="the-get-orbital-proximity-function">
+<h2>The <code class="docutils literal notranslate"><span class="pre">get_orbital_proximity</span></code> function<a class="headerlink" href="#the-get-orbital-proximity-function" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pdos_overlap.vasp_dos.get_orbital_proximity">
+<code class="sig-name descname">get_orbital_proximity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">energies</span></em>, <em class="sig-param"><span class="n">densities</span></em>, <em class="sig-param"><span class="n">energy</span></em>, <em class="sig-param"><span class="n">moment</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/vasp_dos.html#get_orbital_proximity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.vasp_dos.get_orbital_proximity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get width between to band centers given a division</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>energies</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – discretized orbital energies</p></li>
+<li><p><strong>densities</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – projected state densities</p></li>
+<li><p><strong>energy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – some energy with which the proximity of states is calculated</p></li>
+<li><p><strong>moment</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – moment with which to calculate the orbital proximity</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>orbital_proximity</strong> – proximity of orbitals to some energy</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="the-get-second-moment-function">
+<h2>The <code class="docutils literal notranslate"><span class="pre">get_second_moment</span></code> function<a class="headerlink" href="#the-get-second-moment-function" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pdos_overlap.vasp_dos.get_second_moment">
+<code class="sig-name descname">get_second_moment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">energies</span></em>, <em class="sig-param"><span class="n">densities</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/vasp_dos.html#get_second_moment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.vasp_dos.get_second_moment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the second moment</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>energies</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – discretized orbital energies</p></li>
+<li><p><strong>densities</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – projected state densities</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>second_moment</strong> – second moment of the densities</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Similar to get_orbital_proximty method with moment=2</p>
+</dd></dl>
+
+</div>
+<div class="section" id="the-get-filling-function">
+<h2>The <code class="docutils literal notranslate"><span class="pre">get_filling</span></code> function<a class="headerlink" href="#the-get-filling-function" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pdos_overlap.vasp_dos.get_filling">
+<code class="sig-name descname">get_filling</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">energies</span></em>, <em class="sig-param"><span class="n">densities</span></em>, <em class="sig-param"><span class="n">max_energy</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_energy</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/vasp_dos.html#get_filling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.vasp_dos.get_filling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get band center given energies and densities</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>energies</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – discretized orbital energies</p></li>
+<li><p><strong>densities</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – projected state densities</p></li>
+<li><p><strong>max_energy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – cutoff energy (often the fermi energy)</p></li>
+<li><p><strong>min_energy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – cutoff energy (often the fermi energy)</p></li>
+<li><p><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – axis of densities on which to integrate</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>Integrated_Filling</strong> – Total filling between min and max energy</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
@@ -469,6 +603,31 @@ indicates if the individual sub-level densities should be summed</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt id="pdos_overlap.vasp_dos.VASP_DOS.get_orbital_proximty">
+<code class="sig-name descname">get_orbital_proximty</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">energy</span></em>, <em class="sig-param"><span class="n">atom_indices</span></em>, <em class="sig-param"><span class="n">orbital_list</span></em>, <em class="sig-param"><span class="n">moment</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">sum_density</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/vasp_dos.html#VASP_DOS.get_orbital_proximty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.vasp_dos.VASP_DOS.get_orbital_proximty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get width between to band centers given a division</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>energy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – some energy with which the proximity of states is calculated</p></li>
+<li><p><strong>moment</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – moment with which to calculate the orbital proximity</p></li>
+<li><p><strong>atom_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>]</em>) – list of atom indices</p></li>
+<li><p><strong>orbital_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>]</em>) – Which orbitals to return</p></li>
+<li><p><strong>sum_density</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – if a sub-level is provided instead of an orbital, sum_density
+indicates if the individual sub-level densities should be summed</p></li>
+<li><p><strong>sum_spin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – different spin densities are summed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>orbital_proximity</strong> – proximity of orbitals to some energy</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pdos_overlap.vasp_dos.VASP_DOS.get_second_moment">
 <code class="sig-name descname">get_second_moment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atom_indices</span></em>, <em class="sig-param"><span class="n">orbital_list</span></em>, <em class="sig-param"><span class="n">sum_density</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/vasp_dos.html#VASP_DOS.get_second_moment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.vasp_dos.VASP_DOS.get_second_moment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get second moment of the density projected onto atomic orbitals</p>
@@ -544,7 +703,7 @@ by both orbital and spin (if available)</p></li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="coordination.html" class="btn btn-neutral float-right" title="coordination" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="overlap_population.html" class="btn btn-neutral float-right" title="overlap_population" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="pdos_overlap.html" class="btn btn-neutral float-left" title="pdos_overlap" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

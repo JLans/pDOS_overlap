@@ -10,8 +10,8 @@ from __future__ import division
 from pdos_overlap.coordination import get_geometric_data
 import numpy as np
 import matplotlib.pyplot as plt
-from pdos_overlap import VASP_DOS
-from pdos_overlap import get_all_VASP_files
+from pdos_overlap.vasp_dos import VASP_DOS
+from pdos_overlap.vasp_dos import get_all_VASP_files
 
 GCNList = []
 atom_type = []

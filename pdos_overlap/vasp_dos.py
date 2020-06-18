@@ -22,7 +22,7 @@ def get_data_path():
     return data_path
 
 def get_example_data():
-    """ Get default paths to experimental data.
+    """ Get default path to vasp_dos data
     
     Returns
     -------
@@ -220,7 +220,7 @@ def get_orbital_proximity(energies, densities, energy, moment=1):
         return orbital_proximity
 
 def get_second_moment(energies, densities):
-        """ Get width between to band centers given a division
+        """ Get the second moment
         
         Parameters
         ----------

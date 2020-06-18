@@ -22,8 +22,8 @@ This example shows how to plot projected density of states
     import os
     import numpy as np
     import matplotlib.pyplot as plt
-    from pdos_overlap import get_example_data
-    from pdos_overlap import VASP_DOS
+    from pdos_overlap.vasp_dos import get_example_data
+    from pdos_overlap.vasp_dos import VASP_DOS
     from pdos_overlap.plotting_tools import set_figure_settings
 
 
@@ -119,7 +119,7 @@ We plot the projected density with the fermi-level indicated.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.748 seconds)
+   **Total running time of the script:** ( 0 minutes  0.822 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_projected_density_plot_projected_density.py:

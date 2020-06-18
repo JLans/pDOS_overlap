@@ -62,5 +62,5 @@ MINOR = _version_minor
 MICRO = _version_micro
 VERSION = __version__
 PACKAGE_DATA = {'pdos_overlap': [pjoin('data', '*'),pjoin('data', '*','*'),pjoin('data', '*','*','*')]}
-REQUIRES = ["numpy", "matplotlib", "ase"]
+REQUIRES = ["numpy", "matplotlib", "ase", "scipy"]
 PYTHON_REQUIRES = ">= 3.5"

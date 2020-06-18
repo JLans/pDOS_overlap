@@ -11,7 +11,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from pdos_overlap.vasp_dos import get_example_data
-from pdos_overlap import VASP_DOS
+from pdos_overlap.vasp_dos import VASP_DOS
 from pdos_overlap.plotting_tools import set_figure_settings
 
 #######################################################################################

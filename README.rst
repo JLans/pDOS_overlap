@@ -21,8 +21,10 @@ Dependencies
 ------------
 
 -  Python3
-
 -  `Numpy`_: Used for vector and matrix operations. Also used for integrations
+-  `Atomic Simulation Environment`_: Used for I/O operations and for visualiztion
+-  `SciPy`_: Used for optimization
+-  `Matplotlib`_: Used for plotting data
 
 License
 -------
@@ -32,3 +34,6 @@ file for details.
 
 .. _`documentation page`: https://JLans.github.io/pdos_overlap/
 .. _Numpy: http://www.numpy.org/
+.. _Atomic Simulation Environment: https://wiki.fysik.dtu.dk/ase/
+.. _SciPy: https://www.scipy.org/
+.. _Matplotlib: https://matplotlib.org/

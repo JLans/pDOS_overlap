@@ -20,8 +20,8 @@ This example shows how to plot projected density of states
 
 
     import os
-    from pdos_overlap import get_example_data
-    from pdos_overlap import VASP_DOS
+    from pdos_overlap.vasp_dos import get_example_data
+    from pdos_overlap.vasp_dos import VASP_DOS
     from pdos_overlap.plotting_tools import set_figure_settings
 
 
@@ -95,7 +95,7 @@ spin orbital densities to get energy sub-level band centers.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.868 seconds)
+   **Total running time of the script:** ( 0 minutes  0.772 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_band_center_plot_band_center.py:
