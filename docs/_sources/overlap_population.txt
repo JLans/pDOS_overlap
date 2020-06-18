@@ -1,8 +1,8 @@
 overlap_population
 ==================
 
-The ``write_lobster_in`` function
-*********************************
+The ``write_lobsterin`` function
+********************************
 .. autofunction:: pdos_overlap.overlap_population.write_lobsterin
 
 The ``get_example_data`` function
