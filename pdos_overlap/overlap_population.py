@@ -58,6 +58,7 @@ def write_lobsterin(directory='.', adsorbate_atoms=['C','H','O','N']\
         for adsorbate_index in adsorbate_indices:
             atom_pairs.append((site_index, adsorbate_index))
     atom_pairs += list(itertools.combinations(adsorbate_indices,2))
+    atom_pairs = np.array(atom_pairs) + 1
     DOSCAR = os.path.join(directory,'DOSCAR')
     DOS = VASP_DOS(DOSCAR)
     COHPstartEnergy = DOS.emin - DOS.e_fermi
