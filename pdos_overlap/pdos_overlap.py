@@ -44,6 +44,7 @@ def get_adsorbate_indices(GAS_CONTCAR, ADSORBATE_CONTCAR):
     site_indices = []
     for i in adsorbate_indices:
         site_indices += bonded[i]
+    site_indices = list(set(site_indices))
     return adsorbate_indices, site_indices
 
 class PDOS_OVERLAP:

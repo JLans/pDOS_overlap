@@ -52,6 +52,7 @@ def write_lobsterin(directory='.', adsorbate_atoms=['C','H','O','N']\
     site_indices = []
     for i in adsorbate_indices:
         site_indices += bonded[i]
+    site_indices = list(set(site_indices))
     atom_pairs = []
     for site_index in site_indices:
         for adsorbate_index in adsorbate_indices:
