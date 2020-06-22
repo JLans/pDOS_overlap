@@ -334,7 +334,12 @@ class VASP_DOS:
         orbital_dictionary: dict
             dictionary that maps resolved sublevels/orbitals to indices
         """
-        natoms, emax, emin, ndos, e_fermi, is_spin, m_projected\
+        if file_name[-14:] == 'DOSCAR.lobster':
+            natoms, emax, emin, ndos, e_fermi, is_spin, m_projected\
+            , orbital_dictionary = self._read_lobster(file_name=file_name, no_negatives=no_negatives)
+        
+        elif file_name[-6:] == 'DOSCAR':
+            natoms, emax, emin, ndos, e_fermi, is_spin, m_projected\
             , orbital_dictionary = self._read_doscar(file_name=file_name, no_negatives=no_negatives)
         self.no_negatives = no_negatives
         self.natoms = natoms
@@ -657,7 +662,8 @@ class VASP_DOS:
                 integrated_dos = self._total_dos[3:5, :]
         return integrated_dos
         
-    def get_site_dos(self, atom_indices, orbital_list=[], sum_density=False, sum_spin=True):
+    def get_site_dos(self, atom_indices, orbital_list=[], sum_density=False\
+                     , sum_spin=True):
         """Return an NDOSxM array with dos for the chosen atom and orbital(s).
         
         Parameters
@@ -847,6 +853,14 @@ class VASP_DOS:
         _total_dos = get_dos(f,ndos)
         if no_negatives == True:
             _total_dos[1:][_total_dos[1:][...] < 0] = 0
+        # if energies have been shifted by fermi level undo that
+        if np.abs(_total_dos[0].min() + e_fermi - emin)\
+            < np.abs(_total_dos[0].min() - emin):
+            _total_dos[0] += e_fermi
+        if _total_dos.shape[0] == 5:
+            is_spin = True
+        elif _total_dos.shape[0] == 3:
+            is_spin = False
         # Next we have one block per atom, if DOSCAR contains the stuff
         # necessary for generating site-projected DOS
         dos = []
@@ -862,24 +876,19 @@ class VASP_DOS:
         if no_negatives == True:
             _site_dos[:,1:,:][_site_dos[:,1:,:][...] < 0] = 0 
         
-        
         # Integer indexing for orbitals starts from 1 in the _site_dos array
         # since the 0th column contains the energies
         norbs = _site_dos.shape[1] - 1
         if norbs == 3:
-            is_spin = False
             m_projected = False
             orbitals = {'s': 1, 'p': 2, 'd': 3}
         elif norbs == 4:
-            is_spin = False
             m_projected = False
             orbitals = {'s': 1, 'p': 2, 'd': 3, 'f': 4}
         elif norbs == 6:
-            is_spin = True
             m_projected = False
             orbitals = {'s+': 1, 's-': 2, 'p+': 3, 'p-': 4, 'd+': 5, 'd-': 6}
         elif norbs == 8:
-            is_spin = True
             m_projected = False
             orbitals = {
                 's+': 1,
@@ -891,12 +900,10 @@ class VASP_DOS:
                 'f+': 7,
                 'f-': 8}
         elif norbs == 9:
-            is_spin = False
             m_projected = True
             orbitals = {'s': 1, 'py': 2, 'pz': 3, 'px': 4,
                     'dxy': 5, 'dyz': 6, 'dz2': 7, 'dxz': 8, 'dx2-y2': 9}
         elif norbs == 16:
-            is_spin = False
             m_projected = True
             orbitals = {
                 's': 1,
@@ -916,7 +923,6 @@ class VASP_DOS:
                 'fz(x2-y2)': 15,
                 'fx(x2-3y2)': 16}
         elif norbs == 18:
-            is_spin = True
             m_projected = True
             orbitals = {
                 's+': 1,
@@ -938,7 +944,6 @@ class VASP_DOS:
                 'dx2-y2+': 17,
                 'dx2-y2-': 18}
         elif norbs == 32:
-            is_spin = True
             m_projected = True
             orbitals = {
                 's+': 1,
@@ -973,6 +978,266 @@ class VASP_DOS:
                 'fz(x2-y2)-': 30,
                 'fx(x2-3y2)+': 31,
                 'fx(x2-3y2)-': 32}
+        self._total_dos = _total_dos
+        self._site_dos = _site_dos
+        return natoms, emax, emin, ndos, e_fermi, is_spin, m_projected, orbitals
+    
+    def _read_lobster(self, file_name="DOSCAR.lobster", no_negatives=True):
+        """Read VASP DOSCAR and extract projected densities
+        
+        Parameters
+        ----------
+        file_name : str
+            file location of the DOSCAR file
+            
+        no_negatives : bool
+            Indicates wheather negative occupances will be converted to zero.
+            Negative occupances can occur if Methfessel-Paxton is used.
+            
+        Attributes
+        ----------
+        _total_dos : numpy.ndarray
+            numpy array that contains the energy of the orbitals and the
+            total projected and integrated density
+            
+        _site_dos : numpy.ndarray
+            numpy array that contains the energy of the orbitals and the
+            site and orbital projected density of states. Only available if a
+            site projected calculation was performed.
+            
+        Returns
+        -------
+        emax : float
+            maximum energy level
+            
+        emin : float
+            minimum energy level
+            
+        ndos : int
+            number of descritized energy levels
+            
+        e_fermi : float
+            highest occupied energy level
+            
+        is_spin : bool
+            indicates if projected density is spin resolved
+            
+        m_projected : bool
+            indicates if projected density is orbital resolved
+            
+        orbital_dictionary : dict
+            dictionary that maps resolved sublevels/orbitals to indices
+        """
+        #Accepts a file and reads through to get the density of states
+        def get_dos(f, ndos):
+            #get first line of density
+            line = f.readline().split()
+            dos = np.zeros((ndos, len(line)))
+            dos[0] = np.array(line)
+            for nd in range(1, ndos):
+                line = f.readline().split()
+                dos[nd] = np.array([float(x) for x in line])
+            return dos.T
+            
+        f = open(file_name)
+        natoms = int(f.readline().split()[0])
+        [f.readline() for lines in range(4)]  # Skip next 4 lines.
+        # First we have a block with total and total integrated DOS
+        descriptive_line = f.readline().split()
+        emax = float(descriptive_line[0])
+        emin = float(descriptive_line[1])
+        ndos = int(descriptive_line[2])
+        e_fermi = float(descriptive_line[3])
+        _total_dos = get_dos(f,ndos)
+        if no_negatives == True:
+            _total_dos[1:][_total_dos[1:][...] < 0] = 0
+        # if energies have been shifted by fermi level undo that
+        if np.abs(_total_dos[0].min() + e_fermi - emin)\
+            < np.abs(_total_dos[0].min() - emin):
+            _total_dos[0] += e_fermi
+        if _total_dos.shape[0] == 5:
+            is_spin = True
+        elif _total_dos.shape[0] == 3:
+            is_spin = False
+        # Next we have one block per atom, if DOSCAR contains the stuff
+        # necessary for generating site-projected DOS
+        dos = []
+        for na in range(natoms):
+            line = f.readline()
+            if line == '':
+                # No site-projected DOS
+                break
+            #ndos = int(line.split()[2]) ndos does not change
+            pdos = get_dos(f,ndos)
+            dos.append(pdos)
+        # Integer indexing for orbitals starts from 1 in the _site_dos array
+        # since the 0th column contains the energies
+        if is_spin == False:
+            orbitals = {'s': 1, 'py': 2, 'pz': 3, 'px': 4,
+                        'dxy': 5, 'dyz': 6, 'dz2': 7, 'dxz': 8, 'dx2-y2': 9}
+            _site_dos = np.zeros((natoms, 10, ndos))
+            for count, pdos in enumerate(dos):
+                if pdos.shape[0] == 2:
+                    _site_dos[count][0] = pdos[0] # energy
+                    _site_dos[count][1] = pdos[1] # s
+                elif pdos.shape[0] == 4:
+                    _site_dos[count][0] = pdos[0] # energy
+                    _site_dos[count][2] = pdos[1] # py
+                    _site_dos[count][3] = pdos[2] # pz
+                    _site_dos[count][4] = pdos[3] # px
+                elif pdos.shape[0] == 5:
+                    _site_dos[count][0] = pdos[0] # energy
+                    _site_dos[count][1] = pdos[1] # s
+                    _site_dos[count][2] = pdos[2] # py
+                    _site_dos[count][3] = pdos[3] # pz
+                    _site_dos[count][4] = pdos[4] # px
+                elif pdos.shape[0] == 6:
+                    _site_dos[count][0] = pdos[0] # energy
+                    _site_dos[count][5] = pdos[1] # dxy
+                    _site_dos[count][6] = pdos[2] # dyz
+                    _site_dos[count][7] = pdos[3] # dz2
+                    _site_dos[count][8] = pdos[4] # dxz
+                    _site_dos[count][9] = pdos[5] # dx2-y2
+                elif pdos.shape[0] == 7:
+                    _site_dos[count][0] = pdos[0] # energy
+                    _site_dos[count][1] = pdos[1] # s
+                    _site_dos[count][5] = pdos[2] # dxy
+                    _site_dos[count][6] = pdos[3] # dyz
+                    _site_dos[count][7] = pdos[4] # dz2
+                    _site_dos[count][8] = pdos[5] # dxz
+                    _site_dos[count][9] = pdos[6] # dx2-y2
+                elif pdos.shape[0] == 9:
+                    _site_dos[count][0] = pdos[0] # energy
+                    _site_dos[count][2] = pdos[1] # py
+                    _site_dos[count][3] = pdos[2] # pz
+                    _site_dos[count][4] = pdos[3] # px
+                    _site_dos[count][5] = pdos[4] # dxy
+                    _site_dos[count][6] = pdos[5] # dyz
+                    _site_dos[count][7] = pdos[6] # dz2
+                    _site_dos[count][8] = pdos[7] # dxz
+                    _site_dos[count][9] = pdos[8] # dx2-y2
+                else:
+                    _site_dos[count][0] = pdos[0] # energy
+                    _site_dos[count][1] = pdos[1] # s
+                    _site_dos[count][2] = pdos[2] # py
+                    _site_dos[count][3] = pdos[3] # pz
+                    _site_dos[count][4] = pdos[4] # px
+                    _site_dos[count][5] = pdos[5] # dxy
+                    _site_dos[count][6] = pdos[6] # dyz
+                    _site_dos[count][7] = pdos[7] # dz2
+                    _site_dos[count][8] = pdos[8] # dxz
+                    _site_dos[count][9] = pdos[9] # dx2-y2
+        else:
+            _site_dos = np.zeros((natoms, 19, ndos))
+            orbitals = {
+                's+': 1,
+                's-': 2,
+                'py+': 3,
+                'py-': 4,
+                'pz+': 5,
+                'pz-': 6,
+                'px+': 7,
+                'px-': 8,
+                'dxy+': 9,
+                'dxy-': 10,
+                'dyz+': 11,
+                'dyz-': 12,
+                'dz2+': 13,
+                'dz2-': 14,
+                'dxz+': 15,
+                'dxz-': 16,
+                'dx2-y2+': 17,
+                'dx2-y2-': 18}
+            for count, pdos in enumerate(dos):
+                if pdos.shape[0] == 3:
+                        _site_dos[count][0] = pdos[0] # energy
+                        _site_dos[count][1] = pdos[1] # s+
+                        _site_dos[count][2] = pdos[2] # s-
+                elif pdos.shape[0] == 7:
+                    _site_dos[count][0] = pdos[0] # energy
+                    _site_dos[count][3] = pdos[1] # py+
+                    _site_dos[count][4] = pdos[2] # py-
+                    _site_dos[count][5] = pdos[3] # pz+
+                    _site_dos[count][6] = pdos[4] # pz-
+                    _site_dos[count][7] = pdos[5] # px+
+                    _site_dos[count][8] = pdos[6] # px-
+                elif pdos.shape[0] == 9:
+                    _site_dos[count][0] = pdos[0] # energy
+                    _site_dos[count][1] = pdos[1] # s+
+                    _site_dos[count][2] = pdos[2] # s-
+                    _site_dos[count][3] = pdos[3] # py+
+                    _site_dos[count][4] = pdos[4] # py-
+                    _site_dos[count][5] = pdos[5] # pz+
+                    _site_dos[count][6] = pdos[6] # pz-
+                    _site_dos[count][7] = pdos[7] # px+
+                    _site_dos[count][8] = pdos[8] # px-
+                elif pdos.shape[0] == 11:
+                    _site_dos[count][0] = pdos[0] # energy
+                    _site_dos[count][9] = pdos[1] # dxy+
+                    _site_dos[count][10] = pdos[2] # dxy-
+                    _site_dos[count][11] = pdos[3] # dyz+
+                    _site_dos[count][12] = pdos[4] # dyz-
+                    _site_dos[count][13] = pdos[5] # dz2+
+                    _site_dos[count][14] = pdos[6] # dz2-
+                    _site_dos[count][15] = pdos[7] # dxz+
+                    _site_dos[count][16] = pdos[8] # dxz-
+                    _site_dos[count][17] = pdos[9] # dx2-y2+
+                    _site_dos[count][18] = pdos[10] # dx2-y2-
+                elif pdos.shape[0] == 13:
+                    _site_dos[count][0] = pdos[0] # energy
+                    _site_dos[count][1] = pdos[1] # s+
+                    _site_dos[count][2] = pdos[2] # s-
+                    _site_dos[count][9] = pdos[3] # dxy+
+                    _site_dos[count][10] = pdos[4] # dxy-
+                    _site_dos[count][11] = pdos[5] # dyz+
+                    _site_dos[count][12] = pdos[6] # dyz-
+                    _site_dos[count][13] = pdos[7] # dz2+
+                    _site_dos[count][14] = pdos[8] # dz2-
+                    _site_dos[count][15] = pdos[9] # dxz+
+                    _site_dos[count][16] = pdos[10] # dxz-
+                    _site_dos[count][17] = pdos[11] # dx2-y2+
+                    _site_dos[count][18] = pdos[12] # dx2-y2-
+                elif pdos.shape[0] == 17:
+                    _site_dos[count][0] = pdos[0] # energy
+                    _site_dos[count][3] = pdos[1] # py+
+                    _site_dos[count][4] = pdos[2] # py-
+                    _site_dos[count][5] = pdos[3] # pz+
+                    _site_dos[count][6] = pdos[4] # pz-
+                    _site_dos[count][7] = pdos[5] # px+
+                    _site_dos[count][8] = pdos[6] # px-
+                    _site_dos[count][9] = pdos[7] # dxy+
+                    _site_dos[count][10] = pdos[8] # dxy-
+                    _site_dos[count][11] = pdos[9] # dyz+
+                    _site_dos[count][12] = pdos[10] # dyz-
+                    _site_dos[count][13] = pdos[11] # dz2+
+                    _site_dos[count][14] = pdos[12] # dz2-
+                    _site_dos[count][15] = pdos[13] # dxz+
+                    _site_dos[count][16] = pdos[14] # dxz-
+                    _site_dos[count][17] = pdos[15] # dx2-y2+
+                    _site_dos[count][18] = pdos[16] # dx2-y2-
+                else:
+                    _site_dos[count][0] = pdos[0] # energy
+                    _site_dos[count][1] = pdos[1] # s+
+                    _site_dos[count][2] = pdos[2] # s-
+                    _site_dos[count][3] = pdos[3] # py+
+                    _site_dos[count][4] = pdos[4] # py-
+                    _site_dos[count][5] = pdos[5] # pz+
+                    _site_dos[count][6] = pdos[6] # pz-
+                    _site_dos[count][7] = pdos[7] # px+
+                    _site_dos[count][8] = pdos[8] # px-
+                    _site_dos[count][9] = pdos[9] # dxy+
+                    _site_dos[count][10] = pdos[10] # dxy-
+                    _site_dos[count][11] = pdos[11] # dyz+
+                    _site_dos[count][12] = pdos[12] # dyz-
+                    _site_dos[count][13] = pdos[13] # dz2+
+                    _site_dos[count][14] = pdos[14] # dz2-
+                    _site_dos[count][15] = pdos[15] # dxz+
+                    _site_dos[count][16] = pdos[16] # dxz-
+                    _site_dos[count][17] = pdos[17] # dx1-y2+
+                    _site_dos[count][18] = pdos[18] # dx2-y2-
+        m_projected = True
+        if no_negatives == True:
+            _site_dos[:,1:,:][_site_dos[:,1:,:][...] < 0] = 0 
         self._total_dos = _total_dos
         self._site_dos = _site_dos
         return natoms, emax, emin, ndos, e_fermi, is_spin, m_projected, orbitals

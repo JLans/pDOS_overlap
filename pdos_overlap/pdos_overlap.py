@@ -177,7 +177,8 @@ class PDOS_OVERLAP:
         
         adsorbate_peak_energies, adsorbate_peak_densities, adsorbate_orbitals \
             , adsorbate_orbital_indices, adsorbate_occupations \
-            = self._get_mol_orbitals(REFERENCE_PDOS, adsorbate_indices, min_occupation)
+            = self._get_mol_orbitals(REFERENCE_PDOS, adsorbate_indices\
+                                     , min_occupation)
             
         overlap_orbitals, energy_overlap \
         = self._calculate_overlap(adsorbate_orbitals, REFERENCE_PDOS\
@@ -557,32 +558,34 @@ class PDOS_OVERLAP:
         atomic_orbitals = list(PDOS.orbital_dictionary.keys())
         orbital_list, TOTAL_PDOS = PDOS.get_site_dos(site_indices, atomic_orbitals\
                                         , sum_density=sum_density, sum_spin=sum_spin)
+        energies = PDOS.get_energies()
         #calculate sumj(Mij*projected_dosj) for all i  
         overlap_orbitals = orbital_list
         energy_overlap = np.zeros((num_molecular_orbitals, TOTAL_PDOS.shape[0]))
         for i in range(num_molecular_orbitals):
             if normalize == False:
                 energy_overlap[i] = np.trapz(molecular_orbitals[i] * TOTAL_PDOS\
-                                         ,PDOS.get_energies())
+                                         , energies)
             else:
                 energy_overlap[i] = np.trapz(molecular_orbitals[i]**0.5 * TOTAL_PDOS**0.5\
-                                         , PDOS.get_energies())\
-                    / (np.trapz(molecular_orbitals[i], PDOS.get_energies())\
-                       * np.trapz(TOTAL_PDOS, PDOS.get_energies()) )
+                                         , energies)\
+                    / (np.trapz(molecular_orbitals[i], energies)\
+                       * np.trapz(TOTAL_PDOS, energies) )
         return overlap_orbitals, energy_overlap
     
-    def calculate_orbital_interaction(self,gas_orbital_index, PDOS, site_indices\
+    def calculate_orbital_interaction(self,orbital_index, PDOS, site_indices\
                              , atomic_orbitals, BULK_PDOS, bulk_atom=0\
                              , sum_density=False, sum_spin=True\
                              , method='orbital_bond_energy'\
-                             , use_orbital_proximity=False):
+                             , use_orbital_proximity=False\
+                             , index_type='gas'):
         """ Calculate surface and gas orbital interactions
         
         Parameters
         ----------
-        gas_orbital_index : int
-            Identifies which gas orbital with which to calculate the overlap
-            of the PDOS atomic orbitals
+        orbital_index : int
+            Identifies the gas/adsorbate orbital with which to calculate the
+            overlap of the PDOS atomic orbitals
         
         PDOS : vasp_dos.VASP_DOS
             VASP_DOS object of surface phase calculation of adsorbate
@@ -602,6 +605,18 @@ class PDOS_OVERLAP:
         sum_spin : bool
             Tag indictes if state density with different spins should be summed
             when generating gas and adsorbate orbital features.
+            
+        method : str
+            Can be 'orbital_bond_energy' or 'band_width' and dictates whate
+            values from the pdos are used in computing relative potential to bond
+            
+        use_orbital_proximity :bool
+            Indicates whether proximity of the surface to the gas states should
+            be used to scale interactions. Only used if index_type = 'gas'
+            
+        index_type : str
+            'gas' or 'adsorbate' identifies whether the orbital indices are for
+            the gs or adsorbate orbitals
                    
         Returns
         -------
@@ -609,12 +624,15 @@ class PDOS_OVERLAP:
             Metal atomic orbital interactions with the gas molecular orbitals
             
         """
-        #get positions of the gas indices in the conversion matrix
-        gas_positions = [i for i in range(self.gas_2_adsorbate.shape[0])\
-                       if self.gas_2_adsorbate[i][0] == gas_orbital_index]
-        gas_energy = self.gas_band_centers[gas_orbital_index]
-        #get the adsorbate indices
-        adsorbate_indices = self.gas_2_adsorbate[gas_positions,1].astype('int')
+        if index_type == 'gas':
+            #get positions of the gas indices in the conversion matrix
+            gas_positions = [i for i in range(self.gas_2_adsorbate.shape[0])\
+                           if self.gas_2_adsorbate[i][0] == orbital_index]
+            gas_energy = self.gas_band_centers[orbital_index]
+            #get the adsorbate indices
+            adsorbate_indices = self.gas_2_adsorbate[gas_positions,1].astype('int')
+        elif index_type == 'adsorbate':
+            adsorbate_indices == orbital_index
         overlap_orbitals, normalized_overlap = self._calculate_overlap(
                                                    self.adsorbate_orbitals\
                                                     , self.REFERENCE_PDOS\
@@ -625,7 +643,7 @@ class PDOS_OVERLAP:
         energy_overlap = np.array([normalized_overlap[adsorbate_indices\
                                         ,overlap_orbitals.index(i)].sum()\
                                               for i in atomic_orbitals])
-        if use_orbital_proximity == True:
+        if use_orbital_proximity == True and index_type == 'gas':
             orbital_proximity = PDOS.get_orbital_proximty(gas_energy\
                                                , site_indices, atomic_orbitals\
                                   , sum_density=sum_density, sum_spin=sum_spin)

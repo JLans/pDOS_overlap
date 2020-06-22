@@ -95,7 +95,7 @@ spin orbital densities to get energy sub-level band centers.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.772 seconds)
+   **Total running time of the script:** ( 0 minutes  0.868 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_band_center_plot_band_center.py:

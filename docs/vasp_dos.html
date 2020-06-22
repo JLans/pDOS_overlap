@@ -452,6 +452,42 @@ site projected calculation was performed.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt id="pdos_overlap.vasp_dos.VASP_DOS._read_lobster">
+<code class="sig-name descname">_read_lobster</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_name</span><span class="o">=</span><span class="default_value">'DOSCAR.lobster'</span></em>, <em class="sig-param"><span class="n">no_negatives</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/vasp_dos.html#VASP_DOS._read_lobster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.vasp_dos.VASP_DOS._read_lobster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read VASP DOSCAR and extract projected densities</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – file location of the DOSCAR file</p></li>
+<li><p><strong>no_negatives</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Indicates wheather negative occupances will be converted to zero.
+Negative occupances can occur if Methfessel-Paxton is used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>_total_dos</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – numpy array that contains the energy of the orbitals and the
+total projected and integrated density</p></li>
+<li><p><strong>_site_dos</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – numpy array that contains the energy of the orbitals and the
+site and orbital projected density of states. Only available if a
+site projected calculation was performed.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>emax</strong> (<em>float</em>) – maximum energy level</p></li>
+<li><p><strong>emin</strong> (<em>float</em>) – minimum energy level</p></li>
+<li><p><strong>ndos</strong> (<em>int</em>) – number of descritized energy levels</p></li>
+<li><p><strong>e_fermi</strong> (<em>float</em>) – highest occupied energy level</p></li>
+<li><p><strong>is_spin</strong> (<em>bool</em>) – indicates if projected density is spin resolved</p></li>
+<li><p><strong>m_projected</strong> (<em>bool</em>) – indicates if projected density is orbital resolved</p></li>
+<li><p><strong>orbital_dictionary</strong> (<em>dict</em>) – dictionary that maps resolved sublevels/orbitals to indices</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pdos_overlap.vasp_dos.VASP_DOS.get_band_center">
 <code class="sig-name descname">get_band_center</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atom_indices</span></em>, <em class="sig-param"><span class="n">orbital_list</span></em>, <em class="sig-param"><span class="n">sum_density</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">max_energy</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_energy</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/vasp_dos.html#VASP_DOS.get_band_center"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.vasp_dos.VASP_DOS.get_band_center" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get band center for a given atom and list of orbitals</p>

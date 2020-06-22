@@ -47,6 +47,7 @@ instantiate an OVERLAP_POPULATION object
     set_figure_settings('paper')
     example_path = get_example_data()
     COOPCAR = os.path.join(example_path, 'C2H4/COOPCAR.lobster')
+
     POP = OVERLAP_POPULATION(COOPCAR)
 
 
@@ -136,7 +137,7 @@ in the bond than outside of the bond
 
  .. code-block:: none
 
-    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\examples\plot_overlap_population\plot_overlap_population.py:62: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\examples\plot_overlap_population\plot_overlap_population.py:63: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
       plt.show()
 
 
@@ -145,7 +146,7 @@ in the bond than outside of the bond
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.321 seconds)
+   **Total running time of the script:** ( 0 minutes  0.326 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_overlap_population_plot_overlap_population.py:

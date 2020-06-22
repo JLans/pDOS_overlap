@@ -13,8 +13,7 @@
 Calculating orbital overlap using pdos_overlap
 ==============================================
 
-This example shows how calculate the overlap of gas phase molecular orbitals
-with an adsorbate and surface atom.
+This example shows how calculate the overlap of gas phase molecular orbitals with an adsorbate and surface atom.
 
 
 .. code-block:: default
@@ -27,6 +26,7 @@ with an adsorbate and surface atom.
     from pdos_overlap import get_adsorbate_indices
     from pdos_overlap import PDOS_OVERLAP
     from pdos_overlap.coordination import get_geometric_data
+    from pdos_overlap.overlap_population import OVERLAP_POPULATION
 
 
 
@@ -45,15 +45,18 @@ instantiate a VASP_DOS object.
 .. code-block:: default
 
     gas = 'CO'
+    adsorbate = 'CO'
     surface = 'Pt111'
     set_figure_settings('paper')
     np.set_printoptions(linewidth=100)
     #These files are too large to store in the examples directory
-    example_path = r'C:\Users\lansf\Documents\Data\PROBE_PDOS\vasp_dos_files'
-    GAS_DOSCAR = os.path.join(example_path, gas + '/DOSCAR')
-    GAS_CONTCAR = os.path.join(example_path, gas + '/CONTCAR')
-    ADSORBATE_DOSCAR = os.path.join(example_path, gas + '+' + surface + '/DOSCAR')
-    ADSORBATE_CONTCAR = os.path.join(example_path, gas + '+' + surface + '/CONTCAR')
+    lobster_path = r'C:\Users\lansf\Documents\Data\PROBE_PDOS\lobster_files'
+    GAS_DOSCAR = os.path.join(lobster_path, gas + '/DOSCAR.lobster')
+    GAS_CONTCAR = os.path.join(lobster_path, gas + '/CONTCAR')
+    ADSORBATE_DOSCAR = os.path.join(lobster_path, 'gas+Pt_G.03_noW/'+surface + '+'\
+                              + adsorbate + '/DOSCAR.lobster')
+    ADSORBATE_CONTCAR = os.path.join(lobster_path, 'gas+Ptnano/'+surface + '+'\
+                              + adsorbate + '/CONTCAR')
 
 
 
@@ -91,11 +94,11 @@ atomic orbital energy overlaps with the adsorbate molecular orbital energies.
 
 .. code-block:: default
 
-    adsorbate_indices, site_indices = get_adsorbate_indices(GAS_CONTCAR\
+    reference_indices, site_indices = get_adsorbate_indices(GAS_CONTCAR\
                                                             , ADSORBATE_CONTCAR)
     #Initialize Coordination object. Repeat is necessary so it doesn't count itself
-    CO_overlap = PDOS_OVERLAP(GAS_PDOS, REFERENCE_PDOS, adsorbate_indices\
-                              , site_indices, min_occupation=0.9\
+    CO_overlap = PDOS_OVERLAP(GAS_PDOS, REFERENCE_PDOS, reference_indices\
+                              , site_indices, min_occupation=1.5\
                               , upshift=0.5, energy_weight=4)
     
 
@@ -143,11 +146,11 @@ We plot the projected density of the gas, adsorbate, and adsorption site.
 
  .. code-block:: none
 
-    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:914: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:933: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
       plt.show()
-    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:914: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:933: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
       plt.show()
-    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:914: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:933: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
       plt.show()
 
 
@@ -182,9 +185,9 @@ as a fraction of the fermi energy.
 
  .. code-block:: none
 
-    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:828: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:847: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
       plt.show()
-    0.36169076485686813
+    0.07276955934945231
 
 
 
@@ -219,36 +222,88 @@ Scores are used to map gas molecular orbitals ot adsorbate molecular orbitals.
  .. code-block:: none
 
     Print molecular gas and adsorbate orbital features, respectively.
-    [[-2.59440624e+01  1.55667344e+00  3.26199490e-13  4.22017815e-01  9.65840299e-15]
-     [-1.07725355e+01  6.77718574e-01  9.85077691e-12  8.64998584e-01  2.91694728e-13]
-     [-8.37158857e+00  3.93060231e-12  1.38208964e+00  7.22459794e-12  1.38201564e+00]
-     [-5.77108906e+00  3.57464960e-01  1.06157881e-12  8.50897818e-01  3.14380969e-14]
-     [ 1.18455181e+00  3.22212492e-02  9.60645175e-01  2.46394073e-02  9.60608089e-01]]
-    [[-2.41110858e+01  1.73902895e+00  5.09101559e-10  4.56123751e-01  1.26260274e-09]
-     [-1.05406293e+01  8.09275578e-01  4.59590029e-07  2.72026686e-01  2.63096436e-07]
-     [-7.89123682e+00  1.81585882e-01  3.65520754e-04  1.18150089e+00  2.68352149e-04]
-     [-7.00986643e+00  7.00095672e-03  1.16194079e+00  7.04962282e-02  1.15795451e+00]
-     [ 7.22337248e-01  1.47708586e-01  1.34778394e+00  2.14257133e-01  1.35510153e+00]]
+    [[-28.54994612   0.76973977   0.           0.23026023   0.        ]
+     [-13.3783458    0.34039071   0.           0.65960929   0.        ]
+     [-10.97734764   0.           0.5          0.           0.5       ]
+     [ -8.37694491   0.57635593   0.           0.42364407   0.        ]
+     [ -1.48194605   0.           0.5          0.           0.5       ]
+     [  0.51275403   0.31496024   0.           0.68503976   0.        ]]
+    [[-2.82873275e+01  7.70153547e-01  0.00000000e+00  2.29846453e-01  0.00000000e+00]
+     [-1.46713584e+01  5.39389355e-01  0.00000000e+00  4.60610645e-01  0.00000000e+00]
+     [-1.20104155e+01  2.08571786e-01  2.92481559e-05  7.91311124e-01  8.78417147e-05]
+     [-1.11485114e+01  6.44919366e-06  5.00150936e-01  1.69565719e-05  4.99825658e-01]
+     [-3.19178957e+00  1.79067127e-01  3.06957835e-01  2.06774554e-01  3.07200484e-01]]
     #####################################################################
     Orbital matching scores
-    [[9.29028568e-01 1.61273572e-04 7.34545868e-08 1.38664310e-07 6.45021613e-09]
-     [1.61273572e-04 1.99724666e-01 1.75777184e-02 4.97812655e-03 1.90226298e-05]
-     [7.34545868e-08 1.75777184e-02 3.02183417e-04 6.88050593e-01 1.82339250e-03]
-     [1.38664310e-07 4.97812655e-03 6.88050593e-01 2.21233455e-03 6.35174227e-03]
-     [6.45021613e-09 1.90226298e-05 1.82339250e-03 6.35174227e-03 5.64799688e-01]]
+    [[9.99020963e-01 2.84303840e-02 1.48947982e-04 5.34777828e-07 1.87782615e-06]
+     [5.35431899e-08 4.31399273e-01 6.46144705e-01 9.77533722e-06 2.91189383e-05]
+     [1.64176368e-10 1.42226134e-03 1.10137128e-03 9.98438342e-01 1.65453393e-02]
+     [3.60278376e-08 1.89161744e-01 3.87266785e-02 4.46566123e-06 3.60456775e-03]
+     [3.02340888e-09 1.24464111e-04 1.55284375e-04 1.82790929e-01 3.97738194e-01]
+     [1.25497454e-07 1.37556353e-02 8.20776547e-02 2.35004518e-06 1.27586289e-02]]
     #####################################################################
     Gas to adsorbate indices and band centers
-    [[  0.           0.         -29.20625951 -24.28842369]
-     [  1.           1.         -14.03473256 -10.71795641]
-     [  2.           3.         -11.63378565  -7.18747574]
-     [  3.           2.          -9.03328614  -8.06828387]
-     [  4.           4.          -2.07764527   0.54343512]]
+    [[  0.           0.         -29.20627653 -28.63020717]
+     [  1.           2.         -14.03467621 -12.35329515]
+     [  2.           3.         -11.63367805 -11.49139105]
+     [  3.           1.          -9.03327532 -15.01423802]
+     [  4.           4.          -2.13827646  -3.53466921]
+     [  5.           2.          -0.14357638 -12.35329515]]
+
+
+
+
+Identify bonding orbitals
+-------------------------
+
+We calcluate the amount of density for each orbital that is in a bonding region
+We can do this both for the gas and for the adsorbate
+
+
+.. code-block:: default
+
+
+    #gas
+    COOPCAR_CO = os.path.join(lobster_path, gas + '/COOPCAR.lobster')
+    POP_CO = OVERLAP_POPULATION(COOPCAR_CO)
+    bonding_fraction = POP_CO.get_bonding_fraction(CO_overlap.gas_orbital_indices\
+                                                   , CO_overlap.GAS_PDOS.get_energies()\
+                                                   , set_antibonding_zero=False)
+    print('Gas bonding fraction')
+    print(bonding_fraction)
+    
+    #adsorbate
+    COOPCAR_CO = os.path.join(lobster_path, 'gas+Pt_G.03_noW/'+surface + '+'\
+                              + adsorbate + '/COOPCAR.lobster')
+    POP_CO = OVERLAP_POPULATION(COOPCAR_CO)
+    bonding_fraction = POP_CO.get_bonding_fraction(CO_overlap.adsorbate_orbital_indices\
+                                                   , CO_overlap.REFERENCE_PDOS.get_energies()\
+                                                   , set_antibonding_zero=True
+                                                   , emax = CO_overlap.REFERENCE_PDOS.e_fermi)
+    print('Adsorbate bonding fraction')
+    print(bonding_fraction)
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+    Gas bonding fraction
+    [0.33390889559640663, 0.05000879480760805, 0.4167793652668387, -0.24333205768916177, -0.8939664918105517, -3.3284633768987364]
+    Adsorbate bonding fraction
+    [0.34507779467786953, 0.23978212303695395, 0.09395854678697194, 0.5027243012494749, 0.10317189667648151]
 
 
 
 
 Plot energy overlap
 -------------------
+
 We select energy overlap histograms with the adsorbate molecular orbitals
 that influence spectra. Gas orbitals 1,2, and 3 interact with the surface.
 
@@ -256,7 +311,7 @@ that influence spectra. Gas orbitals 1,2, and 3 interact with the surface.
 .. code-block:: default
 
     gas_indices = [i for i in range(5) if CO_overlap.gas_2_adsorbate[i][0] in [1,2,3]]
-    adsorbate_indices = CO_overlap.gas_2_adsorbate[gas_indices,1].astype('int')
+    adsorbate_indices = [CO_overlap.gas_2_adsorbate[gas_indices,1].astype('int')]
     CO_overlap.plot_energy_overlap(adsorbate_indices)
 
 
@@ -287,7 +342,9 @@ that influence spectra. Gas orbitals 1,2, and 3 interact with the surface.
 
  .. code-block:: none
 
-    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:859: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:867: FutureWarning: Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of `arr[seq]`. In the future this will be interpreted as an array index, `arr[np.array(seq)]`, which will result either in an error or a different result.
+      energy_overlap = self.energy_overlap[indices]
+    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:878: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
       plt.show()
 
 
@@ -295,12 +352,14 @@ that influence spectra. Gas orbitals 1,2, and 3 interact with the surface.
 
 Print orbital interactions
 --------------------------
+
 Plot orbital interaction of the first gas molecular orbital with a surface
 s, pz, and dz2 orbitals. These are identified from first figure above
 
 
 .. code-block:: default
 
+    example_path = r'C:\Users\lansf\Documents\Data\PROBE_PDOS\vasp_dos_files'
     nano = 'Pt44'
     nano_DOSCAR = os.path.join(example_path, nano + '/DOSCAR')
     nano_CONTCAR = os.path.join(example_path, nano + '/CONTCAR')
@@ -343,11 +402,13 @@ s, pz, and dz2 orbitals. These are identified from first figure above
  .. code-block:: none
 
     Interactions with 4sigma orbital
-    [-0.71071628 -0.31695864 -0.15137432]
+    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:573: RuntimeWarning: invalid value encountered in true_divide
+      * np.trapz(TOTAL_PDOS, energies) )
+    [-0.14607233         nan -0.09274738]
     Interactions with 1pi orbital
-    [-0.30455614 -0.17911093]
+    [-0.22319773 -0.13182552]
     Interactions with 5sigma orbital
-    [-0.41681493 -0.11738777 -0.10148584]
+    [-0.16803452         nan -0.10557953]
 
 
 
@@ -355,7 +416,7 @@ s, pz, and dz2 orbitals. These are identified from first figure above
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  27.662 seconds)
+   **Total running time of the script:** ( 0 minutes  14.735 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_orbital_overlap_plot_orbital_overlap.py:

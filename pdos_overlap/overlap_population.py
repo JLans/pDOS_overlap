@@ -121,14 +121,14 @@ def get_all_lobster_files(directory, file_type='COOPCAR.lobster'):
     lobster_files = [os.path.join(d,file_type) for d in lobster_directories]
     return lobster_files
 
-def get_bonding_fraction(dos, dos_energies, pcoop, pcoop_energies\
-                             , set_antibonding_zero=False):
+def get_bonding_fraction(orbital_indices, dos_energies, pcoop, pcoop_energies\
+                             , set_antibonding_zero=False, emax=float('inf')):
         """ method for obtaining bonding fraction of dos or dos-like array
         
         Parameters
         ----------
-        dos : numpy.ndarray
-            density of states
+        orbital_indices : list[list]
+            list of orbital indices for each molecular orbital
             
         dos_energies : numpy.ndarray
             energies at which dos is calculated
@@ -151,8 +151,10 @@ def get_bonding_fraction(dos, dos_energies, pcoop, pcoop_energies\
         if set_antibonding_zero == True:
             pcoop[pcoop[...] < 0] = 0
         pcoop = np.interp(dos_energies, pcoop_energies,pcoop)
-        dos_bonding = dos * pcoop
-        dos_bonding = np.trapz(dos_bonding, dos_energies)
+        pcoop[dos_energies[...] > emax] = 0
+        dos_bonding = []
+        for i in range(len(orbital_indices)):
+            dos_bonding.append(np.trapz(pcoop[orbital_indices[i]],dos_energies[orbital_indices[i]]))
         return dos_bonding
 
 class OVERLAP_POPULATION:
@@ -409,5 +411,41 @@ class OVERLAP_POPULATION:
         pcoop[0] += e_fermi
         self._pcoop = pcoop
         return num_interactions, interactions, is_spin, ndos, e_fermi, e_min, e_max
+    
+    def get_bonding_fraction(self, orbital_indices, dos_energies\
+                             , set_antibonding_zero=False\
+                             , sum_pcoop=True, sum_spin=True, emax=float('inf')):
+        """ method for obtaining bonding fraction of dos or dos-like array
+        
+        Parameters
+        ----------
+        orbital_indices : list[list]
+            list of orbital indices for each molecular orbital
+            
+        dos_energies : numpy.ndarray
+            energies at which dos is calculated
+            
+        set_antibonding_zero : bool
+            if true, set antibonding populations to zero to look at total
+            instead of net bonding characteristics
+
+        sum_pcoop : bool
+            indicates whether all pcoop should be summed
+        
+        sum_spin : bool
+            indicates whether data of different spins should be summed
+        
+        Returns
+        -------
+        dos_bonding : numpy.ndarray
+            1-D array of the relative bonding for either dos-like array
+        """
+        pcoop = self.get_pcoop(sum_pcoop=sum_pcoop, sum_spin=sum_spin\
+                               , set_antibonding_zero=set_antibonding_zero)
+        bonding_fraction = get_bonding_fraction(orbital_indices, dos_energies, pcoop\
+                                        , self.get_energies()\
+                                        , set_antibonding_zero=set_antibonding_zero\
+                                        , emax = emax)
+        return bonding_fraction
         
         

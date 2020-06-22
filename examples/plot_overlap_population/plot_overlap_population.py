@@ -24,6 +24,7 @@ from pdos_overlap.plotting_tools import set_figure_settings
 set_figure_settings('paper')
 example_path = get_example_data()
 COOPCAR = os.path.join(example_path, 'C2H4/COOPCAR.lobster')
+
 POP = OVERLAP_POPULATION(COOPCAR)
 
 #######################################################################################
