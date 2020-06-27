@@ -40,7 +40,7 @@ POP_NO = OVERLAP_POPULATION(COOPCAR_NO)
 CC_overlap = POP_C2H4.get_pcoop(interactions=[0], sum_pcoop=False, sum_spin=True)
 CH_overlap = POP_C2H4.get_pcoop(interactions=[1,2,3,4], sum_pcoop=True, sum_spin=True)
 CO_overlap = POP_CO.get_pcoop(sum_spin=True)
-NO_overlap = POP_NO.get_pcoop(sum_spin=True)
+NO_overlap = POP_NO.get_pcoop(sum_spin=False)
 
 #######################################################################################
 # Plot the bonding populaiton with respect to the CC and CH bonds
@@ -69,10 +69,11 @@ plt.ylabel('Energy [eV]')
 plt.show()
 
 plt.figure(figsize=(3,5))
-plt.plot(NO_overlap, POP_NO.get_energies(), zorder=2)
+plt.plot(NO_overlap[0], POP_NO.get_energies(), zorder=3)
+plt.plot(NO_overlap[1], POP_NO.get_energies(), zorder=2)
 plt.plot([np.min(NO_overlap), np.max(NO_overlap)]\
          ,[POP_NO.e_fermi, POP_NO.e_fermi],'k--', zorder=1, linewidth=5)
-plt.legend(['NO overlap population','fermi level'],loc='best')
+plt.legend(['NO overlap population (spin up)', 'NO overlap population (spin down)', 'fermi level'],loc='best')
 plt.xlabel('Orbital overlap')
 plt.ylabel('Energy [eV]')
 plt.show()

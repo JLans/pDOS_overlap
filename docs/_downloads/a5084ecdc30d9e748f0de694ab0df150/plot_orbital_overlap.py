@@ -131,7 +131,7 @@ print(bonding_fraction)
 # that influence spectra. Gas orbitals 1,2, and 3 interact with the surface.
 gas_indices = [i for i in range(5) if CO_overlap.gas_2_adsorbate[i][0] in [1,2,3]]
 adsorbate_indices = [CO_overlap.gas_2_adsorbate[gas_indices,1].astype('int')]
-CO_overlap.plot_energy_overlap(adsorbate_indices)
+CO_overlap.plot_energy_overlap(indices=[0,1,2,3,4], atomic_orbitals=['s', 'd'])
 
 #######################################################################################
 # Print orbital interactions
@@ -154,20 +154,20 @@ GAS_PDOS = VASP_DOS(GAS_DOSCAR)
 REFERENCE_PDOS = VASP_DOS(ADSORBATE_DOSCAR)
 BULK_PDOS = VASP_DOS(BULK_DOSCAR)
 print('Interactions with 4sigma orbital')
-orbital_interaction = CO_overlap.calculate_orbital_interaction(gas_indices[0]\
+orbital_interaction = CO_overlap.get_orbital_interaction(gas_indices[0]\
                     , nano_PDOS, nano_indices[atom_types[...] == 'surface'][0]\
-                         , ['s','pz','dz2'], BULK_PDOS, bulk_atom=43\
-                             , sum_density=False, sum_spin=True)
+                         , ['s','dz2'], BULK_PDOS, bulk_atom=43\
+                             , sum_interaction=False, sum_spin=True)
 print(orbital_interaction)
 print('Interactions with 1pi orbital')
-orbital_interaction = CO_overlap.calculate_orbital_interaction(gas_indices[1]\
+orbital_interaction = CO_overlap.get_orbital_interaction(gas_indices[1]\
                     , nano_PDOS, nano_indices[atom_types[...] == 'surface'][0]\
                          , ['dyz','dxz'], BULK_PDOS, bulk_atom=43\
-                             , sum_density=False, sum_spin=True)
+                             , sum_interaction=False, sum_spin=True)
 print(orbital_interaction)
 print('Interactions with 5sigma orbital')
-orbital_interaction = CO_overlap.calculate_orbital_interaction(gas_indices[2]\
+orbital_interaction = CO_overlap.get_orbital_interaction(gas_indices[2]\
                     , nano_PDOS, nano_indices[atom_types[...] == 'surface'][0]\
-                         , ['s','pz','dz2'], BULK_PDOS, bulk_atom=43\
-                             , sum_density=False, sum_spin=True)
+                         , ['s','dz2'], BULK_PDOS, bulk_atom=43\
+                             , sum_interaction=False, sum_spin=True)
 print(orbital_interaction)

@@ -1,7 +1,15 @@
 coordination
 ============
-.. automodule:: pdos_overlap.coordination
+
+The ``get_geometric_data`` function
+***********************************
+.. autofunction:: pdos_overlap.coordination.get_geometric_data
+
+The ``Coordination`` class
+**************************
+.. autoclass:: pdos_overlap.coordination.Coordination
    :members:
    :undoc-members:
    :private-members:
 
+   .. rubric:: Methods

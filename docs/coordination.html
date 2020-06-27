@@ -39,7 +39,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="plotting_tools" href="plotting_tools.html" />
-    <link rel="prev" title="vasp_dos" href="vasp_dos.html" /> 
+    <link rel="prev" title="overlap_population" href="overlap_population.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -91,7 +91,12 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="pdos_overlap.html">pdos_overlap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vasp_dos.html">vasp_dos</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">coordination</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overlap_population.html">overlap_population</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">coordination</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-get-geometric-data-function">The <code class="docutils literal notranslate"><span class="pre">get_geometric_data</span></code> function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-coordination-class">The <code class="docutils literal notranslate"><span class="pre">Coordination</span></code> class</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="plotting_tools.html">plotting_tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="error_metrics.html">error_metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Examples</a></li>
@@ -159,10 +164,37 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-pdos_overlap.coordination">
-<span id="coordination"></span><h1>coordination<a class="headerlink" href="#module-pdos_overlap.coordination" title="Permalink to this headline">¶</a></h1>
-<p>Created on Thu Mar 02 17:26:23 2017</p>
-<p>&#64;author: lansford</p>
+  <div class="section" id="coordination">
+<h1>coordination<a class="headerlink" href="#coordination" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="the-get-geometric-data-function">
+<h2>The <code class="docutils literal notranslate"><span class="pre">get_geometric_data</span></code> function<a class="headerlink" href="#the-get-geometric-data-function" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pdos_overlap.coordination.get_geometric_data">
+<code class="sig-name descname">get_geometric_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">CONTCAR</span></em>, <em class="sig-param"><span class="n">cutoff</span><span class="o">=</span><span class="default_value">1.25</span></em>, <em class="sig-param"><span class="n">crystal_type</span><span class="o">=</span><span class="default_value">'fcc'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/coordination.html#get_geometric_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.coordination.get_geometric_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtain important geometric data for all atoms</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>CONTCAR</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Location to VASP CONTCAR file for a gas molecule.</p></li>
+<li><p><strong>cutoff</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Fudge factor multiplied by covalent radii used to determine
+connectivity. If distance between atoms is less than the summ of
+their radii times cutoff they are considered to be coordinated</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>indices</strong> (<em>list[int]</em>) – Atom indices</p></li>
+<li><p><strong>GCNs</strong> (<em>list[float]</em>) – GCN values of all atoms</p></li>
+<li><p><strong>atom_types</strong> (<em>list[str]</em>) – Indicates if atoms are of type ‘surface’ or ‘bulk’</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="the-coordination-class">
+<h2>The <code class="docutils literal notranslate"><span class="pre">Coordination</span></code> class<a class="headerlink" href="#the-coordination-class" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pdos_overlap.coordination.Coordination">
 <em class="property">class </em><code class="sig-name descname">Coordination</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atoms</span></em>, <em class="sig-param"><span class="n">exclude</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">cutoff</span><span class="o">=</span><span class="default_value">1.25</span></em>, <em class="sig-param"><span class="n">cutoff_type</span><span class="o">=</span><span class="default_value">'percent'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/coordination.html#Coordination"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.coordination.Coordination" title="Permalink to this definition">¶</a></dt>
@@ -184,7 +216,7 @@ is best.</p></li>
 </dd>
 <dt class="field-even">Variables</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>atoms</strong> (<em>atoms</em>) – ASE atoms type.</p></li>
+<li><p><strong>atoms</strong> (<em>ase.Atoms</em>) – ASE atoms type.</p></li>
 <li><p><strong>exclude</strong> (<em>list of int</em>) – Indices of atoms to exclude in tabulating the coordination of
 each atom</p></li>
 <li><p><strong>cutoff</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Fudge factor multiplied by Van der Waals radii used to determine
@@ -197,6 +229,7 @@ is best.</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Methods</p>
 <dl class="py method">
 <dt id="pdos_overlap.coordination.Coordination.get_bonded">
 <code class="sig-name descname">get_bonded</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/coordination.html#Coordination.get_bonded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.coordination.Coordination.get_bonded" title="Permalink to this definition">¶</a></dt>
@@ -272,30 +305,7 @@ bonds to other excluded atomic numbers.</p>
 
 </dd></dl>
 
-<dl class="py function">
-<dt id="pdos_overlap.coordination.get_geometric_data">
-<code class="sig-name descname">get_geometric_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">CONTCAR</span></em>, <em class="sig-param"><span class="n">cutoff</span><span class="o">=</span><span class="default_value">1.25</span></em>, <em class="sig-param"><span class="n">crystal_type</span><span class="o">=</span><span class="default_value">'fcc'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/coordination.html#get_geometric_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.coordination.get_geometric_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Obtain important geometric data for all atoms</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>CONTCAR</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Location to VASP CONTCAR file for a gas molecule.</p></li>
-<li><p><strong>cutoff</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Fudge factor multiplied by covalent radii used to determine
-connectivity. If distance between atoms is less than the summ of
-their radii times cutoff they are considered to be coordinated</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>indices</strong> (<em>list[int]</em>) – Atom indices</p></li>
-<li><p><strong>GCNs</strong> (<em>list[float]</em>) – GCN values of all atoms</p></li>
-<li><p><strong>atom_types</strong> (<em>list[str]</em>) – Indicates if atoms are of type ‘surface’ or ‘bulk’</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
+</div>
 </div>
 
 
@@ -309,7 +319,7 @@ their radii times cutoff they are considered to be coordinated</p></li>
         <a href="plotting_tools.html" class="btn btn-neutral float-right" title="plotting_tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="vasp_dos.html" class="btn btn-neutral float-left" title="vasp_dos" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="overlap_population.html" class="btn btn-neutral float-left" title="overlap_population" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -158,38 +158,39 @@ def get_bonding_fraction(orbital_indices, dos_energies, pcoop, pcoop_energies\
         return dos_bonding
 
 class OVERLAP_POPULATION:
-    """Class for analyzing overlap population bonding data"""
+    """Class for analyzing overlap population bonding data
+        
+    Parameters
+    ----------
+    file_name : str
+        full lobster file location
+    
+    Attributes
+    ----------
+    emax : float
+        maximum energy level
+        
+    emin : float
+        minimum energy level
+        
+    ndos : int
+        number of descritized energy levels
+        
+    e_fermi : float
+        highest occupied energy level
+        
+    is_spin : bool
+        indicates if projected density is spin resolved
+        
+    num_interactions : int
+        number of interactions in COOP
+    
+    interactions : list[str]
+        list of the interactions included in the file
+        
+    """
+    
     def __init__(self, file_name="COOPCAR.lobster"):
-        """ 
-        Parameters
-        ----------
-        file_name : str
-            full lobster file location
-        
-        Attributes
-        ----------
-        emax : float
-            maximum energy level
-            
-        emin : float
-            minimum energy level
-            
-        ndos : int
-            number of descritized energy levels
-            
-        e_fermi : float
-            highest occupied energy level
-            
-        is_spin : bool
-            indicates if projected density is spin resolved
-            
-        num_interactions : int
-            number of interactions in COOP
-        
-        interactions : list[str]
-            list of the interactions included in the file
-            
-        """
         
         #conditional read statements can be added
         num_interactions, interactions, is_spin, ndos, e_fermi, e_min, e_max\
@@ -226,13 +227,16 @@ class OVERLAP_POPULATION:
         average_pcoop : numpy.ndarray
             1-D or 2-D array of average pcoop for all interactions
         """
-        if self.is_spin == True:
+        is_spin = self.is_spin
+        num_interactions = self.num_interactions
+        _pcoop = self._pcoop
+        if is_spin == True:
             if sum_spin == False:
-                average_pcoop = self._pcoop[[1, 2 * self.num_interactions + 3], :]
+                average_pcoop = _pcoop[[1, 2 * num_interactions + 3], :]
             else:
-                average_pcoop = self._pcoop[1, :] + self._pcoop[2 * self.num_interactions + 3, :]
+                average_pcoop = _pcoop[1, :] + _pcoop[2 * num_interactions + 3, :]
         else:
-            average_pcoop = self._pcoop[1, :]
+            average_pcoop = _pcoop[1, :]
         return average_pcoop
 
     def get_average_int_pcoop(self, sum_spin=True):
@@ -248,13 +252,16 @@ class OVERLAP_POPULATION:
         average_int_pcoop : numpy.ndarray
             1-D or 2-D array of average integrated pcoop for all interactions
         """
-        if self.is_spin == True:
+        is_spin = self.is_spin
+        num_interactions = self.num_interactions
+        _pcoop = self._pcoop
+        if is_spin == True:
             if sum_spin == False:
-                average_int_pcoop = self._pcoop[[2, 2 * self.num_interactions + 4], :]
+                average_int_pcoop = _pcoop[[2, 2 * num_interactions + 4], :]
             else:
-                average_int_pcoop = self._pcoop[2, :] + self._pcoop[2 * self.num_interactions + 4, :]
+                average_int_pcoop = _pcoop[2, :] + _pcoop[2 * num_interactions + 4, :]
         else:
-            average_int_pcoop = self._pcoop[2, :]
+            average_int_pcoop = _pcoop[2, :]
         return average_int_pcoop
     
     def get_integrated_pcoop(self, interactions=[], sum_pcoop=False, sum_spin=True
@@ -281,11 +288,14 @@ class OVERLAP_POPULATION:
         integrated_pcoop : numpy.ndarray
             1-D or 2-D array of integrated pcoop for all interactions
         """
+        is_spin = self.is_spin
+        num_interactions = self.num_interactions
+        _pcoop = self._pcoop
         if len(interactions) == 0:
-            interactions = list(range(self.num_interactions))
-        if self.is_spin == True:
-            spin_up = self._pcoop[4:2 * self.num_interactions + 3:2, :][interactions]
-            spin_down = self._pcoop[2 * self.num_interactions + 6::2, :][interactions]
+            interactions = list(range(num_interactions))
+        if is_spin == True:
+            spin_up = _pcoop[4:2 * num_interactions + 3:2, :][interactions]
+            spin_down = _pcoop[2 * num_interactions + 6::2, :][interactions]
             if set_antibonding_zero == True:
                 spin_up[spin_up[...] < 0] = 0
                 spin_down[spin_down[...] < 0] = 0
@@ -294,7 +304,7 @@ class OVERLAP_POPULATION:
             else:
                 integrated_pcoop = np.array([spin_up, spin_down])
         else:
-            integrated_pcoop = self._pcoop[4::2, :][interactions]
+            integrated_pcoop = _pcoop[4::2, :][interactions]
             if set_antibonding_zero == True:
                 integrated_pcoop[integrated_pcoop[...] < 0] = 0
         if sum_pcoop == True or len(interactions) == 1:
@@ -326,11 +336,14 @@ class OVERLAP_POPULATION:
         pcoop : numpy.ndarray
             1-D or 2-D array of pcoop for all interactions
         """
+        is_spin = self.is_spin
+        num_interactions = self.num_interactions
+        _pcoop = self._pcoop
         if len(interactions) == 0:
-            interactions = list(range(self.num_interactions))
-        if self.is_spin == True:
-            spin_up = self._pcoop[3:2 * self.num_interactions + 3:2, :][interactions]
-            spin_down = self._pcoop[2 * self.num_interactions + 5::2, :][interactions]
+            interactions = list(range(num_interactions))
+        if is_spin == True:
+            spin_up = _pcoop[3:2 * num_interactions + 3:2, :][interactions]
+            spin_down = _pcoop[2 * num_interactions + 5::2, :][interactions]
             if set_antibonding_zero == True:
                 spin_up[spin_up[...] < 0] = 0
                 spin_down[spin_down[...] < 0] = 0
@@ -341,7 +354,7 @@ class OVERLAP_POPULATION:
         else:
             if set_antibonding_zero == True:
                 pcoop[pcoop[...] < 0] = 0
-            pcoop = self._pcoop[3::2, :][interactions]
+            pcoop = _pcoop[3::2, :][interactions]
         if sum_pcoop == True or len(interactions) == 1:
             axis = len(pcoop.shape) - 2
             pcoop = pcoop.sum(axis=axis)
@@ -440,10 +453,12 @@ class OVERLAP_POPULATION:
         dos_bonding : numpy.ndarray
             1-D array of the relative bonding for either dos-like array
         """
-        pcoop = self.get_pcoop(sum_pcoop=sum_pcoop, sum_spin=sum_spin\
+        get_pcoop = self.get_pcoop
+        get_energies = self.get_energies
+        pcoop = get_pcoop(sum_pcoop=sum_pcoop, sum_spin=sum_spin\
                                , set_antibonding_zero=set_antibonding_zero)
         bonding_fraction = get_bonding_fraction(orbital_indices, dos_energies, pcoop\
-                                        , self.get_energies()\
+                                        , get_energies()\
                                         , set_antibonding_zero=set_antibonding_zero\
                                         , emax = emax)
         return bonding_fraction

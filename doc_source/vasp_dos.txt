@@ -44,4 +44,4 @@ The ``VASP_DOS`` class
    :undoc-members:
    :private-members:
 
-
+   .. rubric:: Methods

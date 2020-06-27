@@ -82,7 +82,7 @@ class Coordination:
         	
         Attributes
         ----------
-        atoms : atoms
+        atoms : ase.Atoms
         	ASE atoms type.
             
         exclude : list of int
@@ -124,29 +124,33 @@ class Coordination:
         bonded : list of list
         	List of indices of atoms bonded to each atom 
         """
+        atoms = self.atoms
+        cutoff = self.cutoff
+        cutoff_type = self.cutoff_type
+        exclude = self.exclude
         # Get all the distances
-        distances = np.divide(self.atoms.get_all_distances(mic=True), self.cutoff)
+        distances = np.divide(atoms.get_all_distances(mic=True), cutoff)
         
         # Array of indices of bonded atoms.  len(bonded[x]) == cn[x]
         bonded = []
-        indices = list(range(len(self.atoms)))
+        indices = list(range(len(atoms)))
         
         # Atomic Numbers
-        numbers = self.atoms.numbers
+        numbers = atoms.numbers
         # Coordination Numbers for each atom
         cn = []
         
         cr = np.take(CR, numbers)
-        if self.cutoff_type == 'absolute':
+        if cutoff_type == 'absolute':
             for i in indices:
-                cr[i] = self.cutoff/2.
-            distances = self.atoms.get_all_distances(mic=True)
+                cr[i] = cutoff/2.
+            distances = atoms.get_all_distances(mic=True)
                 
         for i in indices:
             bondedi = []
             for ii in indices:
                 # Skip if measuring the same atom
-                if i == ii or ii in self.exclude:
+                if i == ii or ii in exclude:
                     continue
                 if (cr[i] + cr[ii]) >= distances[i,ii]:
                     bondedi.append(ii)
@@ -198,6 +202,8 @@ class Coordination:
         gcn : float
         	Generalized coordination values for the desired site    
         """
+        bonded = self.bonded
+        cn = self.cn
         # Define the types of bulk accepted
         gcn_bulk = {"fcc": [12., 18., 22., 26., 26.], "bcc": [14., 22., 28., 32.]}
         sum_gcn = 0.
@@ -207,10 +213,10 @@ class Coordination:
         for i in site:
             counted.append(i)
         for i in site:
-            for ii in self.bonded[i]:
+            for ii in bonded[i]:
                 if ii in counted:
                     continue
                 counted.append(ii)
-                sum_gcn += self.cn[ii]
+                sum_gcn += cn[ii]
         gcn = sum_gcn / gcn_bulk[surface_type][len(site) - 1]
         return gcn

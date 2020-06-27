@@ -146,11 +146,11 @@ We plot the projected density of the gas, adsorbate, and adsorption site.
 
  .. code-block:: none
 
-    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:933: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:932: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
       plt.show()
-    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:933: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:932: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
       plt.show()
-    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:933: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:932: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
       plt.show()
 
 
@@ -185,7 +185,7 @@ as a fraction of the fermi energy.
 
  .. code-block:: none
 
-    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:847: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:837: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
       plt.show()
     0.07276955934945231
 
@@ -312,7 +312,7 @@ that influence spectra. Gas orbitals 1,2, and 3 interact with the surface.
 
     gas_indices = [i for i in range(5) if CO_overlap.gas_2_adsorbate[i][0] in [1,2,3]]
     adsorbate_indices = [CO_overlap.gas_2_adsorbate[gas_indices,1].astype('int')]
-    CO_overlap.plot_energy_overlap(adsorbate_indices)
+    CO_overlap.plot_energy_overlap(indices=[0,1,2,3,4], atomic_orbitals=['s', 'd'])
 
 
 
@@ -335,6 +335,16 @@ that influence spectra. Gas orbitals 1,2, and 3 interact with the surface.
       .. image:: /auto_examples/plot_orbital_overlap/images/sphx_glr_plot_orbital_overlap_007.png
             :class: sphx-glr-multi-img
 
+    *
+
+      .. image:: /auto_examples/plot_orbital_overlap/images/sphx_glr_plot_orbital_overlap_008.png
+            :class: sphx-glr-multi-img
+
+    *
+
+      .. image:: /auto_examples/plot_orbital_overlap/images/sphx_glr_plot_orbital_overlap_009.png
+            :class: sphx-glr-multi-img
+
 
 .. rst-class:: sphx-glr-script-out
 
@@ -342,9 +352,7 @@ that influence spectra. Gas orbitals 1,2, and 3 interact with the surface.
 
  .. code-block:: none
 
-    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:867: FutureWarning: Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of `arr[seq]`. In the future this will be interpreted as an array index, `arr[np.array(seq)]`, which will result either in an error or a different result.
-      energy_overlap = self.energy_overlap[indices]
-    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:878: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:877: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
       plt.show()
 
 
@@ -374,22 +382,22 @@ s, pz, and dz2 orbitals. These are identified from first figure above
     REFERENCE_PDOS = VASP_DOS(ADSORBATE_DOSCAR)
     BULK_PDOS = VASP_DOS(BULK_DOSCAR)
     print('Interactions with 4sigma orbital')
-    orbital_interaction = CO_overlap.calculate_orbital_interaction(gas_indices[0]\
+    orbital_interaction = CO_overlap.get_orbital_interaction(gas_indices[0]\
                         , nano_PDOS, nano_indices[atom_types[...] == 'surface'][0]\
-                             , ['s','pz','dz2'], BULK_PDOS, bulk_atom=43\
-                                 , sum_density=False, sum_spin=True)
+                             , ['s','dz2'], BULK_PDOS, bulk_atom=43\
+                                 , sum_interaction=False, sum_spin=True)
     print(orbital_interaction)
     print('Interactions with 1pi orbital')
-    orbital_interaction = CO_overlap.calculate_orbital_interaction(gas_indices[1]\
+    orbital_interaction = CO_overlap.get_orbital_interaction(gas_indices[1]\
                         , nano_PDOS, nano_indices[atom_types[...] == 'surface'][0]\
                              , ['dyz','dxz'], BULK_PDOS, bulk_atom=43\
-                                 , sum_density=False, sum_spin=True)
+                                 , sum_interaction=False, sum_spin=True)
     print(orbital_interaction)
     print('Interactions with 5sigma orbital')
-    orbital_interaction = CO_overlap.calculate_orbital_interaction(gas_indices[2]\
+    orbital_interaction = CO_overlap.get_orbital_interaction(gas_indices[2]\
                         , nano_PDOS, nano_indices[atom_types[...] == 'surface'][0]\
-                             , ['s','pz','dz2'], BULK_PDOS, bulk_atom=43\
-                                 , sum_density=False, sum_spin=True)
+                             , ['s','dz2'], BULK_PDOS, bulk_atom=43\
+                                 , sum_interaction=False, sum_spin=True)
     print(orbital_interaction)
 
 
@@ -402,13 +410,11 @@ s, pz, and dz2 orbitals. These are identified from first figure above
  .. code-block:: none
 
     Interactions with 4sigma orbital
-    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\pdos_overlap\pdos_overlap.py:573: RuntimeWarning: invalid value encountered in true_divide
-      * np.trapz(TOTAL_PDOS, energies) )
-    [-0.14607233         nan -0.09274738]
+    [-0.39560438 -0.19983295]
     Interactions with 1pi orbital
-    [-0.22319773 -0.13182552]
+    [-0.63043331 -0.3723133 ]
     Interactions with 5sigma orbital
-    [-0.16803452         nan -0.10557953]
+    [-0.43739267 -0.21863768]
 
 
 
@@ -416,7 +422,7 @@ s, pz, and dz2 orbitals. These are identified from first figure above
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  14.735 seconds)
+   **Total running time of the script:** ( 0 minutes  13.318 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_orbital_overlap_plot_orbital_overlap.py:

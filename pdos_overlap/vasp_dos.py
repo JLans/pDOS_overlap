@@ -77,7 +77,7 @@ def get_band_center(energies, densities, max_energy=None, min_energy=None, axis=
         
         Returns
         -------
-        band_center : float or numpy.ndarray
+        band_center : numpy.float64 or numpy.ndarray
             center of the band(s) up to max_energy
             
         Notes
@@ -86,8 +86,7 @@ def get_band_center(energies, densities, max_energy=None, min_energy=None, axis=
         https://doi.org/10.1016/j.chemolab.2018.06.001
         http://emis.icm.edu.pl/journals/JIPAM/v3n4/031_02.html
         """
-        if len(densities.shape) == 1:
-            densities = np.array([densities.copy()])
+        densities = np.atleast_2d(densities)
         if max_energy is None:
             idx_stop = len(energies)
         else:
@@ -102,9 +101,7 @@ def get_band_center(energies, densities, max_energy=None, min_energy=None, axis=
         Integrated_Filling = np.trapz(densities[:,idx_start:idx_stop]\
                                       , energies[idx_start:idx_stop], axis=axis)
         band_center = Integrated_Energy/Integrated_Filling
-        if band_center.shape == (1,):
-            band_center = float(band_center)
-        return band_center
+        return band_center.squeeze()
 
 def get_bond_energy(energies, densities, e_fermi):
         """ Get bond energy from density
@@ -116,23 +113,23 @@ def get_bond_energy(energies, densities, e_fermi):
         
         densities : numpy.ndarray
             projected state densities
+            
+        e_fermi : float
+            highest occupied energy level
                     
         Returns
         -------
-        bond_energy : float or numpy.ndarray
+        bond_energy : numpy.float64 or numpy.ndarray
             total energy in the bonds   
         """
-        if len(densities.shape) == 1:
-            densities = np.array([densities.copy()])
+        densities = np.atleast_2d(densities)
         band_center = get_band_center(energies, densities)
         if len(np.array(band_center).shape) == 1:
             band_center = band_center.reshape(-1,1)
         integrand = (energies - band_center) * densities
         idx_stop = (np.abs(energies - e_fermi)).argmin()+1
         bond_energy = 2 * np.trapz(integrand[:,0:idx_stop], energies[0:idx_stop])
-        if bond_energy.shape == (1,):
-            bond_energy = float(bond_energy)
-        return bond_energy
+        return bond_energy.squeeze()
     
 def get_band_width(energies, densities, fraction=0):
         """ Get band width given energies and densities
@@ -150,11 +147,10 @@ def get_band_width(energies, densities, fraction=0):
         
         Returns
         -------
-        band_width : float or numpy.ndarray
+        band_width : numpy.float64 or numpy.ndarray
             width of the band(s)
         """
-        if len(densities.shape) == 1:
-            densities = np.array([densities.copy()])
+        densities = np.atleast_2d(densities)
         index_values = np.arange(densities.shape[-1])
         min_index = np.zeros(densities.shape[0])
         max_index = np.zeros(densities.shape[0])
@@ -162,7 +158,7 @@ def get_band_width(energies, densities, fraction=0):
             min_index[count] = np.min(index_values[density > fraction * density.max()])
             max_index[count] = np.max(index_values[density > fraction * density.max()])
         band_width = energies[max_index.astype(int)] - energies[min_index.astype(int)]
-        return band_width
+        return band_width.squeeze()
     
 def get_center_width(energies, densities, energy):
         """ Get width between to band centers given a division
@@ -180,14 +176,14 @@ def get_center_width(energies, densities, energy):
         
         Returns
         -------
-        center_width : float or numpy.ndarray
+        center_width : numpy.float64 or numpy.ndarray
             width of two band centers separated by some ennergy
             
         """
         center_lower = get_band_center(energies, densities, max_energy=energy)
         center_upper = get_band_center(energies, densities, min_energy=energy)
         center_width = center_upper - center_lower
-        return center_width
+        return center_width.squeeze()
 
 def get_orbital_proximity(energies, densities, energy, moment=1):
         """ Get width between to band centers given a division
@@ -208,7 +204,7 @@ def get_orbital_proximity(energies, densities, energy, moment=1):
         
         Returns
         -------
-        orbital_proximity : float or numpy.ndarray
+        orbital_proximity : numpy.float64 or numpy.ndarray
             proximity of orbitals to some energy
             
         """
@@ -217,7 +213,7 @@ def get_orbital_proximity(energies, densities, energy, moment=1):
         else:
             integrand = (energies - energy)**moment * densities
         orbital_proximity = np.trapz(integrand, energies) / np.trapz(densities, energies)
-        return orbital_proximity
+        return orbital_proximity.squeeze()
 
 def get_second_moment(energies, densities):
         """ Get the second moment
@@ -232,19 +228,18 @@ def get_second_moment(energies, densities):
                     
         Returns
         -------
-        second_moment : float or numpy.ndarray
+        second_moment : numpy.float64 or numpy.ndarray
             second moment of the densities
             
         Notes
         -----
-        Similar to get_orbital_proximty method with moment=2
+        Utilizeds get_orbital_proximity
         """
         band_center = get_band_center(energies, densities)
         if len(np.array(band_center).shape) == 1:
             band_center = band_center.reshape(-1,1)
-        variance = (energies - band_center)**2 * densities
-        second_moment = np.trapz(variance, energies, axis=-1) / np.trapz(densities, energies)
-        return second_moment
+        second_moment = get_orbital_proximity(energies, densities, band_center, moment=2)
+        return second_moment.squeeze()
     
 def get_filling(energies, densities, max_energy=None, min_energy=None, axis=-1):
         """ Get band center given energies and densities
@@ -277,8 +272,7 @@ def get_filling(energies, densities, max_energy=None, min_energy=None, axis=-1):
         https://doi.org/10.1016/j.chemolab.2018.06.001
         http://emis.icm.edu.pl/journals/JIPAM/v3n4/031_02.html
         """
-        if len(densities.shape) == 1:
-            densities = np.array([densities.copy()])
+        densities = np.atleast_2d(densities)
         if max_energy is None:
             idx_stop = len(energies)
         else:
@@ -289,7 +283,7 @@ def get_filling(energies, densities, max_energy=None, min_energy=None, axis=-1):
             idx_start = (np.abs(energies-min_energy)).argmin()
         Integrated_Filling = np.trapz(densities[:,idx_start:idx_stop]\
                                       , energies[idx_start:idx_stop], axis=axis)
-        return Integrated_Filling
+        return Integrated_Filling.squeeze()
 
 class VASP_DOS:
     """Class for extracting projected density of states from VASP"""
@@ -507,7 +501,7 @@ class VASP_DOS:
         center_width = get_center_width(energies, densities, energy)
         return center_width
     
-    def get_orbital_proximty(self, energy, atom_indices, orbital_list, moment=1
+    def get_orbital_proximity(self, energy, atom_indices, orbital_list, moment=1
                          , sum_density=False, sum_spin=True):
         """ Get width between to band centers given a division
         
@@ -635,13 +629,14 @@ class VASP_DOS:
         total_dos : numpy.ndarray
             1-D or 2-D array of state densities   
         """
-        if self._total_dos.shape[0] == 3:
-            total_dos = self._total_dos[1, :]
-        elif self._total_dos.shape[0] == 5:
+        _total_dos = self._total_dos
+        if _total_dos.shape[0] == 3:
+            total_dos = _total_dos[1, :]
+        elif _total_dos.shape[0] == 5:
             if sum_spin == True:
-                total_dos = self._total_dos[1:3, :].sum(axis=0)
+                total_dos = _total_dos[1:3, :].sum(axis=0)
             else:
-                total_dos = self._total_dos[1:3, :]
+                total_dos = _total_dos[1:3, :]
                 
         return total_dos
 
@@ -653,13 +648,14 @@ class VASP_DOS:
         integrated_dos : numpy.ndarray
             1-D or 2-D array of state integrated densities  
         """
-        if self._total_dos.shape[0] == 3:
-            integrated_dos = self._total_dos[2, :]
-        elif self._total_dos.shape[0] == 5:
+        _total_dos = self._total_dos
+        if _total_dos.shape[0] == 3:
+            integrated_dos = _total_dos[2, :]
+        elif _total_dos.shape[0] == 5:
             if sum_spin == True:
-                integrated_dos = self._total_dos[3:5, :].sum(axis=0)
+                integrated_dos = _total_dos[3:5, :].sum(axis=0)
             else:
-                integrated_dos = self._total_dos[3:5, :]
+                integrated_dos = _total_dos[3:5, :]
         return integrated_dos
         
     def get_site_dos(self, atom_indices, orbital_list=[], sum_density=False\
@@ -669,7 +665,7 @@ class VASP_DOS:
         Parameters
         ----------
         atom_list : list[int]
-            List of atom index
+            List of atom index/indices
             
         orbital_list : list[str]
             Which orbitals to return
@@ -890,94 +886,34 @@ class VASP_DOS:
             orbitals = {'s+': 1, 's-': 2, 'p+': 3, 'p-': 4, 'd+': 5, 'd-': 6}
         elif norbs == 8:
             m_projected = False
-            orbitals = {
-                's+': 1,
-                's-': 2,
-                'p+': 3,
-                'p-': 4,
-                'd+': 5,
-                'd-': 6,
-                'f+': 7,
-                'f-': 8}
+            orbitals = {'s+': 1, 's-': 2, 'p+': 3, 'p-': 4,
+                        'd+': 5, 'd-': 6, 'f+': 7, 'f-': 8}
         elif norbs == 9:
             m_projected = True
             orbitals = {'s': 1, 'py': 2, 'pz': 3, 'px': 4,
                     'dxy': 5, 'dyz': 6, 'dz2': 7, 'dxz': 8, 'dx2-y2': 9}
         elif norbs == 16:
             m_projected = True
-            orbitals = {
-                's': 1,
-                'py': 2,
-                'pz': 3,
-                'px': 4,
-                'dxy': 5,
-                'dyz': 6,
-                'dz2': 7,
-                'dxz': 8,
-                'dx2': 9,
-                'fy(3x2-y2)': 10,
-                'fxyz': 11,
-                'fyz2': 12,
-                'fz3': 13,
-                'fxz2': 14,
-                'fz(x2-y2)': 15,
-                'fx(x2-3y2)': 16}
+            orbitals = {'s': 1, 'py': 2, 'pz': 3, 'px': 4,
+                        'dxy': 5, 'dyz': 6, 'dz2': 7, 'dxz': 8, 'dx2': 9,
+                        'fy(3x2-y2)': 10, 'fxyz': 11, 'fyz2': 12, 'fz3': 13,
+                        'fxz2': 14, 'fz(x2-y2)': 15, 'fx(x2-3y2)': 16}
         elif norbs == 18:
             m_projected = True
-            orbitals = {
-                's+': 1,
-                's-': 2,
-                'py+': 3,
-                'py-': 4,
-                'pz+': 5,
-                'pz-': 6,
-                'px+': 7,
-                'px-': 8,
-                'dxy+': 9,
-                'dxy-': 10,
-                'dyz+': 11,
-                'dyz-': 12,
-                'dz2+': 13,
-                'dz2-': 14,
-                'dxz+': 15,
-                'dxz-': 16,
-                'dx2-y2+': 17,
-                'dx2-y2-': 18}
+            orbitals = {'s+': 1, 's-': 2, 'py+': 3, 'py-': 4, 'pz+': 5,
+                        'pz-': 6, 'px+': 7, 'px-': 8, 'dxy+': 9, 'dxy-': 10,
+                        'dyz+': 11, 'dyz-': 12, 'dz2+': 13, 'dz2-': 14,
+                        'dxz+': 15, 'dxz-': 16, 'dx2-y2+': 17, 'dx2-y2-': 18}
         elif norbs == 32:
             m_projected = True
-            orbitals = {
-                's+': 1,
-                's-': 2,
-                'py+': 3,
-                'py-': 4,
-                'pz+': 5,
-                'pz-': 6,
-                'px+': 7,
-                'px-': 8,
-                'dxy+': 9,
-                'dxy-': 10,
-                'dyz+': 11,
-                'dyz-': 12,
-                'dz2+': 13,
-                'dz2-': 14,
-                'dxz+': 15,
-                'dxz-': 16,
-                'dx2-y2+': 17,
-                'dx2-y2-': 18,
-                'fy(3x2-y2)+': 19,
-                'fy(3x2-y2)-': 20,
-                'fxyz+': 21,
-                'fxyz-': 22,
-                'fyz2+': 23,
-                'fyz2-': 24,
-                'fz3+': 25,
-                'fz3-': 26,
-                'fxz2+': 27,
-                'fxz2-': 28,
-                'fz(x2-y2)+': 29,
-                'fz(x2-y2)-': 30,
-                'fx(x2-3y2)+': 31,
-                'fx(x2-3y2)-': 32}
+            orbitals = {'s+': 1, 's-': 2, 'py+': 3, 'py-': 4, 'pz+': 5,
+                        'pz-': 6, 'px+': 7, 'px-': 8, 'dxy+': 9, 'dxy-': 10,
+                        'dyz+': 11, 'dyz-': 12, 'dz2+': 13, 'dz2-': 14,
+                        'dxz+': 15, 'dxz-': 16, 'dx2-y2+': 17, 'dx2-y2-': 18,
+                        'fy(3x2-y2)+': 19, 'fy(3x2-y2)-': 20, 'fxyz+': 21,
+                        'fxyz-': 22, 'fyz2+': 23, 'fyz2-': 24, 'fz3+': 25,
+                        'fz3-': 26, 'fxz2+': 27, 'fxz2-': 28, 'fz(x2-y2)+': 29,
+                        'fz(x2-y2)-': 30, 'fx(x2-3y2)+': 31, 'fx(x2-3y2)-': 32}
         self._total_dos = _total_dos
         self._site_dos = _site_dos
         return natoms, emax, emin, ndos, e_fermi, is_spin, m_projected, orbitals
@@ -1076,6 +1012,7 @@ class VASP_DOS:
             orbitals = {'s': 1, 'py': 2, 'pz': 3, 'px': 4,
                         'dxy': 5, 'dyz': 6, 'dz2': 7, 'dxz': 8, 'dx2-y2': 9}
             _site_dos = np.zeros((natoms, 10, ndos))
+            # not every pdos will have the same orbitals (basis set)
             for count, pdos in enumerate(dos):
                 if pdos.shape[0] == 2:
                     _site_dos[count][0] = pdos[0] # energy
@@ -1128,31 +1065,16 @@ class VASP_DOS:
                     _site_dos[count][8] = pdos[8] # dxz
                     _site_dos[count][9] = pdos[9] # dx2-y2
         else:
+            orbitals = {'s+': 1, 's-': 2, 'py+': 3, 'py-': 4, 'pz+': 5,
+                        'pz-': 6, 'px+': 7, 'px-': 8, 'dxy+': 9, 'dxy-': 10,
+                        'dyz+': 11, 'dyz-': 12, 'dz2+': 13, 'dz2-': 14,
+                        'dxz+': 15, 'dxz-': 16, 'dx2-y2+': 17, 'dx2-y2-': 18}
             _site_dos = np.zeros((natoms, 19, ndos))
-            orbitals = {
-                's+': 1,
-                's-': 2,
-                'py+': 3,
-                'py-': 4,
-                'pz+': 5,
-                'pz-': 6,
-                'px+': 7,
-                'px-': 8,
-                'dxy+': 9,
-                'dxy-': 10,
-                'dyz+': 11,
-                'dyz-': 12,
-                'dz2+': 13,
-                'dz2-': 14,
-                'dxz+': 15,
-                'dxz-': 16,
-                'dx2-y2+': 17,
-                'dx2-y2-': 18}
             for count, pdos in enumerate(dos):
                 if pdos.shape[0] == 3:
-                        _site_dos[count][0] = pdos[0] # energy
-                        _site_dos[count][1] = pdos[1] # s+
-                        _site_dos[count][2] = pdos[2] # s-
+                    _site_dos[count][0] = pdos[0] # energy
+                    _site_dos[count][1] = pdos[1] # s+
+                    _site_dos[count][2] = pdos[2] # s-
                 elif pdos.shape[0] == 7:
                     _site_dos[count][0] = pdos[0] # energy
                     _site_dos[count][3] = pdos[1] # py+
@@ -1233,7 +1155,7 @@ class VASP_DOS:
                     _site_dos[count][14] = pdos[14] # dz2-
                     _site_dos[count][15] = pdos[15] # dxz+
                     _site_dos[count][16] = pdos[16] # dxz-
-                    _site_dos[count][17] = pdos[17] # dx1-y2+
+                    _site_dos[count][17] = pdos[17] # dx2-y2+
                     _site_dos[count][18] = pdos[18] # dx2-y2-
         m_projected = True
         if no_negatives == True:

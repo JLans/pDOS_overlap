@@ -12,4 +12,4 @@ The ``PDOS_OVERLAP`` class
    :undoc-members:
    :private-members:
 
-
+   .. rubric:: Methods

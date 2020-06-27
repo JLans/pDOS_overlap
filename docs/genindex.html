@@ -176,17 +176,17 @@
 <h2 id="_">_</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP._assign_orbitals">_assign_orbitals() (PDOS_OVERLAP static method)</a>
+      <li><a href="pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP._assign_orbitals">_assign_orbitals() (PDOS_OVERLAP method)</a>
 </li>
-      <li><a href="pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP._calculate_overlap">_calculate_overlap() (PDOS_OVERLAP static method)</a>
+      <li><a href="pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP._get_mol_orbitals">_get_mol_orbitals() (PDOS_OVERLAP method)</a>
 </li>
-      <li><a href="pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP._get_mol_orbitals">_get_mol_orbitals() (PDOS_OVERLAP static method)</a>
+      <li><a href="pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP._get_orbital_features">_get_orbital_features() (PDOS_OVERLAP method)</a>
 </li>
-      <li><a href="pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP._get_orbital_features">_get_orbital_features() (PDOS_OVERLAP static method)</a>
+      <li><a href="pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP._get_orbital_scores">_get_orbital_scores() (PDOS_OVERLAP static method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP._get_orbital_scores">_get_orbital_scores() (PDOS_OVERLAP static method)</a>
+      <li><a href="pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP._get_sum_score">_get_sum_score() (PDOS_OVERLAP static method)</a>
 </li>
       <li><a href="pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP._get_upshift_score">_get_upshift_score() (PDOS_OVERLAP method)</a>
 </li>
@@ -201,10 +201,6 @@
 
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.calculate_orbital_interaction">calculate_orbital_interaction() (PDOS_OVERLAP method)</a>
-</li>
-  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="coordination.html#pdos_overlap.coordination.Coordination">Coordination (class in pdos_overlap.coordination)</a>
 </li>
@@ -264,14 +260,16 @@
         <li><a href="vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.get_energies">(VASP_DOS method)</a>
 </li>
       </ul></li>
+      <li><a href="pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.get_energy_overlap">get_energy_overlap() (PDOS_OVERLAP method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="overlap_population.html#pdos_overlap.overlap_population.get_example_data">get_example_data() (in module pdos_overlap.overlap_population)</a>
 
       <ul>
         <li><a href="vasp_dos.html#pdos_overlap.vasp_dos.get_example_data">(in module pdos_overlap.vasp_dos)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="vasp_dos.html#pdos_overlap.vasp_dos.get_filling">get_filling() (in module pdos_overlap.vasp_dos)</a>
 
       <ul>
@@ -288,10 +286,14 @@
 </li>
       <li><a href="error_metrics.html#pdos_overlap.error_metrics.get_max_error">get_max_error() (in module pdos_overlap.error_metrics)</a>
 </li>
+      <li><a href="pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.get_orbital_interaction">get_orbital_interaction() (PDOS_OVERLAP method)</a>
+</li>
       <li><a href="vasp_dos.html#pdos_overlap.vasp_dos.get_orbital_proximity">get_orbital_proximity() (in module pdos_overlap.vasp_dos)</a>
+
+      <ul>
+        <li><a href="vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.get_orbital_proximity">(VASP_DOS method)</a>
 </li>
-      <li><a href="vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.get_orbital_proximty">get_orbital_proximty() (VASP_DOS method)</a>
-</li>
+      </ul></li>
       <li><a href="pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.get_orbital_scores">get_orbital_scores() (PDOS_OVERLAP method)</a>
 </li>
       <li><a href="pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.get_pair_scores">get_pair_scores() (PDOS_OVERLAP static method)</a>
@@ -310,8 +312,6 @@
       </ul></li>
       <li><a href="vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.get_site_dos">get_site_dos() (VASP_DOS method)</a>
 </li>
-      <li><a href="pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP.get_sum_score">get_sum_score() (PDOS_OVERLAP static method)</a>
-</li>
       <li><a href="vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.get_total_dos">get_total_dos() (VASP_DOS method)</a>
 </li>
       <li><a href="error_metrics.html#pdos_overlap.error_metrics.get_wasserstein_loss">get_wasserstein_loss() (in module pdos_overlap.error_metrics)</a>
@@ -326,8 +326,6 @@
     module
 
       <ul>
-        <li><a href="coordination.html#module-pdos_overlap.coordination">pdos_overlap.coordination</a>
-</li>
         <li><a href="error_metrics.html#module-pdos_overlap.error_metrics">pdos_overlap.error_metrics</a>
 </li>
         <li><a href="plotting_tools.html#module-pdos_overlap.plotting_tools">pdos_overlap.plotting_tools</a>
@@ -353,13 +351,6 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP">PDOS_OVERLAP (class in pdos_overlap.pdos_overlap)</a>
 </li>
-      <li>
-    pdos_overlap.coordination
-
-      <ul>
-        <li><a href="coordination.html#module-pdos_overlap.coordination">module</a>
-</li>
-      </ul></li>
       <li>
     pdos_overlap.error_metrics
 

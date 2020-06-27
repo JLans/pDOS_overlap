@@ -19,14 +19,18 @@ from pdos_overlap import PDOS_OVERLAP
 
 
 gas = 'CO'
+adsorbate='CO'
 surface = 'Pt111'
 set_figure_settings('paper')
 np.set_printoptions(linewidth=100)
 example_path = r'C:\Users\lansf\Documents\Data\PROBE_PDOS\vasp_dos_files'
-GAS_DOSCAR = os.path.join(example_path, gas + '/DOSCAR')
-GAS_CONTCAR = os.path.join(example_path, gas + '/CONTCAR')
-ADSORBATE_DOSCAR = os.path.join(example_path, gas + '+' + surface + '/DOSCAR')
-ADSORBATE_CONTCAR = os.path.join(example_path, gas + '+' + surface + '/CONTCAR')
+lobster_path = r'C:\Users\lansf\Documents\Data\PROBE_PDOS\lobster_files'
+GAS_DOSCAR = os.path.join(lobster_path, gas + '/DOSCAR.lobster')
+GAS_CONTCAR = os.path.join(lobster_path, gas + '/CONTCAR')
+ADSORBATE_DOSCAR = os.path.join(lobster_path, 'gas+Pt_G.03_noW/'+surface + '+'\
+                          + adsorbate + '/DOSCAR.lobster')
+ADSORBATE_CONTCAR = os.path.join(lobster_path, 'gas+Ptnano/'+surface + '+'\
+                          + adsorbate + '/CONTCAR')
 BULK_DOSCAR = os.path.join(example_path,'Pt_nano/Pt147/DOSCAR')
 # VASP_DOS objects for both the gas (vacuum) and the adsorbate+surface system
 GAS_PDOS = VASP_DOS(GAS_DOSCAR)
@@ -38,7 +42,7 @@ adsorbate_indices, site_indices = get_adsorbate_indices(GAS_CONTCAR\
                                                         , ADSORBATE_CONTCAR)
 #Initialize Coordination object. Repeat is necessary so it doesn't count itself
 CO_overlap = PDOS_OVERLAP(GAS_PDOS, REFERENCE_PDOS, adsorbate_indices\
-                          , site_indices, min_occupation=0.9\
+                          , site_indices, min_occupation=1.5\
                           , upshift=0.5, energy_weight=3)
 CO_overlap.optimize_energy_shift(bound=[-0.5,1.5], reset=True)
 
@@ -57,18 +61,18 @@ for nano_DOSCAR, nano_CONTCAR in zip(DOSCAR_files, CONTCAR_files):
     # read and return density of states object
     nano_PDOS = VASP_DOS(nano_DOSCAR)   
     for atom_index in nano_indices[atom_types[...] == 'surface']:
-        four_sigma = CO_overlap.calculate_orbital_interaction(1\
-                    , nano_PDOS, atom_index, ['s','pz','dz2']\
+        four_sigma = CO_overlap.get_orbital_interaction(1\
+                    , nano_PDOS, atom_index, ['s','dz2']\
                     , BULK_PDOS, bulk_atom=43\
-                    , method='orbital_bond_energy', use_orbital_proximity=False)
-        one_pi = CO_overlap.calculate_orbital_interaction(2\
+                    , method='band_width', use_orbital_proximity=False)
+        one_pi = CO_overlap.get_orbital_interaction(2\
                     , nano_PDOS, atom_index, ['dyz','dxz']\
                     , BULK_PDOS, bulk_atom=43\
-                    , method='orbital_bond_energy', use_orbital_proximity=False)
-        five_sigma = CO_overlap.calculate_orbital_interaction(3\
-                    , nano_PDOS, atom_index, ['s','pz','dz2']\
+                    , method='band_width', use_orbital_proximity=False)
+        five_sigma = CO_overlap.get_orbital_interaction(3\
+                    , nano_PDOS, atom_index, ['s','dz2']\
                     , BULK_PDOS, bulk_atom=43\
-                    , method='orbital_bond_energy', use_orbital_proximity=False)
+                    , method='band_width', use_orbital_proximity=False)
         
             
         four_sigma_list.append(four_sigma)
@@ -82,7 +86,7 @@ five_sigma_list = np.array(five_sigma_list).T
 
 #plotting scaling of band center with GCN
 plt.figure(0,figsize=(7,5))
-colors = ['b','g','r']
+colors = ['b','r']
 orbitalfit = []
 for count, color in enumerate(colors):
     orbitalfit.append(np.polyfit(GCNList,four_sigma_list[count], 1))
@@ -90,8 +94,7 @@ for count, color in enumerate(colors):
 for count, color in enumerate(colors):
     plt.plot(GCNList, four_sigma_list[count], color + 'o')
 plt.legend([r'${interaction}_{s}$=%.2fGCN + %.2f eV' %(orbitalfit[0][0], orbitalfit[0][1])
-,r'${interaction}_{pz}$=%.2fGCN + %.2f eV' %(orbitalfit[1][0], orbitalfit[1][1])
-,r'${interaction}_{dz2}$=%.2fGCN + %.2f eV' %(orbitalfit[2][0], orbitalfit[2][1])]
+,r'${interaction}_{dz2}$=%.2fGCN + %.2f eV' %(orbitalfit[1][0], orbitalfit[1][1])]
 ,loc='best',frameon=False)
 plt.xlabel('Generalized coordination number (GCN)')
 plt.ylabel('Interaction energy [states]')
@@ -99,7 +102,7 @@ plt.show()
 
 #plotting scaling of band center with GCN
 plt.figure(1,figsize=(7,5))
-colors = ['b','g','r']
+colors = ['b','r']
 orbitalfit = []
 for count, color in enumerate(colors):
     orbitalfit.append(np.polyfit(GCNList,five_sigma_list[count], 1))
@@ -107,8 +110,7 @@ for count, color in enumerate(colors):
 for count, color in enumerate(colors):
     plt.plot(GCNList, five_sigma_list[count], color + 'o')
 plt.legend([r'${interaction}_{s}$=%.2fGCN + %.2f eV' %(orbitalfit[0][0], orbitalfit[0][1])
-,r'${interaction}_{pz}$=%.2fGCN + %.2f eV' %(orbitalfit[1][0], orbitalfit[1][1])
-,r'${interaction}_{dz2}$=%.2fGCN + %.2f eV' %(orbitalfit[2][0], orbitalfit[2][1])]
+,r'${interaction}_{dz2}$=%.2fGCN + %.2f eV' %(orbitalfit[1][0], orbitalfit[1][1])]
 ,loc='best',frameon=False)
 plt.xlabel('Generalized coordination number (GCN)')
 plt.ylabel('Interaction energy [eV]')

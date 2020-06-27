@@ -24,4 +24,4 @@ The ``OVERLAP_POPULATION`` class
    :undoc-members:
    :private-members:
 
-
+   .. rubric:: Methods
