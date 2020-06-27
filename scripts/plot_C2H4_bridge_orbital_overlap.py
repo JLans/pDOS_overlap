@@ -70,17 +70,16 @@ C2H4_overlap.plot_projected_density()
 # Find the optimal upshift factor
 # -------------------------------
 #
-# The optimal upshift factor shifts the molecular orbital energies to
+# The optimal upshift factor shifts the gas molecular orbital energies to
 # minimize the sum the orbital scores used in matching gas and adsorbate orbitals.
 # This has the effect of increasing certainty and roughly corresponds to the 
 # average shift in molecular orbital energies when a gas adsorbs to the surface
-# as a fraction of the fermi energy.
 """
 I need to fix this for NO
 """
-#optimized_upshift = C2H4_overlap.optimize_energy_shift(bound=[-0.5,1]\
-#                                                     , reset=True, plot=True)
-#print(optimized_upshift)
+optimized_upshift = C2H4_overlap.optimize_energy_shift(bound=[-10, 10]\
+                                                     , reset=True, plot=True)
+print(optimized_upshift)
  
 #######################################################################################
 # Print orbital CO_overlap attributes

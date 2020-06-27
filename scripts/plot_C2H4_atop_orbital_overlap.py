@@ -78,9 +78,9 @@ C2H4_overlap.plot_projected_density()
 """
 I need to fix this for NO
 """
-#optimized_upshift = C2H4_overlap.optimize_energy_shift(bound=[-0.5,1]\
-#                                                     , reset=True, plot=True)
-#print(optimized_upshift)
+optimized_upshift = C2H4_overlap.optimize_energy_shift(bound=[-10, 10]\
+                                                   , reset=True, plot=True)
+print(optimized_upshift)
  
 #######################################################################################
 # Print orbital CO_overlap attributes

@@ -44,7 +44,7 @@ adsorbate_indices, site_indices = get_adsorbate_indices(GAS_CONTCAR\
 NO_overlap = PDOS_OVERLAP(GAS_PDOS, REFERENCE_PDOS, adsorbate_indices\
                           , site_indices, min_occupation=1\
                           , upshift=0.5, energy_weight=3)
-#NO_overlap.optimize_energy_shift(bound=[-0.5,1.5], reset=True)
+NO_overlap.optimize_energy_shift(bound=[-10, 10], reset=True)
 
 GCNList = []
 orbital_1_list = []

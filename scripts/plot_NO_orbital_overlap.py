@@ -31,9 +31,9 @@ np.set_printoptions(linewidth=100)
 lobster_path = r'C:\Users\lansf\Documents\Data\PROBE_PDOS\lobster_files'
 GAS_DOSCAR = os.path.join(lobster_path, gas + '/DOSCAR.lobster')
 GAS_CONTCAR = os.path.join(lobster_path, gas + '/CONTCAR')
-ADSORBATE_DOSCAR = os.path.join(lobster_path, 'gas+Pt_G.03_noW/'+surface + '+'\
+ADSORBATE_DOSCAR = os.path.join(lobster_path, 'minimized_noW/'+surface + '+'\
                           + adsorbate + '/DOSCAR.lobster')
-ADSORBATE_CONTCAR = os.path.join(lobster_path, 'gas+Ptnano/'+surface + '+'\
+ADSORBATE_CONTCAR = os.path.join(lobster_path, 'minimized_noW/'+surface + '+'\
                           + adsorbate + '/CONTCAR')
 
 #######################################################################################
@@ -70,17 +70,13 @@ NO_overlap.plot_projected_density()
 # Find the optimal upshift factor
 # -------------------------------
 #
-# The optimal upshift factor shifts the molecular orbital energies to
+# The optimal upshift factor shifts the gas molecular orbital energies to
 # minimize the sum the orbital scores used in matching gas and adsorbate orbitals.
 # This has the effect of increasing certainty and roughly corresponds to the 
 # average shift in molecular orbital energies when a gas adsorbs to the surface
-# as a fraction of the fermi energy.
-"""
-I need to fix this for NO
-"""
-#optimized_upshift = NO_overlap.optimize_energy_shift(bound=[-0.5,1]\
-#                                                     , reset=True, plot=True)
-#print(optimized_upshift)
+optimized_upshift = NO_overlap.optimize_energy_shift(bound=[-10, 10]\
+                                                     , reset=True, plot=True)
+print(optimized_upshift)
  
 #######################################################################################
 # Print orbital CO_overlap attributes
@@ -115,7 +111,7 @@ print('Gas bonding fraction')
 print(bonding_fraction)
     
 #adsorbate
-COOPCAR_NO = os.path.join(lobster_path, 'gas+Pt_G.03_noW/'+surface + '+'\
+COOPCAR_NO = os.path.join(lobster_path, 'minimized_noW/'+surface + '+'\
                           + adsorbate + '/COOPCAR.lobster')
 POP_NO = OVERLAP_POPULATION(COOPCAR_NO)
 bonding_fraction = POP_NO.get_bonding_fraction(NO_overlap.adsorbate_orbital_indices\

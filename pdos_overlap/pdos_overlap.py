@@ -50,7 +50,7 @@ def get_adsorbate_indices(GAS_CONTCAR, ADSORBATE_CONTCAR):
 class PDOS_OVERLAP:
     """Class for calculating adsorbate-surface relative energy overlap"""
     def __init__(self, GAS_PDOS, REFERENCE_PDOS, adsorbate_indices, site_indices\
-                 , min_occupation=0.9, upshift=1, energy_weight=3\
+                 , min_occupation=0.9, upshift=4.5, energy_weight=3\
                  , sum_density=False, sum_spin=True):
         """ 
         Parameters
@@ -74,8 +74,7 @@ class PDOS_OVERLAP:
             a molecular orbital.
             
         upshift : float
-            The fraction of the fermi energy the gas and adsorbate molecular
-            orbitals are shifted before pairing
+            The energy the gas molecular orbitals are shifted before pairing
         
         energy_weight : float
             The degree to weight the energy error before computing the 
@@ -189,7 +188,7 @@ class PDOS_OVERLAP:
         
         adsorbate_features\
             = self._get_orbital_features(REFERENCE_PDOS, adsorbate_orbital_indices\
-                                         , adsorbate_indices, upshift=self.upshift)
+                                         , adsorbate_indices, upshift=0)
         
         orbital_scores = self.get_orbital_scores(gas_features\
                                            , adsorbate_features, energy_weight)
@@ -347,8 +346,7 @@ class PDOS_OVERLAP:
             indices of atoms to include in the TOTAL PDOS.
             
         upshift : float
-            The fraction of the fermi energy the gas and adsorbate molecular
-            orbitals are shifted before pairing
+            The energy the gas molecular orbitals are shifted before pairing
         
         Returns
         -------
@@ -361,7 +359,7 @@ class PDOS_OVERLAP:
         feature_type = self.feature_type
         sum_spin = self.sum_spin
         num_orbitals = len(orbital_indices)
-        energies = PDOS.get_energies() - upshift * PDOS.e_fermi
+        energies = PDOS.get_energies() + upshift
         orbital_list = list(PDOS.orbital_dictionary.keys())
         #feature_list = ['s','py', 'pz', 'px', 'dxy', 'dyz', 'dz2', 'dxz', 'dx2-y2']
         feature_list = ['s','py', 'pz', 'px']
@@ -764,8 +762,7 @@ class PDOS_OVERLAP:
         Parameters
         ----------
         upshift : float
-            The fraction of the fermi energy the gas and adsorbate molecular
-            orbitals are shifted before pairing
+            The energy the gas molecular orbitals are shifted before pairing
                    
         Returns
         -------
@@ -779,7 +776,7 @@ class PDOS_OVERLAP:
         adsorbate_features\
                 = self._get_orbital_features(self.REFERENCE_PDOS\
                                              , self.adsorbate_orbital_indices\
-                                             , self.adsorbate_indices, upshift)
+                                             , self.adsorbate_indices, 0)
         scores = self.get_orbital_scores(gas_features, adsorbate_features\
                                              , self.energy_weight)    
         sum_score = self._get_sum_score(scores)
@@ -791,8 +788,7 @@ class PDOS_OVERLAP:
         Parameters
         ----------
         upshift : float
-            The fraction of the fermi energy the gas and adsorbate molecular
-            orbitals are shifted before pairing
+            The energy the gas molecular orbitals are shifted before pairing
             
         bound : tuple
             Lower and upper bounds to for which to find the optimal energy shift
@@ -832,7 +828,7 @@ class PDOS_OVERLAP:
             set_figure_settings('paper')
             plt.figure()
             plt.plot(grid, - 1 * y)
-            plt.xlabel(r'Increase applied to energies as a fraction of the fermi energy')
+            plt.xlabel(r'Shift in gas molecular orbitals [eV]')
             plt.ylabel(r'$\sum_{m=1}^{M}$max(orbital score$_{m,j}$ for j in N )')
             plt.show()
         return optimized_upshift

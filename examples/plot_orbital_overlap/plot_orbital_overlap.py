@@ -71,12 +71,11 @@ CO_overlap.plot_projected_density()
 # Find the optimal upshift factor
 # -------------------------------
 #
-# The optimal upshift factor shifts the molecular orbital energies to
+# The optimal upshift factor shifts the gas molecular orbital energies to
 # minimize the sum the orbital scores used in matching gas and adsorbate orbitals.
 # This has the effect of increasing certainty and roughly corresponds to the 
 # average shift in molecular orbital energies when a gas adsorbs to the surface
-# as a fraction of the fermi energy.
-optimized_upshift = CO_overlap.optimize_energy_shift(bound=[-0.5,1.5]\
+optimized_upshift = CO_overlap.optimize_energy_shift(bound=[-10,10]\
                                                      , reset=True, plot=True)
 print(optimized_upshift)
  
