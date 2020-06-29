@@ -9,6 +9,7 @@ from __future__ import absolute_import, division, print_function
 import os
 import pkg_resources
 import numpy as np
+from scipy.ndimage import gaussian_filter1d
 
 def get_data_path():
     """ Get default paths to package data.
@@ -344,6 +345,50 @@ class VASP_DOS:
         self.is_spin = is_spin
         self.m_projected = m_projected
         self.orbital_dictionary = orbital_dictionary
+        
+    def apply_gaussian_filter(self, sigma):
+        """Applies Gaussian filter to self._total_dos and self._site_dos
+        
+        Parameters
+        ----------
+        sigma : float
+            standard deviation of Gaussian Kernel
+            
+        Attributes
+        ----------
+        _total_dos_original : numpy.ndarray
+            self._total_dos array without filter
+            
+        _site_dos_original : numpy.ndarray
+            self._site_dos array without filter
+        """
+        total_dos_exists = False
+        try:
+            self._total_dos
+            total_dos_exists = True
+            try:
+                self._total_dos_original
+            except:
+                self._total_dos_original = self._total_dos.copy()
+        except:
+            pass
+            
+        site_dos_exists = False
+        try:
+            self._site_dos
+            site_dos_exists = True
+            try:
+                self._site_dos_original
+            except:
+                self._site_dos_original = self._total_dos.copy()
+        except:
+            pass
+        
+        if total_dos_exists == True:
+            self._total_dos[1:,:] = gaussian_filter1d(self._total_dos_original[1:,:].copy(), sigma)
+            
+        if site_dos_exists == True:
+            self._site_dos[:,1:,:] = gaussian_filter1d(self._site_dos_original[:,1:,:].copy(), sigma)
         
     def get_band_center(self, atom_indices, orbital_list, sum_density=False, sum_spin=True\
                         , max_energy=None, min_energy=None, axis=-1):

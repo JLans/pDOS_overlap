@@ -33,7 +33,7 @@ GAS_DOSCAR = os.path.join(lobster_path, gas + '/DOSCAR.lobster')
 GAS_CONTCAR = os.path.join(lobster_path, gas + '/CONTCAR')
 ADSORBATE_DOSCAR = os.path.join(lobster_path, 'gas+Pt_G.03_noW/'+surface + '+'\
                           + adsorbate + '/DOSCAR.lobster')
-ADSORBATE_CONTCAR = os.path.join(lobster_path, 'gas+Ptnano/'+surface + '+'\
+ADSORBATE_CONTCAR = os.path.join(lobster_path, 'gas+Pt_G.03_noW/'+surface + '+'\
                           + adsorbate + '/CONTCAR')
 
 #######################################################################################
@@ -105,25 +105,30 @@ print(NO_overlap.gas_2_adsorbate)
 #gas
 COOPCAR_NO = os.path.join(lobster_path, gas + '/COOPCAR.lobster')
 POP_NO = OVERLAP_POPULATION(COOPCAR_NO)
-bonding_fraction = POP_NO.get_bonding_fraction(NO_overlap.gas_orbital_indices\
+bonding_states = POP_NO.get_bonding_states(NO_overlap.gas_orbital_indices\
                                                , NO_overlap.GAS_PDOS.get_energies()\
                                                , set_antibonding_zero=False)
 print('Gas bonding fraction')
-print(bonding_fraction)
+print(bonding_states)
     
 #adsorbate
 COOPCAR_NO = os.path.join(lobster_path, 'gas+Pt_G.03_noW/'+surface + '+'\
                           + adsorbate + '/COOPCAR.lobster')
 POP_NO = OVERLAP_POPULATION(COOPCAR_NO)
-bonding_fraction = POP_NO.get_bonding_fraction(NO_overlap.adsorbate_orbital_indices\
+bonding_states = POP_NO.get_bonding_states(NO_overlap.adsorbate_orbital_indices\
                                                , NO_overlap.REFERENCE_PDOS.get_energies()\
                                                , set_antibonding_zero=True
                                                , emax = NO_overlap.REFERENCE_PDOS.e_fermi)
-print('Adsorbate bonding fraction')
-print(bonding_fraction)
-print(NO_overlap.adsorbate_occupations)
-print(NO_overlap.adsorbate_band_centers)
+print('Adsorbate bonding states')
+print(bonding_states)
 
+bonding_states = POP_NO.get_bonding_states(NO_overlap.adsorbate_orbital_indices
+                                               , NO_overlap.REFERENCE_PDOS.get_energies()
+                                               , interactions = [2]
+                                               , set_antibonding_zero=True
+                                               , emax = NO_overlap.REFERENCE_PDOS.e_fermi)
+print('N-O bonding states')
+print(bonding_states)
 #######################################################################################
 # Plot energy overlap
 # -------------------

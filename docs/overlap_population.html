@@ -95,7 +95,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#the-write-lobsterin-function">The <code class="docutils literal notranslate"><span class="pre">write_lobsterin</span></code> function</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#the-get-example-data-function">The <code class="docutils literal notranslate"><span class="pre">get_example_data</span></code> function</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#the-get-all-lobster-files-function">The <code class="docutils literal notranslate"><span class="pre">get_all_lobster_files</span></code> function</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#the-get-bonding-fraction-function">The <code class="docutils literal notranslate"><span class="pre">get_bonding_fraction</span></code> function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-get-bonding-states-function">The <code class="docutils literal notranslate"><span class="pre">get_bonding_states</span></code> function</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#the-overlap-population-class">The <code class="docutils literal notranslate"><span class="pre">OVERLAP_POPULATION</span></code> class</a></li>
 </ul>
 </li>
@@ -231,19 +231,19 @@ set to None</p></li>
 </dd></dl>
 
 </div>
-<div class="section" id="the-get-bonding-fraction-function">
-<h2>The <code class="docutils literal notranslate"><span class="pre">get_bonding_fraction</span></code> function<a class="headerlink" href="#the-get-bonding-fraction-function" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="the-get-bonding-states-function">
+<h2>The <code class="docutils literal notranslate"><span class="pre">get_bonding_states</span></code> function<a class="headerlink" href="#the-get-bonding-states-function" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="pdos_overlap.overlap_population.get_bonding_fraction">
-<code class="sig-name descname">get_bonding_fraction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">orbital_indices</span></em>, <em class="sig-param"><span class="n">dos_energies</span></em>, <em class="sig-param"><span class="n">pcoop</span></em>, <em class="sig-param"><span class="n">pcoop_energies</span></em>, <em class="sig-param"><span class="n">set_antibonding_zero</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">emax</span><span class="o">=</span><span class="default_value">inf</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/overlap_population.html#get_bonding_fraction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.overlap_population.get_bonding_fraction" title="Permalink to this definition">¶</a></dt>
+<dt id="pdos_overlap.overlap_population.get_bonding_states">
+<code class="sig-name descname">get_bonding_states</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">orbital_indices</span></em>, <em class="sig-param"><span class="n">dos_energies</span></em>, <em class="sig-param"><span class="n">pcoop</span></em>, <em class="sig-param"><span class="n">pcoop_energies</span></em>, <em class="sig-param"><span class="n">set_antibonding_zero</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">emax</span><span class="o">=</span><span class="default_value">inf</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/overlap_population.html#get_bonding_states"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.overlap_population.get_bonding_states" title="Permalink to this definition">¶</a></dt>
 <dd><p>method for obtaining bonding fraction of dos or dos-like array</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>orbital_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>]</em>) – list of orbital indices for each molecular orbital</p></li>
-<li><p><strong>dos_energies</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – energies at which dos is calculated</p></li>
-<li><p><strong>pcoop</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – projected orbital overlap populations</p></li>
-<li><p><strong>pcoop_energies</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – energies at which the pcoop is calculated</p></li>
+<li><p><strong>dos_energies</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><em>numpy.ndarray</em></a>) – energies at which dos is calculated</p></li>
+<li><p><strong>pcoop</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><em>numpy.ndarray</em></a>) – projected orbital overlap populations</p></li>
+<li><p><strong>pcoop_energies</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><em>numpy.ndarray</em></a>) – energies at which the pcoop is calculated</p></li>
 <li><p><strong>set_antibonding_zero</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – if true, set antibonding populations to zero to look at total
 instead of net bonding characteristics</p></li>
 </ul>
@@ -252,7 +252,7 @@ instead of net bonding characteristics</p></li>
 <dd class="field-even"><p><strong>dos_bonding</strong> – 1-D array of the relative bonding for either dos-like array</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -290,7 +290,7 @@ instead of net bonding characteristics</p></li>
 <dd class="field-odd"><p><strong>file_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – file location of the COOPCAR.lobster file file</p>
 </dd>
 <dt class="field-even">Variables</dt>
-<dd class="field-even"><p><strong>_pcoop</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – numpy array that contains the energy of levels and the projected
+<dd class="field-even"><p><strong>_pcoop</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><em>numpy.ndarray</em></a>) – numpy array that contains the energy of levels and the projected
 crystal orbital overlap population densities</p>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -309,6 +309,24 @@ crystal orbital overlap population densities</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="pdos_overlap.overlap_population.OVERLAP_POPULATION.apply_gaussian_filter">
+<code class="sig-name descname">apply_gaussian_filter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sigma</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/overlap_population.html#OVERLAP_POPULATION.apply_gaussian_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.overlap_population.OVERLAP_POPULATION.apply_gaussian_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies Gaussian filter to self._pcoop</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sigma</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – standard deviation of Gaussian Kernel</p>
+</dd>
+<dt class="field-even">Variables</dt>
+<dd class="field-even"><p><strong>_pcoop_original</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><em>numpy.ndarray</em></a>) – self._pcoop array without filter</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Understand carefully what this does before using it. It applies a
+Gaussian filter to the average and integrated PCOOP and the PCOOP
+such that the average and integrated PCOOP may become meaningless</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pdos_overlap.overlap_population.OVERLAP_POPULATION.get_average_int_pcoop">
 <code class="sig-name descname">get_average_int_pcoop</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/overlap_population.html#OVERLAP_POPULATION.get_average_int_pcoop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.overlap_population.OVERLAP_POPULATION.get_average_int_pcoop" title="Permalink to this definition">¶</a></dt>
 <dd><p>obtain average integrated overlap population for all atom pairs</p>
@@ -320,7 +338,7 @@ crystal orbital overlap population densities</p>
 <dd class="field-even"><p><strong>average_int_pcoop</strong> – 1-D or 2-D array of average integrated pcoop for all interactions</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -337,31 +355,31 @@ crystal orbital overlap population densities</p>
 <dd class="field-even"><p><strong>average_pcoop</strong> – 1-D or 2-D array of average pcoop for all interactions</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pdos_overlap.overlap_population.OVERLAP_POPULATION.get_bonding_fraction">
-<code class="sig-name descname">get_bonding_fraction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">orbital_indices</span></em>, <em class="sig-param"><span class="n">dos_energies</span></em>, <em class="sig-param"><span class="n">set_antibonding_zero</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sum_pcoop</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">emax</span><span class="o">=</span><span class="default_value">inf</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/overlap_population.html#OVERLAP_POPULATION.get_bonding_fraction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.overlap_population.OVERLAP_POPULATION.get_bonding_fraction" title="Permalink to this definition">¶</a></dt>
+<dt id="pdos_overlap.overlap_population.OVERLAP_POPULATION.get_bonding_states">
+<code class="sig-name descname">get_bonding_states</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">orbital_indices</span></em>, <em class="sig-param"><span class="n">dos_energies</span></em>, <em class="sig-param"><span class="n">interactions</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">set_antibonding_zero</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">emax</span><span class="o">=</span><span class="default_value">inf</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/overlap_population.html#OVERLAP_POPULATION.get_bonding_states"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.overlap_population.OVERLAP_POPULATION.get_bonding_states" title="Permalink to this definition">¶</a></dt>
 <dd><p>method for obtaining bonding fraction of dos or dos-like array</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>orbital_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>]</em>) – list of orbital indices for each molecular orbital</p></li>
-<li><p><strong>dos_energies</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – energies at which dos is calculated</p></li>
+<li><p><strong>orbital_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>]</em>) – list of energy indices for each molecular orbital</p></li>
+<li><p><strong>dos_energies</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><em>numpy.ndarray</em></a>) – energies at which dos is calculated</p></li>
+<li><p><strong>interactions</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – indices of interactions for which to find the integrated pcoop</p></li>
 <li><p><strong>set_antibonding_zero</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – if true, set antibonding populations to zero to look at total
 instead of net bonding characteristics</p></li>
-<li><p><strong>sum_pcoop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – indicates whether all pcoop should be summed</p></li>
-<li><p><strong>sum_spin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – indicates whether data of different spins should be summed</p></li>
+<li><p><strong>emax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – maximum energy level</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>dos_bonding</strong> – 1-D array of the relative bonding for either dos-like array</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -375,7 +393,7 @@ instead of net bonding characteristics</p></li>
 <dd class="field-odd"><p><strong>energies</strong> – 1-D array of energies</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -395,10 +413,10 @@ instead of net bonding characteristics</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>integrated_pcoop</strong> – 1-D or 2-D array of integrated pcoop for all interactions</p>
+<dd class="field-even"><p><strong>integrated_pcoop</strong> – 1-D, 2-D, or 3-D array of integrated pcoop for all interactions</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -421,7 +439,7 @@ instead of net bonding characteristics</p></li>
 <dd class="field-even"><p><strong>pcoop</strong> – 1-D or 2-D array of pcoop for all interactions</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>

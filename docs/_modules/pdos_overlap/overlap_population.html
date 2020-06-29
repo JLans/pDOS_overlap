@@ -172,12 +172,13 @@
 <span class="kn">from</span> <span class="nn">.vasp_dos</span> <span class="kn">import</span> <span class="n">VASP_DOS</span>
 <span class="kn">from</span> <span class="nn">.coordination</span> <span class="kn">import</span> <span class="n">Coordination</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">from</span> <span class="nn">scipy.ndimage</span> <span class="kn">import</span> <span class="n">gaussian_filter1d</span>
 
-<div class="viewcode-block" id="write_lobsterin"><a class="viewcode-back" href="../../overlap_population.html#pdos_overlap.overlap_population.write_lobsterin">[docs]</a><span class="k">def</span> <span class="nf">write_lobsterin</span><span class="p">(</span><span class="n">directory</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">adsorbate_atoms</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">,</span><span class="s1">&#39;H&#39;</span><span class="p">,</span><span class="s1">&#39;O&#39;</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">]</span>\
-                    <span class="p">,</span><span class="n">basisSet</span><span class="o">=</span><span class="s1">&#39;pbeVaspFit2015&#39;</span>\
-                    <span class="p">,</span> <span class="n">basisfunctions</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;C&#39;</span><span class="p">:</span><span class="s1">&#39;2s 2p&#39;</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">:</span><span class="s1">&#39;2s 2p&#39;</span>\
-                                      <span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span><span class="s1">&#39;2s 2p&#39;</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span><span class="s1">&#39;1s&#39;</span>\
-                                      <span class="p">,</span><span class="s1">&#39;Pt&#39;</span><span class="p">:</span><span class="s1">&#39;5d 6s&#39;</span><span class="p">}</span>\
+<div class="viewcode-block" id="write_lobsterin"><a class="viewcode-back" href="../../overlap_population.html#pdos_overlap.overlap_population.write_lobsterin">[docs]</a><span class="k">def</span> <span class="nf">write_lobsterin</span><span class="p">(</span><span class="n">directory</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">adsorbate_atoms</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">,</span><span class="s1">&#39;H&#39;</span><span class="p">,</span><span class="s1">&#39;O&#39;</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">]</span>
+                    <span class="p">,</span><span class="n">basisSet</span><span class="o">=</span><span class="s1">&#39;pbeVaspFit2015&#39;</span>
+                    <span class="p">,</span> <span class="n">basisfunctions</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;C&#39;</span><span class="p">:</span><span class="s1">&#39;2s 2p&#39;</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">:</span><span class="s1">&#39;2s 2p&#39;</span>
+                                      <span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span><span class="s1">&#39;2s 2p&#39;</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span><span class="s1">&#39;1s&#39;</span>
+                                      <span class="p">,</span><span class="s1">&#39;Pt&#39;</span><span class="p">:</span><span class="s1">&#39;5d 6s&#39;</span><span class="p">}</span>
                     <span class="p">,</span> <span class="n">gaussianSmearingWidth</span><span class="o">=</span><span class="mf">0.003</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Write a lobster input file</span>
 <span class="sd">    </span>
@@ -274,13 +275,13 @@
 <span class="sd">    lobster_files : list[str]</span>
 <span class="sd">        list of paths to lobster files of type file_type</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">lobster_directories</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">subdirectory</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span> \
-              <span class="k">for</span> <span class="n">subdirectory</span> <span class="ow">in</span> <span class="n">d</span> \
+    <span class="n">lobster_directories</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">subdirectory</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+              <span class="k">for</span> <span class="n">subdirectory</span> <span class="ow">in</span> <span class="n">d</span> 
               <span class="k">if</span> <span class="n">file_type</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">subdirectory</span><span class="p">))]</span>
     <span class="n">lobster_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">file_type</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">lobster_directories</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">lobster_files</span></div>
 
-<div class="viewcode-block" id="get_bonding_fraction"><a class="viewcode-back" href="../../overlap_population.html#pdos_overlap.overlap_population.get_bonding_fraction">[docs]</a><span class="k">def</span> <span class="nf">get_bonding_fraction</span><span class="p">(</span><span class="n">orbital_indices</span><span class="p">,</span> <span class="n">dos_energies</span><span class="p">,</span> <span class="n">pcoop</span><span class="p">,</span> <span class="n">pcoop_energies</span>\
+<div class="viewcode-block" id="get_bonding_states"><a class="viewcode-back" href="../../overlap_population.html#pdos_overlap.overlap_population.get_bonding_states">[docs]</a><span class="k">def</span> <span class="nf">get_bonding_states</span><span class="p">(</span><span class="n">orbital_indices</span><span class="p">,</span> <span class="n">dos_energies</span><span class="p">,</span> <span class="n">pcoop</span><span class="p">,</span> <span class="n">pcoop_energies</span>\
                              <span class="p">,</span> <span class="n">set_antibonding_zero</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">emax</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)):</span>
         <span class="sd">&quot;&quot;&quot; method for obtaining bonding fraction of dos or dos-like array</span>
 <span class="sd">        </span>
@@ -361,6 +362,39 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">e_fermi</span> <span class="o">=</span> <span class="n">e_fermi</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">e_min</span> <span class="o">=</span> <span class="n">e_min</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">e_max</span> <span class="o">=</span> <span class="n">e_max</span>
+        
+<div class="viewcode-block" id="OVERLAP_POPULATION.apply_gaussian_filter"><a class="viewcode-back" href="../../overlap_population.html#pdos_overlap.overlap_population.OVERLAP_POPULATION.apply_gaussian_filter">[docs]</a>    <span class="k">def</span> <span class="nf">apply_gaussian_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Applies Gaussian filter to self._pcoop</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sigma : float</span>
+<span class="sd">            standard deviation of Gaussian Kernel</span>
+<span class="sd">            </span>
+<span class="sd">        Attributes</span>
+<span class="sd">        ----------</span>
+<span class="sd">        _pcoop_original : numpy.ndarray</span>
+<span class="sd">            self._pcoop array without filter</span>
+<span class="sd">            </span>
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Understand carefully what this does before using it. It applies a</span>
+<span class="sd">        Gaussian filter to the average and integrated PCOOP and the PCOOP</span>
+<span class="sd">        such that the average and integrated PCOOP may become meaningless</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pcoop_exists</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pcoop</span>
+            <span class="n">pcoop_exists</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_pcoop_original</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_pcoop_original</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcoop</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        
+        <span class="k">if</span> <span class="n">pcoop_exists</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pcoop</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]</span> <span class="o">=</span> <span class="n">gaussian_filter1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pcoop_original</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">sigma</span><span class="p">)</span></div>
         
 <div class="viewcode-block" id="OVERLAP_POPULATION.get_energies"><a class="viewcode-back" href="../../overlap_population.html#pdos_overlap.overlap_population.OVERLAP_POPULATION.get_energies">[docs]</a>    <span class="k">def</span> <span class="nf">get_energies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; method for obtaining energy levels</span>
@@ -445,7 +479,7 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        integrated_pcoop : numpy.ndarray</span>
-<span class="sd">            1-D or 2-D array of integrated pcoop for all interactions</span>
+<span class="sd">            1-D, 2-D, or 3-D array of integrated pcoop for all interactions</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">is_spin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_spin</span>
         <span class="n">num_interactions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_interactions</span>
@@ -471,7 +505,7 @@
             <span class="n">integrated_pcoop</span> <span class="o">=</span> <span class="n">integrated_pcoop</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">integrated_pcoop</span></div>
     
-<div class="viewcode-block" id="OVERLAP_POPULATION.get_pcoop"><a class="viewcode-back" href="../../overlap_population.html#pdos_overlap.overlap_population.OVERLAP_POPULATION.get_pcoop">[docs]</a>    <span class="k">def</span> <span class="nf">get_pcoop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interactions</span><span class="o">=</span><span class="p">[],</span> <span class="n">sum_pcoop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span>\
+<div class="viewcode-block" id="OVERLAP_POPULATION.get_pcoop"><a class="viewcode-back" href="../../overlap_population.html#pdos_overlap.overlap_population.OVERLAP_POPULATION.get_pcoop">[docs]</a>    <span class="k">def</span> <span class="nf">get_pcoop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interactions</span><span class="o">=</span><span class="p">[],</span> <span class="n">sum_pcoop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span>
                   <span class="p">,</span> <span class="n">set_antibonding_zero</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; method for obtaining projected crystal orbital overlap populations</span>
 <span class="sd">        </span>
@@ -584,28 +618,28 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_pcoop</span> <span class="o">=</span> <span class="n">pcoop</span>
         <span class="k">return</span> <span class="n">num_interactions</span><span class="p">,</span> <span class="n">interactions</span><span class="p">,</span> <span class="n">is_spin</span><span class="p">,</span> <span class="n">ndos</span><span class="p">,</span> <span class="n">e_fermi</span><span class="p">,</span> <span class="n">e_min</span><span class="p">,</span> <span class="n">e_max</span></div>
     
-<div class="viewcode-block" id="OVERLAP_POPULATION.get_bonding_fraction"><a class="viewcode-back" href="../../overlap_population.html#pdos_overlap.overlap_population.OVERLAP_POPULATION.get_bonding_fraction">[docs]</a>    <span class="k">def</span> <span class="nf">get_bonding_fraction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orbital_indices</span><span class="p">,</span> <span class="n">dos_energies</span>\
-                             <span class="p">,</span> <span class="n">set_antibonding_zero</span><span class="o">=</span><span class="kc">False</span>\
-                             <span class="p">,</span> <span class="n">sum_pcoop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">emax</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)):</span>
+<div class="viewcode-block" id="OVERLAP_POPULATION.get_bonding_states"><a class="viewcode-back" href="../../overlap_population.html#pdos_overlap.overlap_population.OVERLAP_POPULATION.get_bonding_states">[docs]</a>    <span class="k">def</span> <span class="nf">get_bonding_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orbital_indices</span><span class="p">,</span> <span class="n">dos_energies</span>\
+                             <span class="p">,</span> <span class="n">interactions</span><span class="o">=</span><span class="p">[],</span> <span class="n">set_antibonding_zero</span><span class="o">=</span><span class="kc">False</span>
+                             <span class="p">,</span> <span class="n">emax</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)):</span>
         <span class="sd">&quot;&quot;&quot; method for obtaining bonding fraction of dos or dos-like array</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        orbital_indices : list[list]</span>
-<span class="sd">            list of orbital indices for each molecular orbital</span>
+<span class="sd">            list of energy indices for each molecular orbital</span>
 <span class="sd">            </span>
 <span class="sd">        dos_energies : numpy.ndarray</span>
 <span class="sd">            energies at which dos is calculated</span>
 <span class="sd">            </span>
+<span class="sd">        interactions : list</span>
+<span class="sd">            indices of interactions for which to find the integrated pcoop</span>
+<span class="sd">            </span>
 <span class="sd">        set_antibonding_zero : bool</span>
 <span class="sd">            if true, set antibonding populations to zero to look at total</span>
 <span class="sd">            instead of net bonding characteristics</span>
-
-<span class="sd">        sum_pcoop : bool</span>
-<span class="sd">            indicates whether all pcoop should be summed</span>
-<span class="sd">        </span>
-<span class="sd">        sum_spin : bool</span>
-<span class="sd">            indicates whether data of different spins should be summed</span>
+<span class="sd">            </span>
+<span class="sd">        emax : float</span>
+<span class="sd">            maximum energy level</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -614,13 +648,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">get_pcoop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pcoop</span>
         <span class="n">get_energies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_energies</span>
-        <span class="n">pcoop</span> <span class="o">=</span> <span class="n">get_pcoop</span><span class="p">(</span><span class="n">sum_pcoop</span><span class="o">=</span><span class="n">sum_pcoop</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="n">sum_spin</span>\
+        <span class="n">pcoop</span> <span class="o">=</span> <span class="n">get_pcoop</span><span class="p">(</span><span class="n">interactions</span><span class="o">=</span><span class="n">interactions</span><span class="p">,</span> <span class="n">sum_pcoop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span>
                                <span class="p">,</span> <span class="n">set_antibonding_zero</span><span class="o">=</span><span class="n">set_antibonding_zero</span><span class="p">)</span>
-        <span class="n">bonding_fraction</span> <span class="o">=</span> <span class="n">get_bonding_fraction</span><span class="p">(</span><span class="n">orbital_indices</span><span class="p">,</span> <span class="n">dos_energies</span><span class="p">,</span> <span class="n">pcoop</span>\
-                                        <span class="p">,</span> <span class="n">get_energies</span><span class="p">()</span>\
-                                        <span class="p">,</span> <span class="n">set_antibonding_zero</span><span class="o">=</span><span class="n">set_antibonding_zero</span>\
+        <span class="n">bonding_states</span> <span class="o">=</span> <span class="n">get_bonding_states</span><span class="p">(</span><span class="n">orbital_indices</span><span class="p">,</span> <span class="n">dos_energies</span><span class="p">,</span> <span class="n">pcoop</span>
+                                        <span class="p">,</span> <span class="n">get_energies</span><span class="p">()</span>
+                                        <span class="p">,</span> <span class="n">set_antibonding_zero</span><span class="o">=</span><span class="n">set_antibonding_zero</span>
                                         <span class="p">,</span> <span class="n">emax</span> <span class="o">=</span> <span class="n">emax</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">bonding_fraction</span></div></div>
+        <span class="k">return</span> <span class="n">bonding_states</span></div></div>
         
         
 </pre></div>

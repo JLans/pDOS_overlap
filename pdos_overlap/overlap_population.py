@@ -13,12 +13,13 @@ from ase.io import read
 from .vasp_dos import VASP_DOS
 from .coordination import Coordination
 import itertools
+from scipy.ndimage import gaussian_filter1d
 
-def write_lobsterin(directory='.', adsorbate_atoms=['C','H','O','N']\
-                    ,basisSet='pbeVaspFit2015'\
-                    , basisfunctions={'C':'2s 2p', 'O':'2s 2p'\
-                                      , 'N':'2s 2p', 'H':'1s'\
-                                      ,'Pt':'5d 6s'}\
+def write_lobsterin(directory='.', adsorbate_atoms=['C','H','O','N']
+                    ,basisSet='pbeVaspFit2015'
+                    , basisfunctions={'C':'2s 2p', 'O':'2s 2p'
+                                      , 'N':'2s 2p', 'H':'1s'
+                                      ,'Pt':'5d 6s'}
                     , gaussianSmearingWidth=0.003):
     """ Write a lobster input file
     
@@ -115,13 +116,13 @@ def get_all_lobster_files(directory, file_type='COOPCAR.lobster'):
     lobster_files : list[str]
         list of paths to lobster files of type file_type
     """
-    lobster_directories = [os.path.join(r,subdirectory) for r,d,f in os.walk(directory) \
-              for subdirectory in d \
+    lobster_directories = [os.path.join(r,subdirectory) for r,d,f in os.walk(directory)
+              for subdirectory in d 
               if file_type in os.listdir(os.path.join(r,subdirectory))]
     lobster_files = [os.path.join(d,file_type) for d in lobster_directories]
     return lobster_files
 
-def get_bonding_fraction(orbital_indices, dos_energies, pcoop, pcoop_energies\
+def get_bonding_states(orbital_indices, dos_energies, pcoop, pcoop_energies\
                              , set_antibonding_zero=False, emax=float('inf')):
         """ method for obtaining bonding fraction of dos or dos-like array
         
@@ -202,6 +203,39 @@ class OVERLAP_POPULATION:
         self.e_fermi = e_fermi
         self.e_min = e_min
         self.e_max = e_max
+        
+    def apply_gaussian_filter(self, sigma):
+        """Applies Gaussian filter to self._pcoop
+        
+        Parameters
+        ----------
+        sigma : float
+            standard deviation of Gaussian Kernel
+            
+        Attributes
+        ----------
+        _pcoop_original : numpy.ndarray
+            self._pcoop array without filter
+            
+        Notes
+        -----
+        Understand carefully what this does before using it. It applies a
+        Gaussian filter to the average and integrated PCOOP and the PCOOP
+        such that the average and integrated PCOOP may become meaningless
+        """
+        pcoop_exists = False
+        try:
+            self._pcoop
+            pcoop_exists = True
+            try:
+                self._pcoop_original
+            except:
+                self._pcoop_original = self._pcoop.copy()
+        except:
+            pass
+        
+        if pcoop_exists == True:
+            self._pcoop[1:,:] = gaussian_filter1d(self._pcoop_original[1:,:].copy(), sigma)
         
     def get_energies(self):
         """ method for obtaining energy levels
@@ -286,7 +320,7 @@ class OVERLAP_POPULATION:
         Returns
         -------
         integrated_pcoop : numpy.ndarray
-            1-D or 2-D array of integrated pcoop for all interactions
+            1-D, 2-D, or 3-D array of integrated pcoop for all interactions
         """
         is_spin = self.is_spin
         num_interactions = self.num_interactions
@@ -312,7 +346,7 @@ class OVERLAP_POPULATION:
             integrated_pcoop = integrated_pcoop.sum(axis=axis)
         return integrated_pcoop
     
-    def get_pcoop(self, interactions=[], sum_pcoop=False, sum_spin=True\
+    def get_pcoop(self, interactions=[], sum_pcoop=False, sum_spin=True
                   , set_antibonding_zero=False):
         """ method for obtaining projected crystal orbital overlap populations
         
@@ -425,28 +459,28 @@ class OVERLAP_POPULATION:
         self._pcoop = pcoop
         return num_interactions, interactions, is_spin, ndos, e_fermi, e_min, e_max
     
-    def get_bonding_fraction(self, orbital_indices, dos_energies\
-                             , set_antibonding_zero=False\
-                             , sum_pcoop=True, sum_spin=True, emax=float('inf')):
+    def get_bonding_states(self, orbital_indices, dos_energies\
+                             , interactions=[], set_antibonding_zero=False
+                             , emax=float('inf')):
         """ method for obtaining bonding fraction of dos or dos-like array
         
         Parameters
         ----------
         orbital_indices : list[list]
-            list of orbital indices for each molecular orbital
+            list of energy indices for each molecular orbital
             
         dos_energies : numpy.ndarray
             energies at which dos is calculated
             
+        interactions : list
+            indices of interactions for which to find the integrated pcoop
+            
         set_antibonding_zero : bool
             if true, set antibonding populations to zero to look at total
             instead of net bonding characteristics
-
-        sum_pcoop : bool
-            indicates whether all pcoop should be summed
-        
-        sum_spin : bool
-            indicates whether data of different spins should be summed
+            
+        emax : float
+            maximum energy level
         
         Returns
         -------
@@ -455,12 +489,12 @@ class OVERLAP_POPULATION:
         """
         get_pcoop = self.get_pcoop
         get_energies = self.get_energies
-        pcoop = get_pcoop(sum_pcoop=sum_pcoop, sum_spin=sum_spin\
+        pcoop = get_pcoop(interactions=interactions, sum_pcoop=True, sum_spin=True
                                , set_antibonding_zero=set_antibonding_zero)
-        bonding_fraction = get_bonding_fraction(orbital_indices, dos_energies, pcoop\
-                                        , get_energies()\
-                                        , set_antibonding_zero=set_antibonding_zero\
+        bonding_states = get_bonding_states(orbital_indices, dos_energies, pcoop
+                                        , get_energies()
+                                        , set_antibonding_zero=set_antibonding_zero
                                         , emax = emax)
-        return bonding_fraction
+        return bonding_states
         
         

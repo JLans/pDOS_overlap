@@ -33,7 +33,7 @@ GAS_DOSCAR = os.path.join(lobster_path, gas + '/DOSCAR.lobster')
 GAS_CONTCAR = os.path.join(lobster_path, gas + '/CONTCAR')
 ADSORBATE_DOSCAR = os.path.join(lobster_path, 'gas+Pt_G.03_noW/'+surface + '+'\
                           + adsorbate + '/DOSCAR.lobster')
-ADSORBATE_CONTCAR = os.path.join(lobster_path, 'gas+Ptnano/'+surface + '+'\
+ADSORBATE_CONTCAR = os.path.join(lobster_path, 'gas+Pt_G.03_noW/'+surface + '+'\
                           + adsorbate + '/CONTCAR')
 
 #######################################################################################
@@ -108,24 +108,31 @@ print(C2H4_overlap.gas_2_adsorbate)
 #gas
 COOPCAR_C2H4 = os.path.join(lobster_path, gas + '/COOPCAR.lobster')
 POP_C2H4 = OVERLAP_POPULATION(COOPCAR_C2H4)
-bonding_fraction = POP_C2H4.get_bonding_fraction(C2H4_overlap.gas_orbital_indices\
+bonding_fraction = POP_C2H4.get_bonding_states(C2H4_overlap.gas_orbital_indices\
                                                , C2H4_overlap.GAS_PDOS.get_energies()\
                                                , set_antibonding_zero=False)
-print('Gas bonding fraction')
+print('Gas bonding states')
 print(bonding_fraction)
     
 #adsorbate
 COOPCAR_C2H4 = os.path.join(lobster_path, 'gas+Pt_G.03_noW/'+surface + '+'\
                           + adsorbate + '/COOPCAR.lobster')
 POP_C2H4 = OVERLAP_POPULATION(COOPCAR_C2H4)
-bonding_fraction = POP_C2H4.get_bonding_fraction(C2H4_overlap.adsorbate_orbital_indices\
+bonding_states = POP_C2H4.get_bonding_states(C2H4_overlap.adsorbate_orbital_indices\
                                                , C2H4_overlap.REFERENCE_PDOS.get_energies()\
                                                , set_antibonding_zero=True
                                                , emax = C2H4_overlap.REFERENCE_PDOS.e_fermi)
-print('Adsorbate bonding fraction')
-print(bonding_fraction)
-print(C2H4_overlap.adsorbate_occupations)
-print(C2H4_overlap.adsorbate_band_centers)
+print('Adsorbate bonding states')
+print(bonding_states)
+
+bonding_states = POP_C2H4.get_bonding_states(C2H4_overlap.adsorbate_orbital_indices
+                                               , C2H4_overlap.REFERENCE_PDOS.get_energies()
+                                               , interactions = [6, 7, 8, 13, 14]
+                                               , set_antibonding_zero=True
+                                               , emax = C2H4_overlap.REFERENCE_PDOS.e_fermi)
+print('C-C and C-H bonding states')
+print(bonding_states)
+
 
 #######################################################################################
 # Plot energy overlap

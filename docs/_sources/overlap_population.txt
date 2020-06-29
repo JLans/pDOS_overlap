@@ -13,9 +13,9 @@ The ``get_all_lobster_files`` function
 **************************************
 .. autofunction:: pdos_overlap.overlap_population.get_all_lobster_files
 
-The ``get_bonding_fraction`` function
-*************************************
-.. autofunction:: pdos_overlap.overlap_population.get_bonding_fraction
+The ``get_bonding_states`` function
+***********************************
+.. autofunction:: pdos_overlap.overlap_population.get_bonding_states
 
 The ``OVERLAP_POPULATION`` class
 ********************************

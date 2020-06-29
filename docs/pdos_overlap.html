@@ -196,7 +196,7 @@ Obtained from pdos_overlap.get_adsorbate_indices.</p></li>
 <h2>The <code class="docutils literal notranslate"><span class="pre">PDOS_OVERLAP</span></code> class<a class="headerlink" href="#the-pdos-overlap-class" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pdos_overlap.pdos_overlap.PDOS_OVERLAP">
-<em class="property">class </em><code class="sig-name descname">PDOS_OVERLAP</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">GAS_PDOS</span></em>, <em class="sig-param"><span class="n">REFERENCE_PDOS</span></em>, <em class="sig-param"><span class="n">adsorbate_indices</span></em>, <em class="sig-param"><span class="n">site_indices</span></em>, <em class="sig-param"><span class="n">min_occupation</span><span class="o">=</span><span class="default_value">0.9</span></em>, <em class="sig-param"><span class="n">upshift</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">energy_weight</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">sum_density</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/pdos_overlap.html#PDOS_OVERLAP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.pdos_overlap.PDOS_OVERLAP" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">PDOS_OVERLAP</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">GAS_PDOS</span></em>, <em class="sig-param"><span class="n">REFERENCE_PDOS</span></em>, <em class="sig-param"><span class="n">adsorbate_indices</span></em>, <em class="sig-param"><span class="n">site_indices</span></em>, <em class="sig-param"><span class="n">min_occupation</span><span class="o">=</span><span class="default_value">0.9</span></em>, <em class="sig-param"><span class="n">upshift</span><span class="o">=</span><span class="default_value">4.5</span></em>, <em class="sig-param"><span class="n">energy_weight</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">sum_density</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/pdos_overlap.html#PDOS_OVERLAP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.pdos_overlap.PDOS_OVERLAP" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class for calculating adsorbate-surface relative energy overlap</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -209,8 +209,7 @@ from pdos_overlap.get_adsorbate_indices.</p></li>
 Obtained from pdos_overlap.get_adsorbate_indices.</p></li>
 <li><p><strong>min_occupation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Minimum state occupation for a section of density to be considered
 a molecular orbital.</p></li>
-<li><p><strong>upshift</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The fraction of the fermi energy the gas and adsorbate molecular
-orbitals are shifted before pairing</p></li>
+<li><p><strong>upshift</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The energy the gas molecular orbitals are shifted before pairing</p></li>
 <li><p><strong>energy_weight</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The degree to weight the energy error before computing the
 associated liklihood that goes into computing the scores. Increasing
 the energy weight sharpens the univariate distribution around
@@ -225,17 +224,17 @@ when generating gas and adsorbate orbital features.</p></li>
 <dt class="field-even">Variables</dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>gas_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><em>ing</em><em>]</em>) – Atom index (indices) of the gas molecule.</p></li>
-<li><p><strong>gas_features</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – gas molecular orbital features used in matching gas and adsorbate
+<li><p><strong>gas_features</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><em>numpy.ndarray</em></a>) – gas molecular orbital features used in matching gas and adsorbate
 molecular orbitals</p></li>
-<li><p><strong>adsorbate_features</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – Adsorbate molecular orbital features used in matching gas and
+<li><p><strong>adsorbate_features</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><em>numpy.ndarray</em></a>) – Adsorbate molecular orbital features used in matching gas and
 adsorbate molecular orbitals</p></li>
-<li><p><strong>gas_orbitals</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – Length mxn array where m is the number of molecular orbitals and
+<li><p><strong>gas_orbitals</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><em>numpy.ndarray</em></a>) – Length mxn array where m is the number of molecular orbitals and
 n is equal to GAS_PDOS.ndos (dos discritizations)</p></li>
-<li><p><strong>gas_occupations</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – Integrated state density of each gas orbital.</p></li>
-<li><p><strong>adsorbate_orbitals</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – Length mxn array where m is the number of adsorbate orbitals and
+<li><p><strong>gas_occupations</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><em>numpy.ndarray</em></a>) – Integrated state density of each gas orbital.</p></li>
+<li><p><strong>adsorbate_orbitals</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><em>numpy.ndarray</em></a>) – Length mxn array where m is the number of adsorbate orbitals and
 n is equal to REFERENCE_PDOS.ndos (dos discritizations)</p></li>
-<li><p><strong>adsorbate_occupations</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – Integrated state density of each adsorbate molecular orbital.</p></li>
-<li><p><strong>orbital_scores</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – Array of size mxn where m and n are the number of gas and adsorbate
+<li><p><strong>adsorbate_occupations</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><em>numpy.ndarray</em></a>) – Integrated state density of each adsorbate molecular orbital.</p></li>
+<li><p><strong>orbital_scores</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><em>numpy.ndarray</em></a>) – Array of size mxn where m and n are the number of gas and adsorbate
 molecular orbitals respecitvely. Indicates similarity. If
 the number of gas orbitals equals the number of adsorbate orbitals
 then the scores are orbital-pairing scores.</p></li>
@@ -246,9 +245,9 @@ occupation fractions.</p></li>
 projected density into molecular orbitals</p></li>
 <li><p><strong>adsorbate_orbital_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – List of vector indices that aportion the adsorbate molecule energy
 and projected density into molecular orbitals</p></li>
-<li><p><strong>gas_band_centers</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – Gas molecular orbital band centers</p></li>
-<li><p><strong>adsorbate_band_centers</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – Adsorbate molecular orbital band centers</p></li>
-<li><p><strong>gas_2_adsorbate</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – Array of gas and adsorbate orbital indices along with corresponding
+<li><p><strong>gas_band_centers</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><em>numpy.ndarray</em></a>) – Gas molecular orbital band centers</p></li>
+<li><p><strong>adsorbate_band_centers</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><em>numpy.ndarray</em></a>) – Adsorbate molecular orbital band centers</p></li>
+<li><p><strong>gas_2_adsorbate</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><em>numpy.ndarray</em></a>) – Array of gas and adsorbate orbital indices along with corresponding
 band centers</p></li>
 </ul>
 </dd>
@@ -267,7 +266,7 @@ atomic orbitals, will interact with the adsorbate/gas molecular orbitals.</p>
 <dd><p>Assign gas orbitals to one or more adsorbate orbitals</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>orbital_scores</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – M x N 2D array where M is the number of gas molecular orbitals
+<dd class="field-odd"><p><strong>orbital_scores</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><em>numpy.ndarray</em></a>) – M x N 2D array where M is the number of gas molecular orbitals
 and N is the number of adsorbate molecular orbitals</p>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -275,7 +274,7 @@ and N is the number of adsorbate molecular orbitals</p>
 band centers</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -313,10 +312,9 @@ ndos is the number of gridpoints for the density of states</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>PDOS</strong> (<a class="reference internal" href="vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS" title="pdos_overlap.vasp_dos.VASP_DOS"><em>vasp_dos.VASP_DOS</em></a>) – VASP_DOS object of gas or surface phase calculation of adsorbate</p></li>
-<li><p><strong>orbital_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a><em>]</em>) – Length M list of non-zero orbital indices</p></li>
+<li><p><strong>orbital_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><em>numpy.ndarray</em></a><em>]</em>) – Length M list of non-zero orbital indices</p></li>
 <li><p><strong>atom_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>]</em>) – indices of atoms to include in the TOTAL PDOS.</p></li>
-<li><p><strong>upshift</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The fraction of the fermi energy the gas and adsorbate molecular
-orbitals are shifted before pairing</p></li>
+<li><p><strong>upshift</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The energy the gas molecular orbitals are shifted before pairing</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -326,7 +324,7 @@ orbital similarity. Includes molecular orbital energy center and
 integrated s, p, and d molecular orbital density of states</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -338,9 +336,9 @@ integrated s, p, and d molecular orbital density of states</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>reference_features</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – Reference features of molecular orbitals whose values are treated
+<li><p><strong>reference_features</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><em>numpy.ndarray</em></a>) – Reference features of molecular orbitals whose values are treated
 as the mean</p></li>
-<li><p><strong>comparison_features</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – Comparison features that are treated as perturbations from the
+<li><p><strong>comparison_features</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><em>numpy.ndarray</em></a>) – Comparison features that are treated as perturbations from the
 reference features for generating probabilities</p></li>
 <li><p><strong>energy_weight</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The degree to weight the energy error before computing the
 associated liklihood that goes into computing the scores. Increasing
@@ -353,7 +351,7 @@ matching peak positions.</p></li>
 and N is the number of comparison orbitals</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -364,14 +362,14 @@ and N is the number of comparison orbitals</p>
 <dd><p>Compute sum for optimizing upshift</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>orbital_scores</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – M x N 2D array where M is the number of gas molecular orbitals
+<dd class="field-odd"><p><strong>orbital_scores</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><em>numpy.ndarray</em></a>) – M x N 2D array where M is the number of gas molecular orbitals
 and N is the number of adsorbate molecular orbitals</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>sum_score</strong> – Sum of highest scores for each gas or adsorbate molecular orbital</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -382,14 +380,13 @@ and N is the number of adsorbate molecular orbitals</p>
 <dd><p>Obtain orbital scores given an upshift value</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>upshift</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The fraction of the fermi energy the gas and adsorbate molecular
-orbitals are shifted before pairing</p>
+<dd class="field-odd"><p><strong>upshift</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The energy the gas molecular orbitals are shifted before pairing</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>sum_score</strong> – Sum of highest scores for each gas or adsorbate molecular orbital</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -458,7 +455,7 @@ the gs or adsorbate orbitals</p></li>
 <dd class="field-even"><p><strong>orbital_interaction</strong> – Metal atomic orbital interactions with the gas molecular orbitals</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -470,8 +467,8 @@ the gs or adsorbate orbitals</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>gas_orbital_features</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – gas orbital features</p></li>
-<li><p><strong>adsorbate_orbital_features</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – adsorbate orbital features</p></li>
+<li><p><strong>gas_orbital_features</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><em>numpy.ndarray</em></a>) – gas orbital features</p></li>
+<li><p><strong>adsorbate_orbital_features</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><em>numpy.ndarray</em></a>) – adsorbate orbital features</p></li>
 <li><p><strong>energy_weight</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The degree to weight the energy error before computing the
 associated liklihood that goes into computing the scores. Increasing
 the energy weight sharpens the univariate distribution around
@@ -483,7 +480,7 @@ matching peak positions.</p></li>
 and N is the number of adsorbate molecular orbitals</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -495,7 +492,7 @@ and N is the number of adsorbate molecular orbitals</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>orbital_scores</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)"><em>numpy.ndarray</em></a>) – M x M 2D array</p></li>
+<li><p><strong>orbital_scores</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><em>numpy.ndarray</em></a>) – M x M 2D array</p></li>
 <li><p><strong>max_iterations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Maximum number of iterations before ending normalization procedure</p></li>
 <li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Print completion information</p></li>
 </ul>
@@ -504,7 +501,7 @@ and N is the number of adsorbate molecular orbitals</p>
 <dd class="field-even"><p><strong>orbital_scores</strong> – M x M 2D array normalized symmetric matrix.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.18)">numpy.ndarray</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)">numpy.ndarray</a></p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -519,8 +516,7 @@ DOI: 10.1109/FOCS.2017.87</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>upshift</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The fraction of the fermi energy the gas and adsorbate molecular
-orbitals are shifted before pairing</p></li>
+<li><p><strong>upshift</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The energy the gas molecular orbitals are shifted before pairing</p></li>
 <li><p><strong>bound</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – Lower and upper bounds to for which to find the optimal energy shift</p></li>
 <li><p><strong>rest</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Indicates whether the values contained in the PDOS_OVERLAP object
 should be reset using the optimal energy shift</p></li>

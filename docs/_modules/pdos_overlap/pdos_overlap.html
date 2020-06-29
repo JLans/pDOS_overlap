@@ -209,7 +209,7 @@
 <div class="viewcode-block" id="PDOS_OVERLAP"><a class="viewcode-back" href="../../pdos_overlap.html#pdos_overlap.pdos_overlap.PDOS_OVERLAP">[docs]</a><span class="k">class</span> <span class="nc">PDOS_OVERLAP</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Class for calculating adsorbate-surface relative energy overlap&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">GAS_PDOS</span><span class="p">,</span> <span class="n">REFERENCE_PDOS</span><span class="p">,</span> <span class="n">adsorbate_indices</span><span class="p">,</span> <span class="n">site_indices</span>\
-                 <span class="p">,</span> <span class="n">min_occupation</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">upshift</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">energy_weight</span><span class="o">=</span><span class="mi">3</span>\
+                 <span class="p">,</span> <span class="n">min_occupation</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">upshift</span><span class="o">=</span><span class="mf">4.5</span><span class="p">,</span> <span class="n">energy_weight</span><span class="o">=</span><span class="mi">3</span>\
                  <span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Parameters</span>
@@ -233,8 +233,7 @@
 <span class="sd">            a molecular orbital.</span>
 <span class="sd">            </span>
 <span class="sd">        upshift : float</span>
-<span class="sd">            The fraction of the fermi energy the gas and adsorbate molecular</span>
-<span class="sd">            orbitals are shifted before pairing</span>
+<span class="sd">            The energy the gas molecular orbitals are shifted before pairing</span>
 <span class="sd">        </span>
 <span class="sd">        energy_weight : float</span>
 <span class="sd">            The degree to weight the energy error before computing the </span>
@@ -348,7 +347,7 @@
         
         <span class="n">adsorbate_features</span>\
             <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_orbital_features</span><span class="p">(</span><span class="n">REFERENCE_PDOS</span><span class="p">,</span> <span class="n">adsorbate_orbital_indices</span>\
-                                         <span class="p">,</span> <span class="n">adsorbate_indices</span><span class="p">,</span> <span class="n">upshift</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">upshift</span><span class="p">)</span>
+                                         <span class="p">,</span> <span class="n">adsorbate_indices</span><span class="p">,</span> <span class="n">upshift</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         
         <span class="n">orbital_scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_orbital_scores</span><span class="p">(</span><span class="n">gas_features</span>\
                                            <span class="p">,</span> <span class="n">adsorbate_features</span><span class="p">,</span> <span class="n">energy_weight</span><span class="p">)</span>
@@ -506,8 +505,7 @@
 <span class="sd">            indices of atoms to include in the TOTAL PDOS.</span>
 <span class="sd">            </span>
 <span class="sd">        upshift : float</span>
-<span class="sd">            The fraction of the fermi energy the gas and adsorbate molecular</span>
-<span class="sd">            orbitals are shifted before pairing</span>
+<span class="sd">            The energy the gas molecular orbitals are shifted before pairing</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -520,7 +518,7 @@
         <span class="n">feature_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_type</span>
         <span class="n">sum_spin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sum_spin</span>
         <span class="n">num_orbitals</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">orbital_indices</span><span class="p">)</span>
-        <span class="n">energies</span> <span class="o">=</span> <span class="n">PDOS</span><span class="o">.</span><span class="n">get_energies</span><span class="p">()</span> <span class="o">-</span> <span class="n">upshift</span> <span class="o">*</span> <span class="n">PDOS</span><span class="o">.</span><span class="n">e_fermi</span>
+        <span class="n">energies</span> <span class="o">=</span> <span class="n">PDOS</span><span class="o">.</span><span class="n">get_energies</span><span class="p">()</span> <span class="o">+</span> <span class="n">upshift</span>
         <span class="n">orbital_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">PDOS</span><span class="o">.</span><span class="n">orbital_dictionary</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="c1">#feature_list = [&#39;s&#39;,&#39;py&#39;, &#39;pz&#39;, &#39;px&#39;, &#39;dxy&#39;, &#39;dyz&#39;, &#39;dz2&#39;, &#39;dxz&#39;, &#39;dx2-y2&#39;]</span>
         <span class="n">feature_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">,</span><span class="s1">&#39;py&#39;</span><span class="p">,</span> <span class="s1">&#39;pz&#39;</span><span class="p">,</span> <span class="s1">&#39;px&#39;</span><span class="p">]</span>
@@ -923,8 +921,7 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        upshift : float</span>
-<span class="sd">            The fraction of the fermi energy the gas and adsorbate molecular</span>
-<span class="sd">            orbitals are shifted before pairing</span>
+<span class="sd">            The energy the gas molecular orbitals are shifted before pairing</span>
 <span class="sd">                   </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -938,7 +935,7 @@
         <span class="n">adsorbate_features</span>\
                 <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_orbital_features</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">REFERENCE_PDOS</span>\
                                              <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">adsorbate_orbital_indices</span>\
-                                             <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">adsorbate_indices</span><span class="p">,</span> <span class="n">upshift</span><span class="p">)</span>
+                                             <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">adsorbate_indices</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_orbital_scores</span><span class="p">(</span><span class="n">gas_features</span><span class="p">,</span> <span class="n">adsorbate_features</span>\
                                              <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">energy_weight</span><span class="p">)</span>    
         <span class="n">sum_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_sum_score</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
@@ -950,8 +947,7 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        upshift : float</span>
-<span class="sd">            The fraction of the fermi energy the gas and adsorbate molecular</span>
-<span class="sd">            orbitals are shifted before pairing</span>
+<span class="sd">            The energy the gas molecular orbitals are shifted before pairing</span>
 <span class="sd">            </span>
 <span class="sd">        bound : tuple</span>
 <span class="sd">            Lower and upper bounds to for which to find the optimal energy shift</span>
@@ -991,7 +987,7 @@
             <span class="n">set_figure_settings</span><span class="p">(</span><span class="s1">&#39;paper&#39;</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Increase applied to energies as a fraction of the fermi energy&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Shift in gas molecular orbitals [eV]&#39;</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\sum_{m=1}^</span><span class="si">{M}</span><span class="s1">$max(orbital score$_{m,j}$ for j in N )&#39;</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">optimized_upshift</span></div>

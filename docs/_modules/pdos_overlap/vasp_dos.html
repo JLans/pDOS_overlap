@@ -168,6 +168,7 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pkg_resources</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.ndimage</span> <span class="kn">import</span> <span class="n">gaussian_filter1d</span>
 
 <div class="viewcode-block" id="get_data_path"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.get_data_path">[docs]</a><span class="k">def</span> <span class="nf">get_data_path</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot; Get default paths to package data.</span>
@@ -503,6 +504,50 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">is_spin</span> <span class="o">=</span> <span class="n">is_spin</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">m_projected</span> <span class="o">=</span> <span class="n">m_projected</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">orbital_dictionary</span> <span class="o">=</span> <span class="n">orbital_dictionary</span>
+        
+<div class="viewcode-block" id="VASP_DOS.apply_gaussian_filter"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.apply_gaussian_filter">[docs]</a>    <span class="k">def</span> <span class="nf">apply_gaussian_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Applies Gaussian filter to self._total_dos and self._site_dos</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sigma : float</span>
+<span class="sd">            standard deviation of Gaussian Kernel</span>
+<span class="sd">            </span>
+<span class="sd">        Attributes</span>
+<span class="sd">        ----------</span>
+<span class="sd">        _total_dos_original : numpy.ndarray</span>
+<span class="sd">            self._total_dos array without filter</span>
+<span class="sd">            </span>
+<span class="sd">        _site_dos_original : numpy.ndarray</span>
+<span class="sd">            self._site_dos array without filter</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">total_dos_exists</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span>
+            <span class="n">total_dos_exists</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos_original</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos_original</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+            
+        <span class="n">site_dos_exists</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_site_dos</span>
+            <span class="n">site_dos_exists</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_site_dos_original</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_site_dos_original</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        
+        <span class="k">if</span> <span class="n">total_dos_exists</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_total_dos</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]</span> <span class="o">=</span> <span class="n">gaussian_filter1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_dos_original</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">sigma</span><span class="p">)</span>
+            
+        <span class="k">if</span> <span class="n">site_dos_exists</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_site_dos</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:]</span> <span class="o">=</span> <span class="n">gaussian_filter1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_site_dos_original</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">sigma</span><span class="p">)</span></div>
         
 <div class="viewcode-block" id="VASP_DOS.get_band_center"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.get_band_center">[docs]</a>    <span class="k">def</span> <span class="nf">get_band_center</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom_indices</span><span class="p">,</span> <span class="n">orbital_list</span><span class="p">,</span> <span class="n">sum_density</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sum_spin</span><span class="o">=</span><span class="kc">True</span>\
                         <span class="p">,</span> <span class="n">max_energy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_energy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
