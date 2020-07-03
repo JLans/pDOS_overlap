@@ -286,7 +286,7 @@ We can do this both for the gas and for the adsorbate
     bonding_states = POP_CO.get_bonding_states(CO_overlap.adsorbate_orbital_indices
                                                    , CO_overlap.REFERENCE_PDOS.get_energies()
                                                    , interactions = [2]
-                                                   , set_antibonding_zero=True
+                                                   , set_antibonding_zero=False
                                                    , emax = CO_overlap.REFERENCE_PDOS.e_fermi)
     print('C-O bonding states')
     print(bonding_states)
@@ -306,7 +306,7 @@ We can do this both for the gas and for the adsorbate
     Adsorbate bonding states
     [0.3395840142537034, 0.23824242669904108, 0.08501356326038817, 0.4627388710479913, 0.045636385827251436]
     C-O bonding states
-    [0.33149060940360775, 0.05483787219978331, 0.003232793522598007, 0.36246791365153325, 0.02166628058368548]
+    [0.33149060940360775, 0.05483787219978331, -0.07335646917697251, 0.36246791365153325, -0.2625371278667219]
 
 
 
@@ -316,13 +316,14 @@ Plot energy overlap
 
 We select energy overlap histograms with the adsorbate molecular orbitals
 that influence spectra. Gas orbitals 1,2, and 3 interact with the surface.
+We plot the energy overlap for the 4sigma, 1pi, and 5sigma orbitals
 
 
 .. code-block:: default
 
-    gas_indices = [i for i in range(5) if CO_overlap.gas_2_adsorbate[i][0] in [1,2,3]]
-    adsorbate_indices = [CO_overlap.gas_2_adsorbate[gas_indices,1].astype('int')]
-    CO_overlap.plot_energy_overlap(indices=[0,1,2,3,4], atomic_orbitals=['s', 'd'])
+    gas_indices = [i for i in range(6) if CO_overlap.gas_2_adsorbate[i][0] in [1,2,3]]
+    adsorbate_indices = CO_overlap.gas_2_adsorbate[gas_indices,1].astype('int')
+    CO_overlap.plot_energy_overlap(indices=adsorbate_indices, atomic_orbitals=['s', 'd'])
 
 
 
@@ -343,16 +344,6 @@ that influence spectra. Gas orbitals 1,2, and 3 interact with the surface.
     *
 
       .. image:: /auto_examples/plot_orbital_overlap/images/sphx_glr_plot_orbital_overlap_007.png
-            :class: sphx-glr-multi-img
-
-    *
-
-      .. image:: /auto_examples/plot_orbital_overlap/images/sphx_glr_plot_orbital_overlap_008.png
-            :class: sphx-glr-multi-img
-
-    *
-
-      .. image:: /auto_examples/plot_orbital_overlap/images/sphx_glr_plot_orbital_overlap_009.png
             :class: sphx-glr-multi-img
 
 
@@ -392,22 +383,25 @@ s, pz, and dz2 orbitals. These are identified from first figure above
     REFERENCE_PDOS = VASP_DOS(ADSORBATE_DOSCAR)
     BULK_PDOS = VASP_DOS(BULK_DOSCAR)
     print('Interactions with 4sigma orbital')
-    orbital_interaction = CO_overlap.get_orbital_interaction(gas_indices[0]\
-                        , nano_PDOS, nano_indices[atom_types[...] == 'surface'][0]\
-                             , ['s','dz2'], BULK_PDOS, bulk_atom=43\
-                                 , sum_interaction=False, sum_spin=True)
+    orbital_interaction = CO_overlap.get_orbital_interaction(gas_indices[0]
+                        , nano_PDOS, nano_indices[atom_types[...] == 'surface'][0]
+                             , ['s','dz2'], BULK_PDOS, bulk_atom=43
+                                 , sum_interaction=False, sum_spin=True
+                                 , index_type='gas')
     print(orbital_interaction)
     print('Interactions with 1pi orbital')
-    orbital_interaction = CO_overlap.get_orbital_interaction(gas_indices[1]\
-                        , nano_PDOS, nano_indices[atom_types[...] == 'surface'][0]\
-                             , ['dyz','dxz'], BULK_PDOS, bulk_atom=43\
-                                 , sum_interaction=False, sum_spin=True)
+    orbital_interaction = CO_overlap.get_orbital_interaction(gas_indices[1]
+                        , nano_PDOS, nano_indices[atom_types[...] == 'surface'][0]
+                             , ['dyz','dxz'], BULK_PDOS, bulk_atom=43
+                                 , sum_interaction=False, sum_spin=True
+                                 , index_type='gas')
     print(orbital_interaction)
     print('Interactions with 5sigma orbital')
-    orbital_interaction = CO_overlap.get_orbital_interaction(gas_indices[2]\
-                        , nano_PDOS, nano_indices[atom_types[...] == 'surface'][0]\
-                             , ['s','dz2'], BULK_PDOS, bulk_atom=43\
-                                 , sum_interaction=False, sum_spin=True)
+    orbital_interaction = CO_overlap.get_orbital_interaction(gas_indices[2]
+                        , nano_PDOS, nano_indices[atom_types[...] == 'surface'][0]
+                             , ['s','dz2'], BULK_PDOS, bulk_atom=43
+                                 , sum_interaction=False, sum_spin=True
+                                 , index_type='gas')
     print(orbital_interaction)
 
 
@@ -432,7 +426,7 @@ s, pz, and dz2 orbitals. These are identified from first figure above
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  29.441 seconds)
+   **Total running time of the script:** ( 0 minutes  21.574 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_orbital_overlap_plot_orbital_overlap.py:
