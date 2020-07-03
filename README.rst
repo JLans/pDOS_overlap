@@ -1,4 +1,4 @@
-pdos_overlap
+pDOS_overlap
 ============
 Methods for calculating catalyst band overlap with adsorbate molecular orbitals
 
