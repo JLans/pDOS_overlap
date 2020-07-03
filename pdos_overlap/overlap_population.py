@@ -324,7 +324,7 @@ class OVERLAP_POPULATION:
         """
         is_spin = self.is_spin
         num_interactions = self.num_interactions
-        _pcoop = self._pcoop
+        _pcoop = self._pcoop.copy()
         if len(interactions) == 0:
             interactions = list(range(num_interactions))
         if is_spin == True:
@@ -372,7 +372,7 @@ class OVERLAP_POPULATION:
         """
         is_spin = self.is_spin
         num_interactions = self.num_interactions
-        _pcoop = self._pcoop
+        _pcoop = self._pcoop.copy()
         if len(interactions) == 0:
             interactions = list(range(num_interactions))
         if is_spin == True:
@@ -386,9 +386,9 @@ class OVERLAP_POPULATION:
             else:
                 pcoop = np.array([spin_up, spin_down])
         else:
+            pcoop = _pcoop[3::2, :][interactions]
             if set_antibonding_zero == True:
                 pcoop[pcoop[...] < 0] = 0
-            pcoop = _pcoop[3::2, :][interactions]
         if sum_pcoop == True or len(interactions) == 1:
             axis = len(pcoop.shape) - 2
             pcoop = pcoop.sum(axis=axis)

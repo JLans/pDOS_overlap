@@ -31,9 +31,9 @@ np.set_printoptions(linewidth=100)
 lobster_path = r'C:\Users\lansf\Documents\Data\PROBE_PDOS\lobster_files'
 GAS_DOSCAR = os.path.join(lobster_path, gas + '/DOSCAR.lobster')
 GAS_CONTCAR = os.path.join(lobster_path, gas + '/CONTCAR')
-ADSORBATE_DOSCAR = os.path.join(lobster_path, 'gas+Pt_G.03_noW/'+surface + '+'\
+ADSORBATE_DOSCAR = os.path.join(lobster_path, 'surfaces_noW/'+surface + '+'\
                           + adsorbate + '/DOSCAR.lobster')
-ADSORBATE_CONTCAR = os.path.join(lobster_path, 'gas+Pt_G.03_noW/'+surface + '+'\
+ADSORBATE_CONTCAR = os.path.join(lobster_path, 'surfaces_noW/'+surface + '+'\
                           + adsorbate + '/CONTCAR')
 
 #######################################################################################
@@ -56,7 +56,7 @@ reference_indices, site_indices = get_adsorbate_indices(GAS_CONTCAR\
                                                         , ADSORBATE_CONTCAR)
 #Initialize Coordination object. Repeat is necessary so it doesn't count itself
 C2H4_overlap = PDOS_OVERLAP(GAS_PDOS, REFERENCE_PDOS, reference_indices\
-                          , site_indices, min_occupation=1\
+                          , site_indices, min_occupation=0.4\
                           , upshift=0.5, energy_weight=3)
     
 #######################################################################################
@@ -110,12 +110,12 @@ COOPCAR_C2H4 = os.path.join(lobster_path, gas + '/COOPCAR.lobster')
 POP_C2H4 = OVERLAP_POPULATION(COOPCAR_C2H4)
 bonding_fraction = POP_C2H4.get_bonding_states(C2H4_overlap.gas_orbital_indices\
                                                , C2H4_overlap.GAS_PDOS.get_energies()\
-                                               , set_antibonding_zero=False)
+                                               , set_antibonding_zero=True)
 print('Gas bonding states')
 print(bonding_fraction)
     
 #adsorbate
-COOPCAR_C2H4 = os.path.join(lobster_path, 'gas+Pt_G.03_noW/'+surface + '+'\
+COOPCAR_C2H4 = os.path.join(lobster_path, 'surfaces_noW/'+surface + '+'\
                           + adsorbate + '/COOPCAR.lobster')
 POP_C2H4 = OVERLAP_POPULATION(COOPCAR_C2H4)
 bonding_states = POP_C2H4.get_bonding_states(C2H4_overlap.adsorbate_orbital_indices\

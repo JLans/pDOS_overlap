@@ -483,7 +483,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">is_spin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_spin</span>
         <span class="n">num_interactions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_interactions</span>
-        <span class="n">_pcoop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcoop</span>
+        <span class="n">_pcoop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcoop</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">interactions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">interactions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_interactions</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">is_spin</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
@@ -531,7 +531,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">is_spin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_spin</span>
         <span class="n">num_interactions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_interactions</span>
-        <span class="n">_pcoop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcoop</span>
+        <span class="n">_pcoop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcoop</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">interactions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">interactions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_interactions</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">is_spin</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
@@ -545,9 +545,9 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">pcoop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">spin_up</span><span class="p">,</span> <span class="n">spin_down</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="n">pcoop</span> <span class="o">=</span> <span class="n">_pcoop</span><span class="p">[</span><span class="mi">3</span><span class="p">::</span><span class="mi">2</span><span class="p">,</span> <span class="p">:][</span><span class="n">interactions</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">set_antibonding_zero</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
                 <span class="n">pcoop</span><span class="p">[</span><span class="n">pcoop</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="n">pcoop</span> <span class="o">=</span> <span class="n">_pcoop</span><span class="p">[</span><span class="mi">3</span><span class="p">::</span><span class="mi">2</span><span class="p">,</span> <span class="p">:][</span><span class="n">interactions</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">sum_pcoop</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">interactions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">axis</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pcoop</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span>
             <span class="n">pcoop</span> <span class="o">=</span> <span class="n">pcoop</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>

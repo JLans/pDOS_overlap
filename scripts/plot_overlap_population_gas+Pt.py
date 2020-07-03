@@ -21,12 +21,12 @@ from pdos_overlap.plotting_tools import set_figure_settings
 # instantiate an OVERLAP_POPULATION object
 
 set_figure_settings('paper')
-data_path = r'C:\Users\lansf\Documents\Data\PROBE_PDOS\lobster_files/gas+Pt'
-COOPCAR_C2H4_atop = os.path.join(data_path, 'C2H4_atop+Pt/COOPCAR.lobster')
-COOPCAR_C2H4_bridge = os.path.join(data_path, 'C2H4_bridge+Pt/COOPCAR.lobster')
-COOPCAR_CO = os.path.join(data_path, 'CO+Pt/COOPCAR.lobster')
-COOPCAR_NO_atop = os.path.join(data_path, 'NO_atop+Pt/COOPCAR.lobster')
-COOPCAR_NO_fcc = os.path.join(data_path, 'NO_fcc+Pt/COOPCAR.lobster')
+data_path = r'C:\Users\lansf\Documents\Data\PROBE_PDOS\lobster_files/surfaces_noW'
+COOPCAR_C2H4_atop = os.path.join(data_path, 'Pt111+C2H4_atop/COOPCAR.lobster')
+COOPCAR_C2H4_bridge = os.path.join(data_path, 'Pt111+C2H4_bridge/COOPCAR.lobster')
+COOPCAR_CO = os.path.join(data_path, 'Pt111+CO/COOPCAR.lobster')
+COOPCAR_NO_atop = os.path.join(data_path, 'Pt111+NO_atop/COOPCAR.lobster')
+COOPCAR_NO_fcc = os.path.join(data_path, 'Pt111+NO_fcc/COOPCAR.lobster')
 POP_C2H4_atop = OVERLAP_POPULATION(COOPCAR_C2H4_atop)
 POP_C2H4_bridge = OVERLAP_POPULATION(COOPCAR_C2H4_bridge)
 POP_CO = OVERLAP_POPULATION(COOPCAR_CO)

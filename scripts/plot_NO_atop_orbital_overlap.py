@@ -31,9 +31,9 @@ np.set_printoptions(linewidth=100)
 lobster_path = r'C:\Users\lansf\Documents\Data\PROBE_PDOS\lobster_files'
 GAS_DOSCAR = os.path.join(lobster_path, gas + '/DOSCAR.lobster')
 GAS_CONTCAR = os.path.join(lobster_path, gas + '/CONTCAR')
-ADSORBATE_DOSCAR = os.path.join(lobster_path, 'gas+Pt_G.03_noW/'+surface + '+'\
+ADSORBATE_DOSCAR = os.path.join(lobster_path, 'surfaces_noW/'+surface + '+'\
                           + adsorbate + '/DOSCAR.lobster')
-ADSORBATE_CONTCAR = os.path.join(lobster_path, 'gas+Pt_G.03_noW/'+surface + '+'\
+ADSORBATE_CONTCAR = os.path.join(lobster_path, 'surfaces_noW/'+surface + '+'\
                           + adsorbate + '/CONTCAR')
 
 #######################################################################################
@@ -112,7 +112,7 @@ print('Gas bonding fraction')
 print(bonding_states)
     
 #adsorbate
-COOPCAR_NO = os.path.join(lobster_path, 'gas+Pt_G.03_noW/'+surface + '+'\
+COOPCAR_NO = os.path.join(lobster_path, 'surfaces_noW/'+surface + '+'\
                           + adsorbate + '/COOPCAR.lobster')
 POP_NO = OVERLAP_POPULATION(COOPCAR_NO)
 bonding_states = POP_NO.get_bonding_states(NO_overlap.adsorbate_orbital_indices\

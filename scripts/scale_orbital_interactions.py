@@ -27,9 +27,9 @@ example_path = r'C:\Users\lansf\Documents\Data\PROBE_PDOS\vasp_dos_files'
 lobster_path = r'C:\Users\lansf\Documents\Data\PROBE_PDOS\lobster_files'
 GAS_DOSCAR = os.path.join(lobster_path, gas + '/DOSCAR.lobster')
 GAS_CONTCAR = os.path.join(lobster_path, gas + '/CONTCAR')
-ADSORBATE_DOSCAR = os.path.join(lobster_path, 'gas+Pt_G.03_noW/'+surface + '+'\
+ADSORBATE_DOSCAR = os.path.join(lobster_path, 'surfaces_noW/'+surface + '+'\
                           + adsorbate + '/DOSCAR.lobster')
-ADSORBATE_CONTCAR = os.path.join(lobster_path, 'gas+Ptnano/'+surface + '+'\
+ADSORBATE_CONTCAR = os.path.join(lobster_path, 'surfaces_noW/'+surface + '+'\
                           + adsorbate + '/CONTCAR')
 BULK_DOSCAR = os.path.join(example_path,'Pt_nano/Pt147/DOSCAR')
 # VASP_DOS objects for both the gas (vacuum) and the adsorbate+surface system

@@ -27,9 +27,9 @@ example_path = r'C:\Users\lansf\Documents\Data\PROBE_PDOS\vasp_dos_files'
 lobster_path = r'C:\Users\lansf\Documents\Data\PROBE_PDOS\lobster_files'
 GAS_DOSCAR = os.path.join(lobster_path, gas + '/DOSCAR.lobster')
 GAS_CONTCAR = os.path.join(lobster_path, gas + '/CONTCAR')
-ADSORBATE_DOSCAR = os.path.join(lobster_path, 'gas+Pt_G.03_noW/'+surface + '+'\
+ADSORBATE_DOSCAR = os.path.join(lobster_path, 'surfaces_noW/'+surface + '+'\
                           + adsorbate + '/DOSCAR.lobster')
-ADSORBATE_CONTCAR = os.path.join(lobster_path, 'gas+Ptnano/'+surface + '+'\
+ADSORBATE_CONTCAR = os.path.join(lobster_path, 'surfaces_noW/'+surface + '+'\
                           + adsorbate + '/CONTCAR')
 BULK_DOSCAR = os.path.join(example_path,'Pt_nano/Pt147/DOSCAR')
 # VASP_DOS objects for both the gas (vacuum) and the adsorbate+surface system
@@ -47,75 +47,32 @@ C2H4_overlap = PDOS_OVERLAP(GAS_PDOS, REFERENCE_PDOS, adsorbate_indices\
 C2H4_overlap.optimize_energy_shift(bound=[-10, 10], reset=True)
 
 GCNList = []
-orbital_1_list = []
-orbital_2_list = []
-orbital_3_list = []
-orbital_4_list = []
-orbital_5_list = []
-
+num_orbitals = 5
+orbital_array = [[] for i in range(num_orbitals)]
 DOSCAR_files, CONTCAR_files = get_all_VASP_files(\
         r'C:\Users\lansf\Documents\Data\PROBE_PDOS\vasp_dos_files\Pt_nano')
 
-
+num_orbitals = 5
 for nano_DOSCAR, nano_CONTCAR in zip(DOSCAR_files, CONTCAR_files):
     nano_indices, GCNs, atom_types = get_geometric_data(nano_CONTCAR)
     GCNList += GCNs[atom_types[...] == 'surface'].tolist()
     # read and return density of states object
     nano_PDOS = VASP_DOS(nano_DOSCAR)   
     for atom_index in nano_indices[atom_types[...] == 'surface']:
-        orbital_1 = C2H4_overlap.get_orbital_interaction(0\
+        for i in range(num_orbitals):
+            orbital_array[i].append(C2H4_overlap.get_orbital_interaction(i\
                     , nano_PDOS, atom_index, ['s','d']\
                     , BULK_PDOS, bulk_atom=43\
                     , method='band_width', use_orbital_proximity=False\
                     , index_type='adsorbate'
-                    , sum_interaction=True)
-        
-        orbital_2 = C2H4_overlap.get_orbital_interaction(1\
-                    , nano_PDOS, atom_index, ['s','d']\
-                    , BULK_PDOS, bulk_atom=43\
-                    , method='band_width', use_orbital_proximity=False\
-                    , index_type='adsorbate'
-                    , sum_interaction=True)
-
-        orbital_3 = C2H4_overlap.get_orbital_interaction(2\
-                    , nano_PDOS, atom_index, ['s','d']\
-                    , BULK_PDOS, bulk_atom=43\
-                    , method='band_width', use_orbital_proximity=False\
-                    , index_type='adsorbate'
-                    , sum_interaction=True)
-
-        orbital_4 = C2H4_overlap.get_orbital_interaction(3\
-                    , nano_PDOS, atom_index, ['s','d']\
-                    , BULK_PDOS, bulk_atom=43\
-                    , method='band_width', use_orbital_proximity=False\
-                    , index_type='adsorbate'
-                    , sum_interaction=True)
-
-        orbital_5 = C2H4_overlap.get_orbital_interaction(4\
-                    , nano_PDOS, atom_index, ['s','d']\
-                    , BULK_PDOS, bulk_atom=43\
-                    , method='band_width', use_orbital_proximity=False\
-                    , index_type='adsorbate'
-                    , sum_interaction=True)
-
-        
-            
-        orbital_1_list.append(orbital_1)
-        orbital_2_list.append(orbital_2)
-        orbital_3_list.append(orbital_3)
-        orbital_4_list.append(orbital_4)
-        orbital_5_list.append(orbital_5)
+                    , sum_interaction=True))
 
 GCNList = np.array(GCNList)
-orbital_1_list = np.array(orbital_1_list).T
-orbital_2_list = np.array(orbital_2_list).T
-orbital_3_list = np.array(orbital_3_list).T
-orbital_4_list = np.array(orbital_4_list).T
-orbital_5_list = np.array(orbital_5_list).T
+for i in range(num_orbitals):
+    orbital_array[i] = np.array(orbital_array[i]).T
 
 #plotting scaling of band center with GCN
-for count, orbital_list in enumerate([orbital_1_list, orbital_2_list\
-                                     , orbital_3_list, orbital_4_list, orbital_5_list]):
+for count, orbital_list in enumerate(orbital_array):
     plt.figure(figsize=(7,5))
     colors = ['b','r']
     orbitalfit = []

@@ -380,7 +380,7 @@ class VASP_DOS:
             try:
                 self._site_dos_original
             except:
-                self._site_dos_original = self._total_dos.copy()
+                self._site_dos_original = self._site_dos.copy()
         except:
             pass
         

@@ -32,9 +32,9 @@ np.set_printoptions(linewidth=100)
 lobster_path = r'C:\Users\lansf\Documents\Data\PROBE_PDOS\lobster_files'
 GAS_DOSCAR = os.path.join(lobster_path, gas + '/DOSCAR.lobster')
 GAS_CONTCAR = os.path.join(lobster_path, gas + '/CONTCAR')
-ADSORBATE_DOSCAR = os.path.join(lobster_path, 'gas+Pt_G.03_noW/'+surface + '+'\
+ADSORBATE_DOSCAR = os.path.join(lobster_path, 'surfaces_noW/'+surface + '+'\
                           + adsorbate + '/DOSCAR.lobster')
-ADSORBATE_CONTCAR = os.path.join(lobster_path, 'gas+Pt_G.03_noW/'+surface + '+'\
+ADSORBATE_CONTCAR = os.path.join(lobster_path, 'surfaces_noW/'+surface + '+'\
                           + adsorbate + '/CONTCAR')
 
 #######################################################################################
@@ -44,6 +44,7 @@ ADSORBATE_CONTCAR = os.path.join(lobster_path, 'gas+Pt_G.03_noW/'+surface + '+'\
 # VASP_DOS objects for both the gas (vacuum) and the adsorbate+surface system
 GAS_PDOS = VASP_DOS(GAS_DOSCAR)
 REFERENCE_PDOS = VASP_DOS(ADSORBATE_DOSCAR)
+#REFERENCE_PDOS.apply_gaussian_filter(10)
 
 #######################################################################################
 # Get adsorbate and site indices and initialize PDOS_OVERLAP object
@@ -107,12 +108,12 @@ COOPCAR_CO = os.path.join(lobster_path, gas + '/COOPCAR.lobster')
 POP_CO = OVERLAP_POPULATION(COOPCAR_CO)
 bonding_states = POP_CO.get_bonding_states(CO_overlap.gas_orbital_indices\
                                                , CO_overlap.GAS_PDOS.get_energies()\
-                                               , set_antibonding_zero=False)
+                                               , set_antibonding_zero=True)
 print('Gas bonding states')
 print(bonding_states)
     
 #adsorbate
-COOPCAR_CO = os.path.join(lobster_path, 'gas+Pt_G.03_noW/'+surface + '+'\
+COOPCAR_CO = os.path.join(lobster_path, 'surfaces_noW/'+surface + '+'\
                           + adsorbate + '/COOPCAR.lobster')
 POP_CO = OVERLAP_POPULATION(COOPCAR_CO)
 bonding_states = POP_CO.get_bonding_states(CO_overlap.adsorbate_orbital_indices\
