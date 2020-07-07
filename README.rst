@@ -2,7 +2,7 @@ pDOS_overlap
 ============
 Methods for calculating catalyst band overlap with adsorbate molecular orbitals
 
-This is documentation for https://github.com/JLans/pdos_overlap.
+This is documentation for https://jlans.github.io/pDOS_overlap/.
 vasp_dos enables projected density states analysis from VASP DOSCAR file and
 pdos overlap enables bonding analysis.
 
