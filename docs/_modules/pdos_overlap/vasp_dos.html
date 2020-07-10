@@ -447,7 +447,7 @@
 
 <div class="viewcode-block" id="VASP_DOS"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS">[docs]</a><span class="k">class</span> <span class="nc">VASP_DOS</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Class for extracting projected density of states from VASP&quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;DOSCAR&quot;</span><span class="p">,</span><span class="n">no_negatives</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;DOSCAR&quot;</span><span class="p">,</span><span class="n">no_negatives</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">add_p2s</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -487,7 +487,11 @@
 <span class="sd">            </span>
 <span class="sd">        orbital_dictionary: dict</span>
 <span class="sd">            dictionary that maps resolved sublevels/orbitals to indices</span>
+<span class="sd">            </span>
+<span class="sd">        add_p2s : bool</span>
+<span class="sd">            if true adds the p density to the s density (useful for metals)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        
         <span class="k">if</span> <span class="n">file_name</span><span class="p">[</span><span class="o">-</span><span class="mi">14</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;DOSCAR.lobster&#39;</span><span class="p">:</span>
             <span class="n">natoms</span><span class="p">,</span> <span class="n">emax</span><span class="p">,</span> <span class="n">emin</span><span class="p">,</span> <span class="n">ndos</span><span class="p">,</span> <span class="n">e_fermi</span><span class="p">,</span> <span class="n">is_spin</span><span class="p">,</span> <span class="n">m_projected</span>\
             <span class="p">,</span> <span class="n">orbital_dictionary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_lobster</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span> <span class="n">no_negatives</span><span class="o">=</span><span class="n">no_negatives</span><span class="p">)</span>
@@ -495,6 +499,7 @@
         <span class="k">elif</span> <span class="n">file_name</span><span class="p">[</span><span class="o">-</span><span class="mi">6</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;DOSCAR&#39;</span><span class="p">:</span>
             <span class="n">natoms</span><span class="p">,</span> <span class="n">emax</span><span class="p">,</span> <span class="n">emin</span><span class="p">,</span> <span class="n">ndos</span><span class="p">,</span> <span class="n">e_fermi</span><span class="p">,</span> <span class="n">is_spin</span><span class="p">,</span> <span class="n">m_projected</span>\
             <span class="p">,</span> <span class="n">orbital_dictionary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_doscar</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span> <span class="n">no_negatives</span><span class="o">=</span><span class="n">no_negatives</span><span class="p">)</span>
+                
         <span class="bp">self</span><span class="o">.</span><span class="n">no_negatives</span> <span class="o">=</span> <span class="n">no_negatives</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">natoms</span> <span class="o">=</span> <span class="n">natoms</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">emax</span> <span class="o">=</span> <span class="n">emax</span>
@@ -503,7 +508,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">e_fermi</span> <span class="o">=</span> <span class="n">e_fermi</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_spin</span> <span class="o">=</span> <span class="n">is_spin</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">m_projected</span> <span class="o">=</span> <span class="n">m_projected</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_p2s</span> <span class="o">=</span> <span class="n">add_p2s</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">orbital_dictionary</span> <span class="o">=</span> <span class="n">orbital_dictionary</span>
+        <span class="k">if</span> <span class="n">add_p2s</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">is_spin</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">natoms</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_site_dos</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">orbital_dictionary</span><span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">],:]</span>\
+                    <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_site_dos</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">],</span> <span class="n">sum_density</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">add_p2s</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">is_spin</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">natoms</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_site_dos</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">orbital_dictionary</span><span class="p">[</span><span class="s1">&#39;s+&#39;</span><span class="p">],:]</span>\
+                        <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_site_dos</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;p+&#39;</span><span class="p">],</span> <span class="n">sum_density</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_site_dos</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">orbital_dictionary</span><span class="p">[</span><span class="s1">&#39;s-&#39;</span><span class="p">],:]</span>\
+                        <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_site_dos</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;p-&#39;</span><span class="p">],</span> <span class="n">sum_density</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
         
 <div class="viewcode-block" id="VASP_DOS.apply_gaussian_filter"><a class="viewcode-back" href="../../vasp_dos.html#pdos_overlap.vasp_dos.VASP_DOS.apply_gaussian_filter">[docs]</a>    <span class="k">def</span> <span class="nf">apply_gaussian_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Applies Gaussian filter to self._total_dos and self._site_dos</span>

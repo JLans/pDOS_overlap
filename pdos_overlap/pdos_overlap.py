@@ -6,14 +6,14 @@ Created on Tue May 19 22:28:09 2020
 """
 
 from __future__ import absolute_import, division, print_function
+import os
 import numpy as np
 import matplotlib.pyplot as plt
-from .vasp_dos import get_band_center
+from scipy.optimize import minimize_scalar
 from ase.io import read
+from .vasp_dos import get_band_center
 from .coordination import Coordination
 from .plotting_tools import set_figure_settings
-from scipy.optimize import minimize_scalar
-
 
 def get_adsorbate_indices(GAS_CONTCAR, ADSORBATE_CONTCAR):
     """ Identify the adsorbate and adsorption site indices
@@ -529,7 +529,7 @@ class PDOS_OVERLAP:
         energy_overlap = np.zeros((adsorbate_orbitals.shape[0], TOTAL_PDOS.shape[0]))
         for i in range(adsorbate_orbitals.shape[0]):
             if normalize == False:
-                energy_overlap[i] = np.trapz(adsorbate_orbitals[i] * TOTAL_PDOS\
+                energy_overlap[i] = np.trapz(adsorbate_orbitals[i]**0.5 * TOTAL_PDOS**0.5\
                                          , energies)
             else:
                 numerator = np.trapz(adsorbate_orbitals[i]**0.5
@@ -834,7 +834,7 @@ class PDOS_OVERLAP:
         return optimized_upshift
                 
     def plot_energy_overlap(self, indices = [...], atomic_orbitals=['s','p','d']
-                            , sum_overlap=False, settings='print'):
+                            , sum_overlap=False, figure_directory='print',extension='jpg'):
         """ Plot energy overlap of atomic and molecular orbitals
         
         Parameters
@@ -843,12 +843,14 @@ class PDOS_OVERLAP:
             Index values of adsorbate molecular orbitals for which to plot
             energy overlap histograms.
             
-        settings : str
-            indicates how to display or save the figures
+        figure_directory : str
+            indicates how to display or save the figures or directory to save
             
         atomic_orbitals : list[str]
             Adsorption site atomic orbitals of interest.
             
+        extension : str
+            'pdf' or 'jpg' how to save the file
         """
         get_energy_overlap = self.get_energy_overlap
         overlap_orbitals, energy_overlap = get_energy_overlap(atomic_orbitals
@@ -856,24 +858,48 @@ class PDOS_OVERLAP:
                                                     , sum_spin=self.sum_spin
                                                     , normalize=False)
         energy_overlap = energy_overlap[indices]
-        if settings == 'presentation':
-            set_figure_settings('presentation')
-        else:
-            set_figure_settings('paper')
-        if len(energy_overlap.shape) == 1:
-            energy_overlap = [energy_overlap]
-        for overlap in energy_overlap:
-            plt.figure()
+        if figure_directory not in ['presentation', 'paper']:
+            if len(indices) == 2:
+                fig = plt.figure(figsize=(7.2,2),dpi=400)
+                abc = ['(a)','(b)']
+                axes = fig.subplots(nrows=1, ncols=2)
+                axes_list = [axes[0], axes[1], axes[1,0]]
+            else:
+                fig = plt.figure(figsize=(7.2,5),dpi=400)
+                abc = ['(a)','(b)','(c)','(d)']
+                axes = fig.subplots(nrows=2, ncols=2)
+                axes_list = [axes[0,0], axes[0,1], axes[1,0], axes[1,1]]
             xticks = np.arange(1,len(overlap_orbitals)+1)
-            plt.bar(xticks,overlap)
-            plt.xticks(xticks,overlap_orbitals)
-            plt.xlabel('Metal states projected onto atomic orbitals')
-            plt.ylabel('Overlap with adsorbate molecular orbitals')
-            if settings == 'print':
+            #plotting function
+            for index, overlap in enumerate(energy_overlap):
+                axes_list[index].text(0.90,0.92,abc[index],transform=axes_list[index].transAxes)
+                axes_list[index].bar(xticks,overlap)
+                axes_list[index].set_xticks(xticks)
+                axes_list[index].set_xticklabels(overlap_orbitals)
+            fig.text(0.001, 0.5, 'Overlap with adsorbate molecular orbitals [states]', va='center', rotation='vertical')
+            fig.text(0.5, 0.01, 'Metal atomic orbitals', ha='center')
+            fig.set_tight_layout({'pad':2,'w_pad':1,'h_pad':1})
+            figure_path = os.path.join(figure_directory,'energy_overlap.'+extension)
+            plt.savefig(figure_path, format=extension)
+            plt.close()
+        else:
+            if figure_directory == 'presentation':
+                set_figure_settings('presentation')
+            else:
+                set_figure_settings('paper')
+            if len(energy_overlap.shape) == 1:
+                energy_overlap = [energy_overlap]
+            for overlap in energy_overlap:
+                plt.figure()
+                xticks = np.arange(1,len(overlap_orbitals)+1)
+                plt.bar(xticks,overlap)
+                plt.xticks(xticks,overlap_orbitals)
+                plt.xlabel('Metal states projected onto atomic orbitals')
+                plt.ylabel('Overlap with adsorbate molecular orbitals')
                 plt.show()
             
     def plot_projected_density(self,sum_density=True, sum_spin=True\
-                               , settings='print'):
+                               , figure_directory='print',extension='jpg'):
         """ Plot projected density of the gas, adsorbate and site
         
         Parameters
@@ -887,15 +913,18 @@ class PDOS_OVERLAP:
             Tag indictes if state density with different spins should be summed
             when generating gas and adsorbate orbital features.
             
-        settings : str
-            indicates how to display or save the figures    
+        figure_directory : str
+            indicates how to display or save the figures
+            
+        extension : str
+            'pdf' or 'jpg' how to save the file
         """
         GAS_PDOS = self.GAS_PDOS
         gas_indices = self.gas_indices
         REFERENCE_PDOS = self.REFERENCE_PDOS
         adsorbate_indices = self.adsorbate_indices
         site_indices = self.site_indices
-        if settings == 'presentation':
+        if figure_directory == 'presentation':
             set_figure_settings('presentation')
         else:
             set_figure_settings('paper')
@@ -906,30 +935,38 @@ class PDOS_OVERLAP:
             orbital_list=['s+', 's-', 'p+', 'p-', 'd+', 'd-']
             colors = ['b-', 'b-', 'g-', 'g-', 'r-', 'r-']
             zorder = [2,3,4,5,6,7]
-        
+        if figure_directory not in ['print', 'presentation']:
+            fig = plt.figure(figsize=(7.2,4),dpi=400)
+        else:
+            fig = plt.figure()
+        abc = ['(a)','(b)','(c)']
+        axes = fig.subplots(nrows=1, ncols=3)
+        axes_list = [axes[0], axes[1], axes[2]]
         #plotting function
-        def plot_density(PDOS, indices, title):
+        def plot_density(PDOS, indices, index):
             orbitals, projected_density = PDOS.get_site_dos(indices\
                                 , orbital_list, sum_density, sum_spin)
             if sum_spin == False:
                 projected_density[1::2,:] *= -1
-            if settings == 'print':
-                plt.figure()
             for count, density in enumerate(projected_density):
-                plt.plot(density, PDOS.get_energies(), colors[count], zorder=zorder[count])
-            plt.plot([np.min(projected_density), np.max(projected_density)]\
+                axes_list[index].plot(density, PDOS.get_energies(), colors[count], zorder=zorder[count])
+            axes_list[index].plot([np.min(projected_density), np.max(projected_density)]\
                      ,[PDOS.e_fermi, PDOS.e_fermi]\
                          ,'k--', zorder=1,linewidth=5) 
-            plt.legend([i for i in orbitals]+ ['fermi level'])
-            plt.xlabel('State density')
-            plt.ylabel('Energy [eV]')
-            plt.title(title)
-            if settings == 'print':
-                plt.show()
+            #axes_list[index].legend([i for i in orbitals]+ ['fermi level'])
+            axes_list[index].text(0.90,0.96,abc[index],transform=axes_list[index].transAxes)
             
         #plot gas density
-        plot_density(GAS_PDOS, gas_indices, 'Gas')
+        plot_density(GAS_PDOS, gas_indices, 0)
         #plot adsorbate density
-        plot_density(REFERENCE_PDOS, adsorbate_indices, 'Adsorbate')
+        plot_density(REFERENCE_PDOS, adsorbate_indices, 1)
         #plot adsorption-site density
-        plot_density(REFERENCE_PDOS, site_indices, 'Adsorbation-site')
+        plot_density(REFERENCE_PDOS, site_indices, 2)
+        fig.text(0.001, 0.5, 'State density [states/eV]', va='center', rotation='vertical')
+        fig.text(0.5, 0.01, 'Energy [eV]', ha='center')
+        if figure_directory not in ['print', 'presentation']:
+            figure_path = os.path.join(figure_directory,'pdos.'+extension)
+            plt.savefig(figure_path, format=extension)
+            plt.close()
+        else:
+            plt.show()

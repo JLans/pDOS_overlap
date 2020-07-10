@@ -64,7 +64,7 @@ NO_overlap = PDOS_OVERLAP(GAS_PDOS, REFERENCE_PDOS, reference_indices\
 # ----------------------
 #
 # We plot the projected density of the gas, adsorbate, and adsorption site.
-NO_overlap.plot_projected_density()
+NO_overlap.plot_projected_density(figure_directory=Downloads_folder)
 
 #######################################################################################
 # Find the optimal upshift factor

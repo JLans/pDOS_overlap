@@ -85,7 +85,7 @@
             
               <p class="caption"><span class="caption-text">Getting Started:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="includeme.html">pdos_overlap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="includeme.html">pDOS_overlap</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
@@ -162,6 +162,127 @@
             
   <div class="section" id="module-pdos_overlap.plotting_tools">
 <span id="plotting-tools"></span><h1>plotting_tools<a class="headerlink" href="#module-pdos_overlap.plotting_tools" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="pdos_overlap.plotting_tools.adjust_text">
+<code class="sig-name descname">adjust_text</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">texts</span></em>, <em class="sig-param"><span class="n">x</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">y</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">expand_text</span><span class="o">=</span><span class="default_value">1.2, 1.2</span></em>, <em class="sig-param"><span class="n">expand_points</span><span class="o">=</span><span class="default_value">1.2, 1.2</span></em>, <em class="sig-param"><span class="n">autoalign</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">va</span><span class="o">=</span><span class="default_value">'bottom'</span></em>, <em class="sig-param"><span class="n">ha</span><span class="o">=</span><span class="default_value">'center'</span></em>, <em class="sig-param"><span class="n">force_text</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">force_points</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">lim</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">precision</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">only_move</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">text_from_text</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">text_from_points</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">save_steps</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">save_prefix</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">save_format</span><span class="o">=</span><span class="default_value">'png'</span></em>, <em class="sig-param"><span class="n">add_step_numbers</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">draggable</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/plotting_tools.html#adjust_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.plotting_tools.adjust_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iteratively adjusts the locations of texts. First moves all texts that are
+outside the axes limits inside. Then in each iteration moves all texts away
+from each other and from points. In the end hides texts and substitutes
+them with annotations to link them to the rescpective points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>texts</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – a list of text.Text objects to adjust</p></li>
+<li><p><strong>x</strong> (<em>seq</em>) – x-coordinates of points to repel from; if not provided only
+uses text coordinates</p></li>
+<li><p><strong>y</strong> (<em>seq</em>) – y-coordinates of points to repel from; if not provided only
+uses text coordinates</p></li>
+<li><p><strong>ax</strong> (<em>obj</em>) – axes object with the plot; if not provided is determined by
+plt.gca()</p></li>
+<li><p><strong>expand_text</strong> (<em>seq</em>) – a tuple/list/… with 2 numbers (x, y) to expand
+texts when repelling them from each other; default (1.2, 1.2)</p></li>
+<li><p><strong>expand_points</strong> (<em>seq</em>) – a tuple/list/… with 2 numbers (x, y) to expand
+texts when repelling them from points; default (1.2, 1.2)</p></li>
+<li><p><strong>autoalign</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If True, the best alignment of all texts will be
+determined automatically before running the iterative adjustment;
+if ‘x’ will only align horizontally, if ‘y’ - vertically; overrides
+va and ha</p></li>
+<li><p><strong>va</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – vertical alignment of texts</p></li>
+<li><p><strong>ha</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – horizontal alignment of texts</p></li>
+<li><p><strong>force_text</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – the repel force from texts is multiplied by this
+value; default 0.5</p></li>
+<li><p><strong>force_points</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – the repel force from points is multiplied by this
+value; default 0.5</p></li>
+<li><p><strong>lim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – limit of number of iterations</p></li>
+<li><p><strong>precision</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – up to which sum of all overlaps along both x and y
+to iterate; may need to increase for complicated situations;
+default 0, so no overlaps with anything.</p></li>
+<li><p><strong>only_move</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – a dict to restrict movement of texts to only certain
+axis. Valid keys are ‘points’ and ‘text’, for each of them valid
+values are ‘x’, ‘y’ and ‘xy’. This way you can forbid moving texts
+along either of the axes due to overlaps with points, but let it
+happen if there is an overlap with texts: only_move={‘points’:’y’,
+‘text’:’xy’}. Default: None, so everything is allowed.</p></li>
+<li><p><strong>text_from_text</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – whether to repel texts from each other; default
+True</p></li>
+<li><p><strong>text_from_points</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – whether to repel texts from points; default
+True; can helpful to switch of in extremely crouded plots</p></li>
+<li><p><strong>save_steps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – whether to save intermediate steps as images;
+default False</p></li>
+<li><p><strong>save_prefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – a path and/or prefix to the saved steps; default ‘’</p></li>
+<li><p><strong>save_format</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – a format to save the steps into; default ‘png</p></li>
+<li><p><strong>and **kwargs</strong> (<em>*args</em>) – <p>any arguments will be fed into plt.annotate after
+all the optimization is done just for plotting</p>
+</p></li>
+<li><p><strong>add_step_numbers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – whether to add step numbers as titles to the
+images of saving steps</p></li>
+<li><p><strong>draggable</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – whether to make the annotations draggable; default
+True</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pdos_overlap.plotting_tools.get_bboxes">
+<code class="sig-name descname">get_bboxes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">texts</span></em>, <em class="sig-param"><span class="n">r</span></em>, <em class="sig-param"><span class="n">expand</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/plotting_tools.html#get_bboxes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.plotting_tools.get_bboxes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pdos_overlap.plotting_tools.get_midpoint">
+<code class="sig-name descname">get_midpoint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bbox</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/plotting_tools.html#get_midpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.plotting_tools.get_midpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pdos_overlap.plotting_tools.get_points_inside_bbox">
+<code class="sig-name descname">get_points_inside_bbox</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">bbox</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/plotting_tools.html#get_points_inside_bbox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.plotting_tools.get_points_inside_bbox" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pdos_overlap.plotting_tools.move_texts">
+<code class="sig-name descname">move_texts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">texts</span></em>, <em class="sig-param"><span class="n">delta_x</span></em>, <em class="sig-param"><span class="n">delta_y</span></em>, <em class="sig-param"><span class="n">bboxes</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">renderer</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/plotting_tools.html#move_texts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.plotting_tools.move_texts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pdos_overlap.plotting_tools.optimally_align_text">
+<code class="sig-name descname">optimally_align_text</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">texts</span></em>, <em class="sig-param"><span class="n">expand</span></em>, <em class="sig-param"><span class="n">renderer</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">direction</span><span class="o">=</span><span class="default_value">'xy'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/plotting_tools.html#optimally_align_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.plotting_tools.optimally_align_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>For all text objects find alignment that causes the least overlap with
+points and other texts and apply it</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pdos_overlap.plotting_tools.overlap_bbox_and_point">
+<code class="sig-name descname">overlap_bbox_and_point</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bbox</span></em>, <em class="sig-param"><span class="n">xp</span></em>, <em class="sig-param"><span class="n">yp</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/plotting_tools.html#overlap_bbox_and_point"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.plotting_tools.overlap_bbox_and_point" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pdos_overlap.plotting_tools.repel_text">
+<code class="sig-name descname">repel_text</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">texts</span></em>, <em class="sig-param"><span class="n">renderer</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">expand</span><span class="o">=</span><span class="default_value">1.2, 1.2</span></em>, <em class="sig-param"><span class="n">only_use_max_min</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">move</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/plotting_tools.html#repel_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.plotting_tools.repel_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Repel texts from each other while expanding their bounding boxes by expand
+(x, y), e.g. (1.2, 1.2) would multiply both width and height by 1.2.
+Requires a renderer to get the actual sizes of the text, and to that end
+either one needs to be directly provided, or the axes have to be specified,
+and the renderer is then got from the axes object.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pdos_overlap.plotting_tools.repel_text_from_axes">
+<code class="sig-name descname">repel_text_from_axes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">texts</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">bboxes</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">renderer</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">expand</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/plotting_tools.html#repel_text_from_axes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.plotting_tools.repel_text_from_axes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pdos_overlap.plotting_tools.repel_text_from_points">
+<code class="sig-name descname">repel_text_from_points</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">texts</span></em>, <em class="sig-param"><span class="n">renderer</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">expand</span><span class="o">=</span><span class="default_value">1.2, 1.2</span></em>, <em class="sig-param"><span class="n">move</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/plotting_tools.html#repel_text_from_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.plotting_tools.repel_text_from_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Repel texts from all points specified by x and y while expanding their
+(texts’!) bounding boxes by expandby  (x, y), e.g. (1.2, 1.2)
+would multiply both width and height by 1.2. In the case when the text
+overlaps a point, but there is no definite direction for movement, moves
+in random direction by 40% of it’s width and/or height depending on
+Requires a renderer to get the actual sizes of the text, and to that end
+either one needs to be directly provided, or the axes have to be specified,
+and the renderer is then got from the axes object.</p>
+</dd></dl>
+
 <dl class="py function">
 <dt id="pdos_overlap.plotting_tools.set_figure_settings">
 <code class="sig-name descname">set_figure_settings</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Figure_Type</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/plotting_tools.html#set_figure_settings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.plotting_tools.set_figure_settings" title="Permalink to this definition">¶</a></dt>

@@ -39,7 +39,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="vasp_dos" href="vasp_dos.html" />
-    <link rel="prev" title="pdos_overlap" href="includeme.html" /> 
+    <link rel="prev" title="pDOS_overlap" href="includeme.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -85,7 +85,7 @@
             
               <p class="caption"><span class="caption-text">Getting Started:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="includeme.html">pdos_overlap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="includeme.html">pDOS_overlap</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
@@ -536,15 +536,16 @@ score pairings</p>
 
 <dl class="py method">
 <dt id="pdos_overlap.pdos_overlap.PDOS_OVERLAP.plot_energy_overlap">
-<code class="sig-name descname">plot_energy_overlap</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">indices</span><span class="o">=</span><span class="default_value">[Ellipsis]</span></em>, <em class="sig-param"><span class="n">atomic_orbitals</span><span class="o">=</span><span class="default_value">['s', 'p', 'd']</span></em>, <em class="sig-param"><span class="n">sum_overlap</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">settings</span><span class="o">=</span><span class="default_value">'print'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/pdos_overlap.html#PDOS_OVERLAP.plot_energy_overlap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.pdos_overlap.PDOS_OVERLAP.plot_energy_overlap" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_energy_overlap</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">indices</span><span class="o">=</span><span class="default_value">[Ellipsis]</span></em>, <em class="sig-param"><span class="n">atomic_orbitals</span><span class="o">=</span><span class="default_value">['s', 'p', 'd']</span></em>, <em class="sig-param"><span class="n">sum_overlap</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">figure_directory</span><span class="o">=</span><span class="default_value">'print'</span></em>, <em class="sig-param"><span class="n">extension</span><span class="o">=</span><span class="default_value">'jpg'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/pdos_overlap.html#PDOS_OVERLAP.plot_energy_overlap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.pdos_overlap.PDOS_OVERLAP.plot_energy_overlap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot energy overlap of atomic and molecular orbitals</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>]</em>) – Index values of adsorbate molecular orbitals for which to plot
 energy overlap histograms.</p></li>
-<li><p><strong>settings</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – indicates how to display or save the figures</p></li>
+<li><p><strong>figure_directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – indicates how to display or save the figures or directory to save</p></li>
 <li><p><strong>atomic_orbitals</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>]</em>) – Adsorption site atomic orbitals of interest.</p></li>
+<li><p><strong>extension</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – ‘pdf’ or ‘jpg’ how to save the file</p></li>
 </ul>
 </dd>
 </dl>
@@ -552,7 +553,7 @@ energy overlap histograms.</p></li>
 
 <dl class="py method">
 <dt id="pdos_overlap.pdos_overlap.PDOS_OVERLAP.plot_projected_density">
-<code class="sig-name descname">plot_projected_density</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sum_density</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">settings</span><span class="o">=</span><span class="default_value">'print'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/pdos_overlap.html#PDOS_OVERLAP.plot_projected_density"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.pdos_overlap.PDOS_OVERLAP.plot_projected_density" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_projected_density</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sum_density</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">sum_spin</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">figure_directory</span><span class="o">=</span><span class="default_value">'print'</span></em>, <em class="sig-param"><span class="n">extension</span><span class="o">=</span><span class="default_value">'jpg'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/pdos_overlap.html#PDOS_OVERLAP.plot_projected_density"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.pdos_overlap.PDOS_OVERLAP.plot_projected_density" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot projected density of the gas, adsorbate and site</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -562,7 +563,8 @@ summed when calculating overlap of the site atomic orbitals and the
 adsorbate molecular orbitals.</p></li>
 <li><p><strong>sum_spin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Tag indictes if state density with different spins should be summed
 when generating gas and adsorbate orbital features.</p></li>
-<li><p><strong>settings</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – indicates how to display or save the figures</p></li>
+<li><p><strong>figure_directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – indicates how to display or save the figures</p></li>
+<li><p><strong>extension</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – ‘pdf’ or ‘jpg’ how to save the file</p></li>
 </ul>
 </dd>
 </dl>
@@ -584,7 +586,7 @@ when generating gas and adsorbate orbital features.</p></li>
         <a href="vasp_dos.html" class="btn btn-neutral float-right" title="vasp_dos" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="includeme.html" class="btn btn-neutral float-left" title="pdos_overlap" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="includeme.html" class="btn btn-neutral float-left" title="pDOS_overlap" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

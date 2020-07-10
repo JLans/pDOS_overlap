@@ -85,7 +85,7 @@
             
               <p class="caption"><span class="caption-text">Getting Started:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="includeme.html">pdos_overlap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="includeme.html">pDOS_overlap</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
@@ -391,7 +391,7 @@
 <h2>The <code class="docutils literal notranslate"><span class="pre">VASP_DOS</span></code> class<a class="headerlink" href="#the-vasp-dos-class" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pdos_overlap.vasp_dos.VASP_DOS">
-<em class="property">class </em><code class="sig-name descname">VASP_DOS</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_name</span><span class="o">=</span><span class="default_value">'DOSCAR'</span></em>, <em class="sig-param"><span class="n">no_negatives</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/vasp_dos.html#VASP_DOS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.vasp_dos.VASP_DOS" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">VASP_DOS</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_name</span><span class="o">=</span><span class="default_value">'DOSCAR'</span></em>, <em class="sig-param"><span class="n">no_negatives</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">add_p2s</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdos_overlap/vasp_dos.html#VASP_DOS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdos_overlap.vasp_dos.VASP_DOS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class for extracting projected density of states from VASP</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -413,6 +413,7 @@ Negative occupances can occur if Methfessel-Paxton is used.</p></li>
 <li><p><strong>is_spin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – indicates if projected density is spin resolved</p></li>
 <li><p><strong>m_projected</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – indicates if projected density is orbital resolved</p></li>
 <li><p><strong>orbital_dictionary</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – dictionary that maps resolved sublevels/orbitals to indices</p></li>
+<li><p><strong>add_p2s</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – if true adds the p density to the s density (useful for metals)</p></li>
 </ul>
 </dd>
 </dl>

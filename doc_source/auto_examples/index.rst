@@ -160,13 +160,13 @@ This contains an example of plotting projected densities.
 
   .. container:: sphx-glr-download sphx-glr-download-python
 
-    :download:`Download all examples in Python source code: auto_examples_python.zip </C:/Users/lansf/Box Sync/Synced_Files/Coding/Python/Github/pdos_overlap/doc_source/auto_examples/auto_examples_python.zip>`
+    :download:`Download all examples in Python source code: auto_examples_python.zip </C:/Users/lansf/Box Sync/Synced_Files/Coding/Python/Github/pDOS_overlap/doc_source/auto_examples/auto_examples_python.zip>`
 
 
 
   .. container:: sphx-glr-download sphx-glr-download-jupyter
 
-    :download:`Download all examples in Jupyter notebooks: auto_examples_jupyter.zip </C:/Users/lansf/Box Sync/Synced_Files/Coding/Python/Github/pdos_overlap/doc_source/auto_examples/auto_examples_jupyter.zip>`
+    :download:`Download all examples in Jupyter notebooks: auto_examples_jupyter.zip </C:/Users/lansf/Box Sync/Synced_Files/Coding/Python/Github/pDOS_overlap/doc_source/auto_examples/auto_examples_jupyter.zip>`
 
 
 .. only:: html

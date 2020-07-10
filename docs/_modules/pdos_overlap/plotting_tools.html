@@ -161,6 +161,10 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">rcParams</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">rcParamsDefault</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">product</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <div class="viewcode-block" id="set_figure_settings"><a class="viewcode-back" href="../../plotting_tools.html#pdos_overlap.plotting_tools.set_figure_settings">[docs]</a><span class="k">def</span> <span class="nf">set_figure_settings</span><span class="p">(</span><span class="n">Figure_Type</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -212,6 +216,387 @@
           <span class="s1">&#39;font.size&#39;</span><span class="p">:</span> <span class="mf">16.0</span><span class="p">}</span>
     <span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
     <span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="n">xrange</span> <span class="o">=</span> <span class="nb">range</span>
+
+<div class="viewcode-block" id="get_bboxes"><a class="viewcode-back" href="../../plotting_tools.html#pdos_overlap.plotting_tools.get_bboxes">[docs]</a><span class="k">def</span> <span class="nf">get_bboxes</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">expand</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">get_window_extent</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">.</span><span class="n">expanded</span><span class="p">(</span><span class="o">*</span><span class="n">expand</span><span class="p">)</span><span class="o">.</span><span class="n">transformed</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span>\
+                                          <span class="n">transData</span><span class="o">.</span><span class="n">inverted</span><span class="p">())</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="get_midpoint"><a class="viewcode-back" href="../../plotting_tools.html#pdos_overlap.plotting_tools.get_midpoint">[docs]</a><span class="k">def</span> <span class="nf">get_midpoint</span><span class="p">(</span><span class="n">bbox</span><span class="p">):</span>
+    <span class="n">cx</span> <span class="o">=</span> <span class="p">(</span><span class="n">bbox</span><span class="o">.</span><span class="n">x0</span><span class="o">+</span><span class="n">bbox</span><span class="o">.</span><span class="n">x1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+    <span class="n">cy</span> <span class="o">=</span> <span class="p">(</span><span class="n">bbox</span><span class="o">.</span><span class="n">y0</span><span class="o">+</span><span class="n">bbox</span><span class="o">.</span><span class="n">y1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+    <span class="k">return</span> <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span></div>
+
+<div class="viewcode-block" id="get_points_inside_bbox"><a class="viewcode-back" href="../../plotting_tools.html#pdos_overlap.plotting_tools.get_points_inside_bbox">[docs]</a><span class="k">def</span> <span class="nf">get_points_inside_bbox</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">bbox</span><span class="p">):</span>
+    <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">bbox</span><span class="o">.</span><span class="n">xmin</span><span class="p">,</span> <span class="n">bbox</span><span class="o">.</span><span class="n">ymin</span><span class="p">,</span> <span class="n">bbox</span><span class="o">.</span><span class="n">xmax</span><span class="p">,</span> <span class="n">bbox</span><span class="o">.</span><span class="n">ymax</span>
+    <span class="n">x_in</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">x</span><span class="o">&gt;</span><span class="n">x1</span><span class="p">,</span> <span class="n">x</span><span class="o">&lt;</span><span class="n">x2</span><span class="p">)</span>
+    <span class="n">y_in</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">y</span><span class="o">&gt;</span><span class="n">y1</span><span class="p">,</span> <span class="n">y</span><span class="o">&lt;</span><span class="n">y2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">x_in</span> <span class="o">&amp;</span> <span class="n">y_in</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="overlap_bbox_and_point"><a class="viewcode-back" href="../../plotting_tools.html#pdos_overlap.plotting_tools.overlap_bbox_and_point">[docs]</a><span class="k">def</span> <span class="nf">overlap_bbox_and_point</span><span class="p">(</span><span class="n">bbox</span><span class="p">,</span> <span class="n">xp</span><span class="p">,</span> <span class="n">yp</span><span class="p">):</span>
+    <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span> <span class="o">=</span> <span class="n">get_midpoint</span><span class="p">(</span><span class="n">bbox</span><span class="p">)</span>
+
+    <span class="n">dir_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">cx</span><span class="o">-</span><span class="n">xp</span><span class="p">)</span>
+    <span class="n">dir_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">cy</span><span class="o">-</span><span class="n">yp</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">dir_x</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">xp</span> <span class="o">-</span> <span class="n">bbox</span><span class="o">.</span><span class="n">xmax</span>
+    <span class="k">elif</span> <span class="n">dir_x</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">xp</span> <span class="o">-</span> <span class="n">bbox</span><span class="o">.</span><span class="n">xmin</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="n">dir_y</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="n">yp</span> <span class="o">-</span> <span class="n">bbox</span><span class="o">.</span><span class="n">ymax</span>
+    <span class="k">elif</span> <span class="n">dir_y</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="n">yp</span> <span class="o">-</span> <span class="n">bbox</span><span class="o">.</span><span class="n">ymin</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span></div>
+
+<div class="viewcode-block" id="move_texts"><a class="viewcode-back" href="../../plotting_tools.html#pdos_overlap.plotting_tools.move_texts">[docs]</a><span class="k">def</span> <span class="nf">move_texts</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">delta_x</span><span class="p">,</span> <span class="n">delta_y</span><span class="p">,</span> <span class="n">bboxes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">renderer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">bboxes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">renderer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_figure</span><span class="p">()</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">get_renderer</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">renderer</span>
+        <span class="n">bboxes</span> <span class="o">=</span> <span class="n">get_bboxes</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()</span>
+    <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">delta_x</span><span class="p">,</span> <span class="n">delta_y</span><span class="p">)):</span>
+        <span class="n">bbox</span> <span class="o">=</span> <span class="n">bboxes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">bbox</span><span class="o">.</span><span class="n">xmin</span><span class="p">,</span> <span class="n">bbox</span><span class="o">.</span><span class="n">ymin</span><span class="p">,</span> <span class="n">bbox</span><span class="o">.</span><span class="n">xmax</span><span class="p">,</span> <span class="n">bbox</span><span class="o">.</span><span class="n">ymax</span>
+        <span class="k">if</span> <span class="n">x1</span> <span class="o">+</span> <span class="n">dx</span> <span class="o">&lt;</span> <span class="n">xmin</span><span class="p">:</span>
+            <span class="n">dx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">x2</span> <span class="o">+</span> <span class="n">dx</span> <span class="o">&gt;</span> <span class="n">xmax</span><span class="p">:</span>
+            <span class="n">dx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">y1</span> <span class="o">+</span> <span class="n">dy</span> <span class="o">&lt;</span> <span class="n">ymin</span><span class="p">:</span>
+            <span class="n">dy</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">y2</span> <span class="o">+</span> <span class="n">dy</span> <span class="o">&gt;</span> <span class="n">ymax</span><span class="p">:</span>
+            <span class="n">dy</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">get_position</span><span class="p">()</span>
+        <span class="n">newx</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">dx</span>
+        <span class="n">newy</span> <span class="o">=</span> <span class="n">y</span> <span class="o">+</span> <span class="n">dy</span>
+        <span class="n">text</span><span class="o">.</span><span class="n">set_position</span><span class="p">((</span><span class="n">newx</span><span class="p">,</span> <span class="n">newy</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="optimally_align_text"><a class="viewcode-back" href="../../plotting_tools.html#pdos_overlap.plotting_tools.optimally_align_text">[docs]</a><span class="k">def</span> <span class="nf">optimally_align_text</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">texts</span><span class="p">,</span> <span class="n">expand</span><span class="p">,</span> <span class="n">renderer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                         <span class="n">direction</span><span class="o">=</span><span class="s1">&#39;xy&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    For all text objects find alignment that causes the least overlap with</span>
+<span class="sd">    points and other texts and apply it</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">renderer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_figure</span><span class="p">()</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">get_renderer</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">renderer</span>
+    <span class="n">bboxes</span> <span class="o">=</span> <span class="n">get_bboxes</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">expand</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;x&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">direction</span><span class="p">:</span>
+        <span class="n">ha</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ha</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="s1">&#39;center&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;y&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">direction</span><span class="p">:</span>
+        <span class="n">va</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">va</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;bottom&#39;</span><span class="p">,</span> <span class="s1">&#39;top&#39;</span><span class="p">,</span> <span class="s1">&#39;center&#39;</span><span class="p">]</span>
+    <span class="n">alignment</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">ha</span><span class="p">,</span> <span class="n">va</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">texts</span><span class="p">):</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">alignment</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">h</span><span class="p">:</span>
+                <span class="n">text</span><span class="o">.</span><span class="n">set_ha</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">v</span><span class="p">:</span>
+                <span class="n">text</span><span class="o">.</span><span class="n">set_va</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="n">bbox</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">get_window_extent</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">.</span><span class="n">expanded</span><span class="p">(</span><span class="o">*</span><span class="n">expand</span><span class="p">)</span><span class="o">.</span>\
+                                       <span class="n">transformed</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">transData</span><span class="o">.</span><span class="n">inverted</span><span class="p">())</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">get_points_inside_bbox</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">bbox</span><span class="p">)</span>
+            <span class="n">counts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">+</span> <span class="n">bbox</span><span class="o">.</span><span class="n">count_overlaps</span><span class="p">(</span><span class="n">bboxes</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">counts</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;x&#39;</span> <span class="ow">in</span> <span class="n">direction</span><span class="p">:</span>
+            <span class="n">text</span><span class="o">.</span><span class="n">set_ha</span><span class="p">(</span><span class="n">alignment</span><span class="p">[</span><span class="n">a</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="s1">&#39;y&#39;</span> <span class="ow">in</span> <span class="n">direction</span><span class="p">:</span>
+            <span class="n">text</span><span class="o">.</span><span class="n">set_va</span><span class="p">(</span><span class="n">alignment</span><span class="p">[</span><span class="n">a</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">bboxes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">get_window_extent</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">.</span><span class="n">expanded</span><span class="p">(</span><span class="o">*</span><span class="n">expand</span><span class="p">)</span><span class="o">.</span>\
+                                       <span class="n">transformed</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">transData</span><span class="o">.</span><span class="n">inverted</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">texts</span></div>
+
+<div class="viewcode-block" id="repel_text"><a class="viewcode-back" href="../../plotting_tools.html#pdos_overlap.plotting_tools.repel_text">[docs]</a><span class="k">def</span> <span class="nf">repel_text</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">renderer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="p">(</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">),</span>
+               <span class="n">only_use_max_min</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">move</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Repel texts from each other while expanding their bounding boxes by expand</span>
+<span class="sd">    (x, y), e.g. (1.2, 1.2) would multiply both width and height by 1.2.</span>
+<span class="sd">    Requires a renderer to get the actual sizes of the text, and to that end</span>
+<span class="sd">    either one needs to be directly provided, or the axes have to be specified,</span>
+<span class="sd">    and the renderer is then got from the axes object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">renderer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_figure</span><span class="p">()</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">get_renderer</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">renderer</span>
+    <span class="n">bboxes</span> <span class="o">=</span> <span class="n">get_bboxes</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">expand</span><span class="p">)</span>
+    <span class="n">xmins</span> <span class="o">=</span> <span class="p">[</span><span class="n">bbox</span><span class="o">.</span><span class="n">xmin</span> <span class="k">for</span> <span class="n">bbox</span> <span class="ow">in</span> <span class="n">bboxes</span><span class="p">]</span>
+    <span class="n">xmaxs</span> <span class="o">=</span> <span class="p">[</span><span class="n">bbox</span><span class="o">.</span><span class="n">xmax</span> <span class="k">for</span> <span class="n">bbox</span> <span class="ow">in</span> <span class="n">bboxes</span><span class="p">]</span>
+    <span class="n">ymaxs</span> <span class="o">=</span> <span class="p">[</span><span class="n">bbox</span><span class="o">.</span><span class="n">ymax</span> <span class="k">for</span> <span class="n">bbox</span> <span class="ow">in</span> <span class="n">bboxes</span><span class="p">]</span>
+    <span class="n">ymins</span> <span class="o">=</span> <span class="p">[</span><span class="n">bbox</span><span class="o">.</span><span class="n">ymin</span> <span class="k">for</span> <span class="n">bbox</span> <span class="ow">in</span> <span class="n">bboxes</span><span class="p">]</span>
+
+    <span class="n">overlaps_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">bboxes</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">bboxes</span><span class="p">)))</span>
+    <span class="n">overlaps_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">overlaps_x</span><span class="p">)</span>
+    <span class="n">overlap_directions_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">overlaps_x</span><span class="p">)</span>
+    <span class="n">overlap_directions_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">overlaps_y</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">bbox1</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bboxes</span><span class="p">):</span>
+        <span class="n">overlaps</span> <span class="o">=</span> <span class="n">get_points_inside_bbox</span><span class="p">(</span><span class="n">xmins</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="n">xmaxs</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">ymins</span><span class="o">+</span><span class="n">ymaxs</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span>
+                                             <span class="n">bbox1</span><span class="p">)</span><span class="o">%</span><span class="nb">len</span><span class="p">(</span><span class="n">bboxes</span><span class="p">)</span>
+        <span class="n">overlaps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">overlaps</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">overlaps</span><span class="p">:</span>
+            <span class="n">bbox2</span> <span class="o">=</span> <span class="n">bboxes</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">bbox1</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">bbox1</span><span class="p">,</span> <span class="n">bbox2</span><span class="p">)</span><span class="o">.</span><span class="n">size</span>
+            <span class="n">overlaps_x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
+            <span class="n">overlaps_y</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
+            <span class="n">direction</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">bbox1</span><span class="o">.</span><span class="n">extents</span> <span class="o">-</span> <span class="n">bbox2</span><span class="o">.</span><span class="n">extents</span><span class="p">)[:</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">overlap_directions_x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">direction</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">overlap_directions_y</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">direction</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">move_x</span> <span class="o">=</span> <span class="n">overlaps_x</span><span class="o">*</span><span class="n">overlap_directions_x</span>
+    <span class="n">move_y</span> <span class="o">=</span> <span class="n">overlaps_y</span><span class="o">*</span><span class="n">overlap_directions_y</span>
+
+    <span class="n">delta_x</span> <span class="o">=</span> <span class="n">move_x</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">delta_y</span> <span class="o">=</span> <span class="n">move_y</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">delta_x</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">delta_y</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">move</span><span class="p">:</span>
+        <span class="n">move_texts</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">delta_x</span><span class="p">,</span> <span class="n">delta_y</span><span class="p">,</span> <span class="n">bboxes</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">delta_x</span><span class="p">,</span> <span class="n">delta_y</span><span class="p">,</span> <span class="n">q</span></div>
+
+
+<div class="viewcode-block" id="repel_text_from_points"><a class="viewcode-back" href="../../plotting_tools.html#pdos_overlap.plotting_tools.repel_text_from_points">[docs]</a><span class="k">def</span> <span class="nf">repel_text_from_points</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">texts</span><span class="p">,</span> <span class="n">renderer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                           <span class="n">expand</span><span class="o">=</span><span class="p">(</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">),</span> <span class="n">move</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Repel texts from all points specified by x and y while expanding their</span>
+<span class="sd">    (texts&#39;!) bounding boxes by expandby  (x, y), e.g. (1.2, 1.2)</span>
+<span class="sd">    would multiply both width and height by 1.2. In the case when the text</span>
+<span class="sd">    overlaps a point, but there is no definite direction for movement, moves</span>
+<span class="sd">    in random direction by 40% of it&#39;s width and/or height depending on</span>
+<span class="sd">    Requires a renderer to get the actual sizes of the text, and to that end</span>
+<span class="sd">    either one needs to be directly provided, or the axes have to be specified,</span>
+<span class="sd">    and the renderer is then got from the axes object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">renderer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_figure</span><span class="p">()</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">get_renderer</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">renderer</span>
+    <span class="n">bboxes</span> <span class="o">=</span> <span class="n">get_bboxes</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">expand</span><span class="p">)</span>
+
+    <span class="n">move_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">bboxes</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+    <span class="n">move_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">bboxes</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">bbox</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bboxes</span><span class="p">):</span>
+        <span class="n">xy_in</span> <span class="o">=</span> <span class="n">get_points_inside_bbox</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">bbox</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">xy_in</span><span class="p">:</span>
+            <span class="n">xp</span><span class="p">,</span> <span class="n">yp</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="n">overlap_bbox_and_point</span><span class="p">(</span><span class="n">bbox</span><span class="p">,</span> <span class="n">xp</span><span class="p">,</span> <span class="n">yp</span><span class="p">)</span>
+
+            <span class="n">move_x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">dx</span>
+            <span class="n">move_y</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">dy</span>
+
+    <span class="n">delta_x</span> <span class="o">=</span> <span class="n">move_x</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">delta_y</span> <span class="o">=</span> <span class="n">move_y</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">delta_x</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">delta_y</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">move</span><span class="p">:</span>
+        <span class="n">move_texts</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">delta_x</span><span class="p">,</span> <span class="n">delta_y</span><span class="p">,</span> <span class="n">bboxes</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">delta_x</span><span class="p">,</span> <span class="n">delta_y</span><span class="p">,</span> <span class="n">q</span></div>
+
+<div class="viewcode-block" id="repel_text_from_axes"><a class="viewcode-back" href="../../plotting_tools.html#pdos_overlap.plotting_tools.repel_text_from_axes">[docs]</a><span class="k">def</span> <span class="nf">repel_text_from_axes</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bboxes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">renderer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                         <span class="n">expand</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">renderer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_figure</span><span class="p">()</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">get_renderer</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">renderer</span>
+    <span class="k">if</span> <span class="n">expand</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">expand</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">bboxes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">bboxes</span> <span class="o">=</span> <span class="n">get_bboxes</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="n">expand</span><span class="p">)</span>
+    <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()</span>
+    <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">bbox</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bboxes</span><span class="p">):</span>
+        <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">bbox</span><span class="o">.</span><span class="n">xmin</span><span class="p">,</span> <span class="n">bbox</span><span class="o">.</span><span class="n">ymin</span><span class="p">,</span> <span class="n">bbox</span><span class="o">.</span><span class="n">xmax</span><span class="p">,</span> <span class="n">bbox</span><span class="o">.</span><span class="n">ymax</span>
+        <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">x1</span> <span class="o">&lt;</span> <span class="n">xmin</span><span class="p">:</span>
+            <span class="n">dx</span> <span class="o">=</span> <span class="n">xmin</span> <span class="o">-</span> <span class="n">x1</span>
+        <span class="k">if</span> <span class="n">x2</span> <span class="o">&gt;</span> <span class="n">xmax</span><span class="p">:</span>
+            <span class="n">dx</span> <span class="o">=</span> <span class="n">xmax</span> <span class="o">-</span> <span class="n">x2</span>
+        <span class="k">if</span> <span class="n">y1</span> <span class="o">&lt;</span> <span class="n">ymin</span><span class="p">:</span>
+            <span class="n">dy</span> <span class="o">=</span> <span class="n">ymin</span> <span class="o">-</span> <span class="n">y1</span>
+        <span class="k">if</span> <span class="n">y2</span> <span class="o">&gt;</span> <span class="n">ymax</span><span class="p">:</span>
+            <span class="n">dy</span> <span class="o">=</span> <span class="n">ymax</span> <span class="o">-</span> <span class="n">y2</span>
+        <span class="k">if</span> <span class="n">dx</span> <span class="ow">or</span> <span class="n">dy</span><span class="p">:</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">texts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">get_position</span><span class="p">()</span>
+            <span class="n">newx</span><span class="p">,</span> <span class="n">newy</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">dx</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">dy</span>
+            <span class="n">texts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_position</span><span class="p">((</span><span class="n">newx</span><span class="p">,</span> <span class="n">newy</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">texts</span></div>
+
+<div class="viewcode-block" id="adjust_text"><a class="viewcode-back" href="../../plotting_tools.html#pdos_overlap.plotting_tools.adjust_text">[docs]</a><span class="k">def</span> <span class="nf">adjust_text</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">expand_text</span><span class="o">=</span><span class="p">(</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">),</span>
+                <span class="n">expand_points</span><span class="o">=</span><span class="p">(</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">),</span> <span class="n">autoalign</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="n">va</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">,</span>
+                <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">force_text</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">force_points</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span>
+                <span class="n">lim</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">only_move</span><span class="o">=</span><span class="p">{},</span> <span class="n">text_from_text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">text_from_points</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">save_steps</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">save_prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                <span class="n">save_format</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="n">add_step_numbers</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">draggable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Iteratively adjusts the locations of texts. First moves all texts that are</span>
+<span class="sd">    outside the axes limits inside. Then in each iteration moves all texts away</span>
+<span class="sd">    from each other and from points. In the end hides texts and substitutes</span>
+<span class="sd">    them with annotations to link them to the rescpective points.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        texts (list): a list of text.Text objects to adjust</span>
+<span class="sd">        x (seq): x-coordinates of points to repel from; if not provided only</span>
+<span class="sd">            uses text coordinates</span>
+<span class="sd">        y (seq): y-coordinates of points to repel from; if not provided only</span>
+<span class="sd">            uses text coordinates</span>
+<span class="sd">        ax (obj): axes object with the plot; if not provided is determined by</span>
+<span class="sd">            plt.gca()</span>
+<span class="sd">        expand_text (seq): a tuple/list/... with 2 numbers (x, y) to expand</span>
+<span class="sd">            texts when repelling them from each other; default (1.2, 1.2)</span>
+<span class="sd">        expand_points (seq): a tuple/list/... with 2 numbers (x, y) to expand</span>
+<span class="sd">            texts when repelling them from points; default (1.2, 1.2)</span>
+<span class="sd">        autoalign (bool): If True, the best alignment of all texts will be</span>
+<span class="sd">            determined automatically before running the iterative adjustment;</span>
+<span class="sd">            if &#39;x&#39; will only align horizontally, if &#39;y&#39; - vertically; overrides</span>
+<span class="sd">            va and ha</span>
+<span class="sd">        va (str): vertical alignment of texts</span>
+<span class="sd">        ha (str): horizontal alignment of texts</span>
+<span class="sd">        force_text (float): the repel force from texts is multiplied by this</span>
+<span class="sd">            value; default 0.5</span>
+<span class="sd">        force_points (float): the repel force from points is multiplied by this</span>
+<span class="sd">            value; default 0.5</span>
+<span class="sd">        lim (int): limit of number of iterations</span>
+<span class="sd">        precision (float): up to which sum of all overlaps along both x and y</span>
+<span class="sd">            to iterate; may need to increase for complicated situations;</span>
+<span class="sd">            default 0, so no overlaps with anything.</span>
+<span class="sd">        only_move (dict): a dict to restrict movement of texts to only certain</span>
+<span class="sd">            axis. Valid keys are &#39;points&#39; and &#39;text&#39;, for each of them valid</span>
+<span class="sd">            values are &#39;x&#39;, &#39;y&#39; and &#39;xy&#39;. This way you can forbid moving texts</span>
+<span class="sd">            along either of the axes due to overlaps with points, but let it</span>
+<span class="sd">            happen if there is an overlap with texts: only_move={&#39;points&#39;:&#39;y&#39;,</span>
+<span class="sd">            &#39;text&#39;:&#39;xy&#39;}. Default: None, so everything is allowed.</span>
+<span class="sd">        text_from_text (bool): whether to repel texts from each other; default</span>
+<span class="sd">            True</span>
+<span class="sd">        text_from_points (bool): whether to repel texts from points; default</span>
+<span class="sd">            True; can helpful to switch of in extremely crouded plots</span>
+<span class="sd">        save_steps (bool): whether to save intermediate steps as images;</span>
+<span class="sd">            default False</span>
+<span class="sd">        save_prefix (str): a path and/or prefix to the saved steps; default &#39;&#39;</span>
+<span class="sd">        save_format (str): a format to save the steps into; default &#39;png</span>
+<span class="sd">        *args and **kwargs: any arguments will be fed into plt.annotate after</span>
+<span class="sd">            all the optimization is done just for plotting</span>
+<span class="sd">        add_step_numbers (bool): whether to add step numbers as titles to the</span>
+<span class="sd">            images of saving steps</span>
+<span class="sd">        draggable (bool): whether to make the annotations draggable; default</span>
+<span class="sd">            True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_figure</span><span class="p">()</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">get_renderer</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">texts</span><span class="p">)</span>
+    <span class="n">orig_xy</span> <span class="o">=</span> <span class="p">[</span><span class="n">text</span><span class="o">.</span><span class="n">get_position</span><span class="p">()</span> <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">]</span>
+    <span class="n">orig_x</span> <span class="o">=</span> <span class="p">[</span><span class="n">xy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">xy</span> <span class="ow">in</span> <span class="n">orig_xy</span><span class="p">]</span>
+    <span class="n">orig_y</span> <span class="o">=</span> <span class="p">[</span><span class="n">xy</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">xy</span> <span class="ow">in</span> <span class="n">orig_xy</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">orig_x</span><span class="p">,</span> <span class="n">orig_y</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Please specify both x and y, or neither&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Please specify both x and y, or neither&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">:</span>
+        <span class="n">text</span><span class="o">.</span><span class="n">set_va</span><span class="p">(</span><span class="n">va</span><span class="p">)</span>
+        <span class="n">text</span><span class="o">.</span><span class="n">set_ha</span><span class="p">(</span><span class="n">ha</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">save_steps</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">add_step_numbers</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;0a&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save_prefix</span><span class="o">+</span><span class="s1">&#39;0a.&#39;</span><span class="o">+</span><span class="n">save_format</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">save_format</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">autoalign</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">autoalign</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">texts</span> <span class="o">=</span> <span class="n">optimally_align_text</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">texts</span><span class="p">,</span>
+                                         <span class="n">direction</span><span class="o">=</span><span class="n">autoalign</span><span class="p">,</span>
+                                         <span class="n">expand</span><span class="o">=</span><span class="n">expand_points</span><span class="p">,</span> <span class="n">renderer</span><span class="o">=</span><span class="n">r</span><span class="p">,</span>
+                                         <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">texts</span> <span class="o">=</span> <span class="n">optimally_align_text</span><span class="p">(</span><span class="n">orig_x</span><span class="p">,</span> <span class="n">orig_y</span><span class="p">,</span> <span class="n">texts</span><span class="p">,</span>
+                                         <span class="n">expand</span><span class="o">=</span><span class="n">expand_points</span><span class="p">,</span> <span class="n">renderer</span><span class="o">=</span><span class="n">r</span><span class="p">,</span>
+                                         <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">save_steps</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">add_step_numbers</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;0b&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save_prefix</span><span class="o">+</span><span class="s1">&#39;0b.&#39;</span><span class="o">+</span><span class="n">save_format</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">save_format</span><span class="p">)</span>
+    <span class="n">texts</span> <span class="o">=</span> <span class="n">repel_text_from_axes</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">renderer</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="n">expand_points</span><span class="p">)</span>
+    <span class="n">history</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">]</span><span class="o">*</span><span class="mi">5</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">lim</span><span class="p">):</span>
+        <span class="n">q1</span><span class="p">,</span> <span class="n">q2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+        <span class="k">if</span> <span class="n">text_from_text</span><span class="p">:</span>
+            <span class="n">d_x_text</span><span class="p">,</span> <span class="n">d_y_text</span><span class="p">,</span> <span class="n">q1</span> <span class="o">=</span> <span class="n">repel_text</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">renderer</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+                                                <span class="n">expand</span><span class="o">=</span><span class="n">expand_text</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">d_x_text</span><span class="p">,</span> <span class="n">d_y_text</span><span class="p">,</span> <span class="n">q1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">texts</span><span class="p">),</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">texts</span><span class="p">),</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">text_from_points</span><span class="p">:</span>
+            <span class="n">d_x_points</span><span class="p">,</span> <span class="n">d_y_points</span><span class="p">,</span> <span class="n">q2</span> <span class="o">=</span> <span class="n">repel_text_from_points</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">texts</span><span class="p">,</span>
+                                                   <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">renderer</span><span class="o">=</span><span class="n">r</span><span class="p">,</span>
+                                                   <span class="n">expand</span><span class="o">=</span><span class="n">expand_points</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">d_x_points</span><span class="p">,</span> <span class="n">d_y_points</span><span class="p">,</span> <span class="n">q1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">texts</span><span class="p">),</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">texts</span><span class="p">),</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">only_move</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;text&#39;</span> <span class="ow">in</span> <span class="n">only_move</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;x&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">only_move</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]:</span>
+                    <span class="n">d_x_text</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">d_x_text</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s1">&#39;y&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">only_move</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]:</span>
+                    <span class="n">d_y_text</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">d_y_text</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">&#39;points&#39;</span> <span class="ow">in</span> <span class="n">only_move</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;x&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">only_move</span><span class="p">[</span><span class="s1">&#39;points&#39;</span><span class="p">]:</span>
+                    <span class="n">d_x_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">d_x_points</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s1">&#39;y&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">only_move</span><span class="p">[</span><span class="s1">&#39;points&#39;</span><span class="p">]:</span>
+                    <span class="n">d_y_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">d_y_points</span><span class="p">)</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">d_x_text</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">d_x_points</span><span class="p">)</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">d_y_text</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">d_y_points</span><span class="p">)</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">q1</span><span class="p">,</span> <span class="n">q2</span><span class="p">])[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">q1</span><span class="p">,</span> <span class="n">q2</span><span class="p">])</span><span class="o">&lt;</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">]),</span> <span class="mi">5</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">q</span> <span class="o">&gt;</span> <span class="n">precision</span> <span class="ow">and</span> <span class="n">q</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">history</span><span class="p">):</span>
+            <span class="n">history</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+            <span class="n">move_texts</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">dx</span><span class="o">*</span><span class="n">force_text</span><span class="p">,</span> <span class="n">dy</span><span class="o">*</span><span class="n">force_points</span><span class="p">,</span>
+                       <span class="n">bboxes</span> <span class="o">=</span> <span class="n">get_bboxes</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">save_steps</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">add_step_numbers</span><span class="p">:</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save_prefix</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.&#39;</span><span class="o">+</span><span class="n">save_format</span><span class="p">,</span>
+                                <span class="nb">format</span><span class="o">=</span><span class="n">save_format</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">break</span>
+
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">texts</span><span class="p">):</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">get_text</span><span class="p">(),</span> <span class="n">xy</span> <span class="o">=</span> <span class="p">(</span><span class="n">orig_xy</span><span class="p">[</span><span class="n">j</span><span class="p">]),</span>
+                    <span class="n">xytext</span><span class="o">=</span><span class="n">text</span><span class="o">.</span><span class="n">get_position</span><span class="p">(),</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">a</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">draggable</span><span class="p">:</span>
+            <span class="n">a</span><span class="o">.</span><span class="n">draggable</span><span class="p">()</span>
+        <span class="n">texts</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">save_steps</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">add_step_numbers</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save_prefix</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.&#39;</span><span class="o">+</span><span class="n">save_format</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">save_format</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

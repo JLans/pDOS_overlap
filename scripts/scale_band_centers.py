@@ -12,6 +12,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pdos_overlap.vasp_dos import VASP_DOS
 from pdos_overlap.vasp_dos import get_all_VASP_files
+from pdos_overlap.plotting_tools import set_figure_settings
+set_figure_settings('paper')
 
 GCNList = []
 atom_type = []
@@ -67,9 +69,9 @@ unoccupied_band_list = np.array(unoccupied_band_list).T
 filling_list = np.array(filling_list).T
 second_moment_list = np.array(second_moment_list).T
 bond_energy_list = np.array(bond_energy_list).T
-
+band_list
 #plotting scaling of band center with GCN
-plt.figure(figsize=(7,5))
+plt.figure(figsize=(3.7,3.2))
 colors = ['b','g','r']
 Efit = []
 for count, color in enumerate(colors):
@@ -77,69 +79,16 @@ for count, color in enumerate(colors):
     plt.plot(np.sort(GCNList), np.poly1d(Efit[count])(np.sort(GCNList)), color + '--')
 for count, color in enumerate(colors):
     plt.plot(GCNList, band_list[count], color + 'o')
-plt.legend([r'${\epsilon}_{s}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
+plt.legend([r'${\epsilon}_{s}$=%.2fGCN - %.2f eV' %(Efit[0][0],abs(Efit[0][1]))
 ,r'${\epsilon}_{p}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])
-,r'${\epsilon}_{d}$=%.2fGCN + %.2f eV' %(Efit[2][0],Efit[2][1])]
-,loc='best',prop={'size':14},frameon=False)
-plt.xlabel('Generalized coordination number (GCN)')
+,r'${\epsilon}_{d}$=%.2fGCN - %.2f eV' %(Efit[2][0],abs(Efit[2][1]))]
+,loc='best',frameon=False)
+#plt.xlabel('Generalized coordination number (GCN)')
 plt.ylabel('Band center (${\epsilon}$ - ${\epsilon}_{fermi}$) [eV]')
 plt.show()
 
-#plotting scaling of band center with GCN
-plt.figure(figsize=(7,5))
-colors = ['b','g','r']
-Efit = []
-for count, color in enumerate(colors):
-    Efit.append(np.polyfit(GCNList,occupied_band_list[count], 1))
-    plt.plot(np.sort(GCNList), np.poly1d(Efit[count])(np.sort(GCNList)), color + '--')
-for count, color in enumerate(colors):
-    plt.plot(GCNList, occupied_band_list[count], color + 'o')
-plt.legend([r'${\epsilon}_{s}^{*}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
-,r'${\epsilon}_{p}^{*}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])
-,r'${\epsilon}_{d}^{*}$=%.2fGCN + %.2f eV' %(Efit[2][0],Efit[2][1])]
-,loc='best',prop={'size':14},frameon=False)
-plt.xlabel('Generalized coordination number (GCN)')
-plt.ylabel('Occupied band center (${\epsilon}^{*}$ - ${\epsilon}_{fermi}$) [eV]')
-plt.show()
-
-#plotting scaling of band center with GCN
-plt.figure(figsize=(7,5))
-colors = ['b','g','r']
-Efit = []
-for count, color in enumerate(colors):
-    Efit.append(np.polyfit(GCNList,unoccupied_band_list[count], 1))
-    plt.plot(np.sort(GCNList), np.poly1d(Efit[count])(np.sort(GCNList)), color + '--')
-for count, color in enumerate(colors):
-    plt.plot(GCNList, unoccupied_band_list[count], color + 'o')
-plt.legend([r'${\epsilon}_{s}^{un}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
-,r'${\epsilon}_{p}^{un}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])
-,r'${\epsilon}_{d}^{un}$=%.2fGCN + %.2f eV' %(Efit[2][0],Efit[2][1])]
-,loc='best',prop={'size':14},frameon=False)
-plt.xlabel('Generalized coordination number (GCN)')
-plt.ylabel('Unoccupied band center (${\epsilon}^{un}$ - ${\epsilon}_{fermi}$) [eV]')
-plt.show()
-
-#plotting scaling of occupied band center with GCN
-plt.figure(figsize=(7,5))
-colors = ['b','g','r']
-Efit = []
-for count, color in enumerate(colors):
-    Efit.append(np.polyfit(GCNList, band_width_list[count], 1))
-    plt.plot(np.sort(GCNList), np.poly1d(Efit[count])(np.sort(GCNList)), color + '--')
-for count, color in enumerate(colors):
-    plt.plot(GCNList, band_width_list[count], color + 'o')
-plt.legend([r'${\epsilon}_{s}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
-,r'${\epsilon}_{p}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])
-,r'${\epsilon}_{d}$=%.2fGCN + %.2f eV' %(Efit[2][0],Efit[2][1])]
-,loc='best',prop={'size':14},frameon=False)
-plt.xlabel('Generalized coordination number (GCN)')
-plt.ylabel('Band width (${\epsilon}$) [eV]')
-plt.show()
-#plt.xlim([1,12.5])
-#plt.ylim([-6,1.5])
-
 #plotting scaling of band center with GCN for surface sites
-plt.figure(figsize=(7,5))
+plt.figure(figsize=(3.7,3.2))
 colors = ['b','g','r']
 Efit = []
 for count, color in enumerate(colors):
@@ -150,16 +99,16 @@ for count, color in enumerate(colors):
              (np.sort(GCNList[atom_type=='surface'])), color + '--')
 for count, color in enumerate(colors):
     plt.plot(GCNList[atom_type=='surface'], band_list[count][atom_type=='surface'], color + 'o')
-plt.legend([r'${\epsilon}_{s}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
+plt.legend([r'${\epsilon}_{s}$=%.2fGCN - %.2f eV' %(Efit[0][0],abs(Efit[0][1]))
 ,r'${\epsilon}_{p}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])
-,r'${\epsilon}_{d}$=%.2fGCN + %.2f eV' %(Efit[2][0],Efit[2][1])]
-,loc='best',prop={'size':14},frameon=False)
-plt.xlabel('Generalized coordination number (GCN)')
+,r'${\epsilon}_{d}$=%.2fGCN - %.2f eV' %(Efit[2][0],abs(Efit[2][1]))]
+,loc='best',frameon=False)
+#plt.xlabel('Generalized coordination number (GCN)')
 plt.ylabel('Band center (${\epsilon}$ - ${\epsilon}_{fermi}$) [eV]')
 plt.show()
 
 #plotting scaling of band center with GCN for surface sites
-plt.figure(figsize=(7,5))
+plt.figure(figsize=(3.5,3.2))
 colors = ['b','g','r']
 Efit = []
 for count, color in enumerate(colors):
@@ -170,16 +119,16 @@ for count, color in enumerate(colors):
              (np.sort(GCNList[atom_type=='surface'])), color + '--')
 for count, color in enumerate(colors):
     plt.plot(GCNList[atom_type=='surface'], filling_list[count][atom_type=='surface'], color + 'o')
-plt.legend([r'${filling}_{s}$=%.2fGCN + %.2f states' %(Efit[0][0],Efit[0][1])
-,r'${filling}_{p}$=%.2fGCN + %.2f states' %(Efit[1][0],Efit[1][1])
-,r'${filling}_{d}$=%.2fGCN + %.2f states' %(Efit[2][0],Efit[2][1])]
-,loc='best',prop={'size':14},frameon=False)
+#plt.legend([r'${filling}_{s}$=%.2fGCN + %.2f states' %(Efit[0][0],Efit[0][1])
+#,r'${filling}_{p}$=%.2fGCN + %.2f states' %(Efit[1][0],Efit[1][1])
+#,r'${filling}_{d}$=%.2fGCN + %.2f states' %(Efit[2][0],Efit[2][1])]
+#,loc='best',frameon=False)
 plt.xlabel('Generalized coordination number (GCN)')
 plt.ylabel('Filling [states]')
 plt.show()
 
 #plotting scaling of band center with GCN for surface sites
-plt.figure(figsize=(7,5))
+plt.figure(figsize=(3.5,3.2))
 colors = ['b','g','r']
 Efit = []
 for count, color in enumerate(colors):
@@ -190,16 +139,16 @@ for count, color in enumerate(colors):
              (np.sort(GCNList[atom_type=='surface'])), color + '--')
 for count, color in enumerate(colors):
     plt.plot(GCNList[atom_type=='surface'], occupied_band_list[count][atom_type=='surface'], color + 'o')
-plt.legend([r'${\epsilon}_{s}^{*}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
-,r'${\epsilon}_{p}^{*}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])
-,r'${\epsilon}_{d}^{*}$=%.2fGCN + %.2f eV' %(Efit[2][0],Efit[2][1])]
-,loc='best',prop={'size':14},frameon=False)
-plt.xlabel('Generalized coordination number (GCN)')
+#plt.legend([r'${\epsilon}_{s}^{*}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
+#,r'${\epsilon}_{p}^{*}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])
+#,r'${\epsilon}_{d}^{*}$=%.2fGCN + %.2f eV' %(Efit[2][0],Efit[2][1])]
+#,loc='best',frameon=False)
+#plt.xlabel('Generalized coordination number (GCN)')
 plt.ylabel('Occupied band center (${\epsilon}^{*}$ - ${\epsilon}_{fermi}$) [eV]')
 plt.show()
 
 #plotting scaling of band center with GCN for surface sites
-plt.figure(figsize=(7,5))
+plt.figure(figsize=(3.5,3.2))
 colors = ['b','g','r']
 Efit = []
 for count, color in enumerate(colors):
@@ -210,37 +159,16 @@ for count, color in enumerate(colors):
              (np.sort(GCNList[atom_type=='surface'])), color + '--')
 for count, color in enumerate(colors):
     plt.plot(GCNList[atom_type=='surface'], unoccupied_band_list[count][atom_type=='surface'], color + 'o')
-plt.legend([r'${\epsilon}_{s}^{un}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
-,r'${\epsilon}_{p}^{un}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])
-,r'${\epsilon}_{d}^{un}$=%.2fGCN + %.2f eV' %(Efit[2][0],Efit[2][1])]
-,loc='best',prop={'size':14},frameon=False)
-plt.xlabel('Generalized coordination number (GCN)')
+#plt.legend([r'${\epsilon}_{s}^{un}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
+#,r'${\epsilon}_{p}^{un}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])
+#,r'${\epsilon}_{d}^{un}$=%.2fGCN + %.2f eV' %(Efit[2][0],Efit[2][1])]
+#,loc='best',frameon=False)
+#plt.xlabel('Generalized coordination number (GCN)')
 plt.ylabel('Unoccupied band center (${\epsilon}^{un}$ - ${\epsilon}_{fermi}$) [eV]')
 plt.show()
 
-
 #plotting scaling of occupied band center with GCN for surface sites
-plt.figure(figsize=(7,5))
-colors = ['b','g','r']
-Efit = []
-for count, color in enumerate(colors):
-    Efit.append(np.polyfit(GCNList[atom_type=='surface']\
-                ,band_width_list[count][atom_type=='surface'], 1))
-    plt.plot(np.sort(GCNList[atom_type=='surface'])\
-             , np.poly1d(Efit[count])\
-             (np.sort(GCNList[atom_type=='surface'])), color + '--')
-for count, color in enumerate(colors):
-    plt.plot(GCNList[atom_type=='surface'], band_width_list[count][atom_type=='surface'], color + 'o')
-plt.legend([r'${\epsilon}_{s}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
-,r'${\epsilon}_{p}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])
-,r'${\epsilon}_{d}$=%.2fGCN + %.2f eV' %(Efit[2][0],Efit[2][1])]
-,loc='best',prop={'size':14},frameon=False)
-plt.xlabel('Generalized coordination number (GCN)')
-plt.ylabel('Band width [eV]')
-plt.show()
-
-#plotting scaling of occupied band center with GCN for surface sites
-plt.figure(figsize=(7,5))
+plt.figure(figsize=(3.5,3.2))
 colors = ['b','g','r']
 Efit = []
 for count, color in enumerate(colors):
@@ -251,16 +179,16 @@ for count, color in enumerate(colors):
              (np.sort(GCNList[atom_type=='surface'])), color + '--')
 for count, color in enumerate(colors):
     plt.plot(GCNList[atom_type=='surface'], second_moment_list[count][atom_type=='surface'], color + 'o')
-plt.legend([r'${\epsilon}_{s}$=%.2fGCN + %.2f eV$^{2}$' %(Efit[0][0],Efit[0][1])
-,r'${\epsilon}_{p}$=%.2fGCN + %.2f eV$^{2}$' %(Efit[1][0],Efit[1][1])
-,r'${\epsilon}_{d}$=%.2fGCN + %.2f eV$^{2}$' %(Efit[2][0],Efit[2][1])]
-,loc='best',prop={'size':14},frameon=False)
-plt.xlabel('Generalized coordination number (GCN)')
+#plt.legend([r'${\sigma^{2}}_{s}$=%.2fGCN + %.2f eV$^{2}$' %(Efit[0][0],Efit[0][1])
+#,r'${\sigma^{2}}_{p}$=%.2fGCN + %.2f eV$^{2}$' %(Efit[1][0],Efit[1][1])
+#,r'${\sigma^{2}}_{d}$=%.2fGCN + %.2f eV$^{2}$' %(Efit[2][0],Efit[2][1])]
+#,loc='best',frameon=False)
+#plt.xlabel('Generalized coordination number (GCN)')
 plt.ylabel('Second moment [eV$^{2}$]')
 plt.show()
 
 #bond energy
-plt.figure(figsize=(7,5))
+plt.figure(figsize=(3.5,3.2))
 colors = ['b','g','r']
 Efit = []
 for count, color in enumerate(colors):
@@ -271,10 +199,10 @@ for count, color in enumerate(colors):
              (np.sort(GCNList[atom_type=='surface'])), color + '--')
 for count, color in enumerate(colors):
     plt.plot(GCNList[atom_type=='surface'], bond_energy_list[count][atom_type=='surface'], color + 'o')
-plt.legend([r'${be}_{s}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
-,r'${be}_{p}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])
-,r'${be}_{d}$=%.2fGCN + %.2f eV' %(Efit[2][0],Efit[2][1])]
-,loc='best',prop={'size':14},frameon=False)
-plt.xlabel('Generalized coordination number (GCN)')
+#plt.legend([r'${be}_{s}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
+#,r'${be}_{p}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])
+#,r'${be}_{d}$=%.2fGCN + %.2f eV' %(Efit[2][0],Efit[2][1])]
+#,loc='best',frameon=False)
+#plt.xlabel('Generalized coordination number (GCN)')
 plt.ylabel('Bond energy [eV]')
 plt.show()

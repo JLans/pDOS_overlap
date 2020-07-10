@@ -64,7 +64,7 @@ C2H4_overlap = PDOS_OVERLAP(GAS_PDOS, REFERENCE_PDOS, reference_indices\
 # ----------------------
 #
 # We plot the projected density of the gas, adsorbate, and adsorption site.
-C2H4_overlap.plot_projected_density()
+C2H4_overlap.plot_projected_density(figure_directory=Downloads_folder)
 
 #######################################################################################
 # Find the optimal upshift factor

@@ -288,7 +288,7 @@ def get_filling(energies, densities, max_energy=None, min_energy=None, axis=-1):
 
 class VASP_DOS:
     """Class for extracting projected density of states from VASP"""
-    def __init__(self, file_name="DOSCAR",no_negatives=True):
+    def __init__(self, file_name="DOSCAR",no_negatives=True, add_p2s=False):
         """ 
         Parameters
         ----------
@@ -328,7 +328,11 @@ class VASP_DOS:
             
         orbital_dictionary: dict
             dictionary that maps resolved sublevels/orbitals to indices
+            
+        add_p2s : bool
+            if true adds the p density to the s density (useful for metals)
         """
+        
         if file_name[-14:] == 'DOSCAR.lobster':
             natoms, emax, emin, ndos, e_fermi, is_spin, m_projected\
             , orbital_dictionary = self._read_lobster(file_name=file_name, no_negatives=no_negatives)
@@ -336,6 +340,7 @@ class VASP_DOS:
         elif file_name[-6:] == 'DOSCAR':
             natoms, emax, emin, ndos, e_fermi, is_spin, m_projected\
             , orbital_dictionary = self._read_doscar(file_name=file_name, no_negatives=no_negatives)
+                
         self.no_negatives = no_negatives
         self.natoms = natoms
         self.emax = emax
@@ -344,7 +349,18 @@ class VASP_DOS:
         self.e_fermi = e_fermi
         self.is_spin = is_spin
         self.m_projected = m_projected
+        self.add_p2s = add_p2s
         self.orbital_dictionary = orbital_dictionary
+        if add_p2s == True and is_spin == False:
+            for i in range(natoms):
+                self._site_dos[i,orbital_dictionary['s'],:]\
+                    += self.get_site_dos(i, ['p'], sum_density=True)[1][0]
+        elif add_p2s == True and is_spin == True:
+            for i in range(natoms):
+                self._site_dos[i,orbital_dictionary['s+'],:]\
+                        += self.get_site_dos(i, ['p+'], sum_density=True)[1][0]
+                self._site_dos[i,orbital_dictionary['s-'],:]\
+                        += self.get_site_dos(i, ['p-'], sum_density=True)[1][0]
         
     def apply_gaussian_filter(self, sigma):
         """Applies Gaussian filter to self._total_dos and self._site_dos
