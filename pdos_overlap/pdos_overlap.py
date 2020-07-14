@@ -865,14 +865,14 @@ class PDOS_OVERLAP:
                 axes = fig.subplots(nrows=1, ncols=2)
                 axes_list = [axes[0], axes[1], axes[1,0]]
             else:
-                fig = plt.figure(figsize=(7.2,5),dpi=400)
+                fig = plt.figure(figsize=(7.2,4),dpi=400)
                 abc = ['(a)','(b)','(c)','(d)']
                 axes = fig.subplots(nrows=2, ncols=2)
                 axes_list = [axes[0,0], axes[0,1], axes[1,0], axes[1,1]]
             xticks = np.arange(1,len(overlap_orbitals)+1)
             #plotting function
             for index, overlap in enumerate(energy_overlap):
-                axes_list[index].text(0.90,0.92,abc[index],transform=axes_list[index].transAxes)
+                axes_list[index].text(0.93,0.90,abc[index],transform=axes_list[index].transAxes)
                 axes_list[index].bar(xticks,overlap)
                 axes_list[index].set_xticks(xticks)
                 axes_list[index].set_xticklabels(overlap_orbitals)

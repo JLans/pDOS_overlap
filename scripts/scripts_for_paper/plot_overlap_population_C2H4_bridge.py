@@ -23,13 +23,13 @@ Downloads_folder = os.path.join(os.path.expanduser("~"),'Downloads')
 #
 # First we will, get the example data, load a DOSCAR file and use it to
 # instantiate a VASP_DOS object.
-gas = 'C2H4'
+gas = 'gases/C2H4'
 adsorbate = 'C2H4_bridge'
 surface = 'Pt111'
 set_figure_settings('paper')
 np.set_printoptions(linewidth=100)
 #These files are too large to store in the examples directory
-lobster_path = r'C:\Users\lansf\Documents\Data\PROBE_PDOS\lobster_files'
+lobster_path = r'C:\Users\lansf\Documents\Data\PROBE_PDOS\lobster_files_(N+1)bands'
 GAS_DOSCAR = os.path.join(lobster_path, gas + '/DOSCAR.lobster')
 GAS_CONTCAR = os.path.join(lobster_path, gas + '/CONTCAR')
 ADSORBATE_DOSCAR = os.path.join(lobster_path, 'surfaces_noW/'+surface + '+'\

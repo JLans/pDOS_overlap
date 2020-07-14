@@ -23,13 +23,13 @@ Downloads_folder = os.path.join(os.path.expanduser("~"),'Downloads')
 #
 # First we will, get the example data, load a DOSCAR file and use it to
 # instantiate a VASP_DOS object.
-gas = 'NO'
+gas = 'gases/NO'
 adsorbate = 'NO_atop'
 surface = 'Pt111'
 set_figure_settings('paper')
 np.set_printoptions(linewidth=100)
 #These files are too large to store in the examples directory
-lobster_path = r'C:\Users\lansf\Documents\Data\PROBE_PDOS\lobster_files'
+lobster_path = r'C:\Users\lansf\Documents\Data\PROBE_PDOS\lobster_files_(N+1)bands'
 GAS_DOSCAR = os.path.join(lobster_path, gas + '/DOSCAR.lobster')
 GAS_CONTCAR = os.path.join(lobster_path, gas + '/CONTCAR')
 ADSORBATE_DOSCAR = os.path.join(lobster_path, 'surfaces_noW/'+surface + '+'\
@@ -123,7 +123,7 @@ print(CO_overlap.adsorbate_occupations)
 #
 # We select energy overlap histograms with the adsorbate molecular orbitals
 # that influence spectra. Gas orbitals 1,2, and 3 interact with the surface.
-CO_overlap.plot_energy_overlap(indices=[0,1,2,3], atomic_orbitals=['s', 'd']
+CO_overlap.plot_energy_overlap(indices=[1,2,3,4], atomic_orbitals=['s', 'd']
                                , figure_directory=Downloads_folder)
 
 

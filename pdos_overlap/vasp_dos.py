@@ -930,51 +930,56 @@ class VASP_DOS:
             pdos = get_dos(f,ndos)
             dos.append(pdos)
         _site_dos = np.array(dos)
-        if no_negatives == True:
+        if no_negatives == True and len(_site_dos.shape) > 1:
             _site_dos[:,1:,:][_site_dos[:,1:,:][...] < 0] = 0 
         
         # Integer indexing for orbitals starts from 1 in the _site_dos array
         # since the 0th column contains the energies
-        norbs = _site_dos.shape[1] - 1
-        if norbs == 3:
+        if len(_site_dos.shape) > 1:
+            norbs = _site_dos.shape[1] - 1
+            if norbs == 3:
+                m_projected = False
+                orbitals = {'s': 1, 'p': 2, 'd': 3}
+            elif norbs == 4:
+                m_projected = False
+                orbitals = {'s': 1, 'p': 2, 'd': 3, 'f': 4}
+            elif norbs == 6:
+                m_projected = False
+                orbitals = {'s+': 1, 's-': 2, 'p+': 3, 'p-': 4, 'd+': 5, 'd-': 6}
+            elif norbs == 8:
+                m_projected = False
+                orbitals = {'s+': 1, 's-': 2, 'p+': 3, 'p-': 4,
+                            'd+': 5, 'd-': 6, 'f+': 7, 'f-': 8}
+            elif norbs == 9:
+                m_projected = True
+                orbitals = {'s': 1, 'py': 2, 'pz': 3, 'px': 4,
+                        'dxy': 5, 'dyz': 6, 'dz2': 7, 'dxz': 8, 'dx2-y2': 9}
+            elif norbs == 16:
+                m_projected = True
+                orbitals = {'s': 1, 'py': 2, 'pz': 3, 'px': 4,
+                            'dxy': 5, 'dyz': 6, 'dz2': 7, 'dxz': 8, 'dx2': 9,
+                            'fy(3x2-y2)': 10, 'fxyz': 11, 'fyz2': 12, 'fz3': 13,
+                            'fxz2': 14, 'fz(x2-y2)': 15, 'fx(x2-3y2)': 16}
+            elif norbs == 18:
+                m_projected = True
+                orbitals = {'s+': 1, 's-': 2, 'py+': 3, 'py-': 4, 'pz+': 5,
+                            'pz-': 6, 'px+': 7, 'px-': 8, 'dxy+': 9, 'dxy-': 10,
+                            'dyz+': 11, 'dyz-': 12, 'dz2+': 13, 'dz2-': 14,
+                            'dxz+': 15, 'dxz-': 16, 'dx2-y2+': 17, 'dx2-y2-': 18}
+            elif norbs == 32:
+                m_projected = True
+                orbitals = {'s+': 1, 's-': 2, 'py+': 3, 'py-': 4, 'pz+': 5,
+                            'pz-': 6, 'px+': 7, 'px-': 8, 'dxy+': 9, 'dxy-': 10,
+                            'dyz+': 11, 'dyz-': 12, 'dz2+': 13, 'dz2-': 14,
+                            'dxz+': 15, 'dxz-': 16, 'dx2-y2+': 17, 'dx2-y2-': 18,
+                            'fy(3x2-y2)+': 19, 'fy(3x2-y2)-': 20, 'fxyz+': 21,
+                            'fxyz-': 22, 'fyz2+': 23, 'fyz2-': 24, 'fz3+': 25,
+                            'fz3-': 26, 'fxz2+': 27, 'fxz2-': 28, 'fz(x2-y2)+': 29,
+                            'fz(x2-y2)-': 30, 'fx(x2-3y2)+': 31, 'fx(x2-3y2)-': 32}
+        else:
+            norbs = None
+            orbitals = None
             m_projected = False
-            orbitals = {'s': 1, 'p': 2, 'd': 3}
-        elif norbs == 4:
-            m_projected = False
-            orbitals = {'s': 1, 'p': 2, 'd': 3, 'f': 4}
-        elif norbs == 6:
-            m_projected = False
-            orbitals = {'s+': 1, 's-': 2, 'p+': 3, 'p-': 4, 'd+': 5, 'd-': 6}
-        elif norbs == 8:
-            m_projected = False
-            orbitals = {'s+': 1, 's-': 2, 'p+': 3, 'p-': 4,
-                        'd+': 5, 'd-': 6, 'f+': 7, 'f-': 8}
-        elif norbs == 9:
-            m_projected = True
-            orbitals = {'s': 1, 'py': 2, 'pz': 3, 'px': 4,
-                    'dxy': 5, 'dyz': 6, 'dz2': 7, 'dxz': 8, 'dx2-y2': 9}
-        elif norbs == 16:
-            m_projected = True
-            orbitals = {'s': 1, 'py': 2, 'pz': 3, 'px': 4,
-                        'dxy': 5, 'dyz': 6, 'dz2': 7, 'dxz': 8, 'dx2': 9,
-                        'fy(3x2-y2)': 10, 'fxyz': 11, 'fyz2': 12, 'fz3': 13,
-                        'fxz2': 14, 'fz(x2-y2)': 15, 'fx(x2-3y2)': 16}
-        elif norbs == 18:
-            m_projected = True
-            orbitals = {'s+': 1, 's-': 2, 'py+': 3, 'py-': 4, 'pz+': 5,
-                        'pz-': 6, 'px+': 7, 'px-': 8, 'dxy+': 9, 'dxy-': 10,
-                        'dyz+': 11, 'dyz-': 12, 'dz2+': 13, 'dz2-': 14,
-                        'dxz+': 15, 'dxz-': 16, 'dx2-y2+': 17, 'dx2-y2-': 18}
-        elif norbs == 32:
-            m_projected = True
-            orbitals = {'s+': 1, 's-': 2, 'py+': 3, 'py-': 4, 'pz+': 5,
-                        'pz-': 6, 'px+': 7, 'px-': 8, 'dxy+': 9, 'dxy-': 10,
-                        'dyz+': 11, 'dyz-': 12, 'dz2+': 13, 'dz2-': 14,
-                        'dxz+': 15, 'dxz-': 16, 'dx2-y2+': 17, 'dx2-y2-': 18,
-                        'fy(3x2-y2)+': 19, 'fy(3x2-y2)-': 20, 'fxyz+': 21,
-                        'fxyz-': 22, 'fyz2+': 23, 'fyz2-': 24, 'fz3+': 25,
-                        'fz3-': 26, 'fxz2+': 27, 'fxz2-': 28, 'fz(x2-y2)+': 29,
-                        'fz(x2-y2)-': 30, 'fx(x2-3y2)+': 31, 'fx(x2-3y2)-': 32}
         self._total_dos = _total_dos
         self._site_dos = _site_dos
         return natoms, emax, emin, ndos, e_fermi, is_spin, m_projected, orbitals
@@ -1219,7 +1224,7 @@ class VASP_DOS:
                     _site_dos[count][17] = pdos[17] # dx2-y2+
                     _site_dos[count][18] = pdos[18] # dx2-y2-
         m_projected = True
-        if no_negatives == True:
+        if no_negatives == True and len(_site_dos.shape) > 1:
             _site_dos[:,1:,:][_site_dos[:,1:,:][...] < 0] = 0 
         self._total_dos = _total_dos
         self._site_dos = _site_dos

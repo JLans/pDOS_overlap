@@ -12,6 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pdos_overlap.plotting_tools import set_figure_settings
 from pdos_overlap.plotting_tools import adjust_text
+from scipy.stats import linregress
 set_figure_settings('paper')
 Downloads_folder = os.path.join(os.path.expanduser("~"),'Downloads')
 #from jl_spectra_2_structure.primary_data_creation.dft_2_data import Primary_DATA
@@ -28,7 +29,9 @@ dict_filter = np.all((np.array(CO_dict['CN_ADSORBATE'])==1
 frequencies = np.array(CO_dict['FREQUENCIES'])[dict_filter]
 GCN = np.array(CO_dict['GCN'])[dict_filter]
 NumPt = np.array(CO_dict['NUM_METAL'])[dict_filter]
-freqfit = np.polyfit(GCN,frequencies.max(axis=-1), 1)
+slope, intercept, r_value, p_value, std_err = linregress(GCN, frequencies.max(axis=-1))
+freqfit = [slope, intercept]
+print(r_value**2)
 plt.figure(figsize=(7.2,4), dpi=400)
 plt.plot(np.sort(GCN), np.poly1d(freqfit)
              (np.sort(GCN)), 'k--')
