@@ -858,7 +858,7 @@ class PDOS_OVERLAP:
                                                     , sum_spin=self.sum_spin
                                                     , normalize=False)
         energy_overlap = energy_overlap[indices]
-        if figure_directory not in ['presentation', 'paper']:
+        if figure_directory not in ['presentation', 'paper', 'print']:
             if len(indices) == 2:
                 fig = plt.figure(figsize=(7.2,2),dpi=400)
                 abc = ['(a)','(b)']
@@ -885,8 +885,6 @@ class PDOS_OVERLAP:
         else:
             if figure_directory == 'presentation':
                 set_figure_settings('presentation')
-            else:
-                set_figure_settings('paper')
             if len(energy_overlap.shape) == 1:
                 energy_overlap = [energy_overlap]
             for overlap in energy_overlap:
@@ -962,10 +960,11 @@ class PDOS_OVERLAP:
         plot_density(REFERENCE_PDOS, adsorbate_indices, 1)
         #plot adsorption-site density
         plot_density(REFERENCE_PDOS, site_indices, 2)
-        fig.text(0.001, 0.5, 'State density [states/eV]', va='center', rotation='vertical')
-        fig.text(0.5, 0.01, 'Energy [eV]', ha='center')
+        fig.text(0.001, 0.5, 'Energy [eV]', va='center', rotation='vertical')
+        fig.text(0.5, 0.01, 'State density [states/eV]', ha='center')
         if figure_directory not in ['print', 'presentation']:
             figure_path = os.path.join(figure_directory,'pdos.'+extension)
+            fig.set_tight_layout({'pad':2,'w_pad':1})
             plt.savefig(figure_path, format=extension)
             plt.close()
         else:

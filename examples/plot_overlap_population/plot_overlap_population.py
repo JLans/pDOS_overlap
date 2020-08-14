@@ -61,4 +61,3 @@ plt.legend(['C-C overlap population','C-H overlap population','fermi level'],loc
 plt.xlabel('Orbital overlap')
 plt.ylabel('Energy [eV]')
 plt.show()
-

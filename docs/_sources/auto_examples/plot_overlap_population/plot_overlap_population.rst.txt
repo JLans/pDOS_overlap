@@ -126,7 +126,6 @@ in the bond than outside of the bond
 
 
 
-
 .. image:: /auto_examples/plot_overlap_population/images/sphx_glr_plot_overlap_population_001.png
     :class: sphx-glr-single-img
 
@@ -137,7 +136,7 @@ in the bond than outside of the bond
 
  .. code-block:: none
 
-    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pdos_overlap\examples\plot_overlap_population\plot_overlap_population.py:63: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+    C:\Users\lansf\Box Sync\Synced_Files\Coding\Python\Github\pDOS_overlap\examples\plot_overlap_population\plot_overlap_population.py:63: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
       plt.show()
 
 
@@ -146,7 +145,7 @@ in the bond than outside of the bond
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.450 seconds)
+   **Total running time of the script:** ( 0 minutes  0.294 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_overlap_population_plot_overlap_population.py:

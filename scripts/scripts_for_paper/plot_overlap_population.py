@@ -30,10 +30,10 @@ set_figure_settings('paper')
 np.set_printoptions(linewidth=100)
 #These files are too large to store in the examples directory
 lobster_path = r'C:\Users\lansf\Documents\Data\PROBE_PDOS\lobster_files_(N+1)bands'
-GAS_DOSCAR = os.path.join(lobster_path, gas + '/DOSCAR')
+GAS_DOSCAR = os.path.join(lobster_path, gas + '/DOSCAR.lobster')
 GAS_CONTCAR = os.path.join(lobster_path, gas + '/CONTCAR')
 ADSORBATE_DOSCAR = os.path.join(lobster_path, 'surfaces_noW/'+surface + '+'\
-                          + adsorbate + '/DOSCAR')
+                          + adsorbate + '/DOSCAR.lobster')
 ADSORBATE_CONTCAR = os.path.join(lobster_path, 'surfaces_noW/'+surface + '+'\
                           + adsorbate + '/CONTCAR')
 
@@ -58,7 +58,7 @@ reference_indices, site_indices = get_adsorbate_indices(GAS_CONTCAR\
                                                         , ADSORBATE_CONTCAR)
 #Initialize Coordination object. Repeat is necessary so it doesn't count itself
 CO_overlap = PDOS_OVERLAP(GAS_PDOS, REFERENCE_PDOS, reference_indices\
-                          , site_indices, min_occupation=1.5\
+                          , site_indices, min_occupation=0.9\
                           , upshift=0.5, energy_weight=4)
     
 #######################################################################################
@@ -162,8 +162,8 @@ plot_density(GAS_OVERLAP, POP_CO_GAS.get_energies(), POP_CO_GAS.e_fermi, 0)
 plot_density(CO_OVERLAP, POP_CO_ADSORBATE.get_energies(), POP_CO_ADSORBATE.e_fermi, 1)
 #plot adsorption-site density
 plot_density(ADSORBATE_OVERLAP, POP_CO_ADSORBATE.get_energies(), POP_CO_ADSORBATE.e_fermi, 2)
-fig.text(0.001, 0.5, 'Overlap density [states/eV]', va='center', rotation='vertical')
-fig.text(0.5, 0.01, 'Energy [eV]', ha='center')
+fig.text(0.001, 0.5, 'Energy [eV]', va='center', rotation='vertical')
+fig.text(0.5, 0.01, 'Overlap density [states/eV]', ha='center')
 figure_path = os.path.join(Downloads_folder,'pccop.jpg')
 fig.set_tight_layout({'pad':2,'w_pad':1})
 plt.savefig(figure_path, format='jpg')

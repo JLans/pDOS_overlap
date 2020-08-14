@@ -103,8 +103,8 @@ for count, color in enumerate(colors):
     axes[0,0].plot(np.sort(GCNList), np.poly1d(Efit[count])(np.sort(GCNList)), color + '--')
 for count, color in enumerate(colors):
     axes[0,0].plot(GCNList, band_list[count], color + 'o')
-axes[0,0].legend([r'${\epsilon}_{s}^{*}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
-,r'${\epsilon}_{d}^{*}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])]
+axes[0,0].legend([r'${\epsilon}_{s}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
+,r'${\epsilon}_{d}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])]
 ,loc=3,frameon=False)
 #plt.xlabel('Generalized coordination number (GCN)')
 axes[0,0].set_ylabel('Band center [eV]')
@@ -125,8 +125,8 @@ for count, color in enumerate(colors):
 for count, color in enumerate(colors):
     axes[0,1].plot(GCNList[atom_type=='surface'], band_list[count][atom_type=='surface'], color + 'o')
 
-axes[0,1].legend([r'${\epsilon}_{s}^{*}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
-,r'${\epsilon}_{d}^{*}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])]
+axes[0,1].legend([r'${\epsilon}_{s}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
+,r'${\epsilon}_{d}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])]
 ,loc=3,frameon=False)
 #plt.xlabel('Generalized coordination number (GCN)')
 axes[0,1].set_ylabel('Band center [eV]')
@@ -167,8 +167,8 @@ for count, color in enumerate(colors):
              (np.sort(GCNList[atom_type=='surface'])), color + '--')
 for count, color in enumerate(colors):
     axes[1,1].plot(GCNList[atom_type=='surface'], unoccupied_band_list[count][atom_type=='surface'], color + 'o')
-axes[1,1].legend([r'${\epsilon}_{s}^{*}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
-,r'${\epsilon}_{d}^{*}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])]
+axes[1,1].legend([r'${\epsilon}_{s}^{un}$=%.2fGCN + %.2f eV' %(Efit[0][0],Efit[0][1])
+,r'${\epsilon}_{d}^{un}$=%.2fGCN + %.2f eV' %(Efit[1][0],Efit[1][1])]
 ,loc=4,frameon=False)
 axes[1,1].set_ylabel('Unoccupied band center [eV]')
 axes[1,1].text(0.01,0.92,'(d)',transform=axes[1,1].transAxes)

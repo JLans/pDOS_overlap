@@ -11,25 +11,23 @@ with an adsorbate and surface atom.
 import os
 import numpy as np
 from pdos_overlap.vasp_dos import VASP_DOS
-from pdos_overlap.plotting_tools import set_figure_settings
 from pdos_overlap import get_adsorbate_indices
 from pdos_overlap import PDOS_OVERLAP
-from pdos_overlap.coordination import get_geometric_data
 from pdos_overlap.overlap_population import OVERLAP_POPULATION
-
+import matplotlib.pyplot as plt
+Downloads_folder = os.path.join(os.path.expanduser("~"),'Downloads')
 #######################################################################################
 # Load DOSCAR file
 # ----------------
 #
 # First we will, get the example data, load a DOSCAR file and use it to
 # instantiate a VASP_DOS object.
-gas = 'CO'
+gas = 'gases/CO'
 adsorbate = 'CO'
 surface = 'Pt111'
-set_figure_settings('paper')
 np.set_printoptions(linewidth=100)
 #These files are too large to store in the examples directory
-lobster_path = r'C:\Users\lansf\Documents\Data\PROBE_PDOS\lobster_files'
+lobster_path = r'C:\Users\lansf\Documents\Data\PROBE_PDOS\lobster_files_(N+1)bands'
 GAS_DOSCAR = os.path.join(lobster_path, gas + '/DOSCAR.lobster')
 GAS_CONTCAR = os.path.join(lobster_path, gas + '/CONTCAR')
 ADSORBATE_DOSCAR = os.path.join(lobster_path, 'surfaces_noW/'+surface + '+'\
@@ -58,7 +56,7 @@ reference_indices, site_indices = get_adsorbate_indices(GAS_CONTCAR\
                                                         , ADSORBATE_CONTCAR)
 #Initialize Coordination object. Repeat is necessary so it doesn't count itself
 CO_overlap = PDOS_OVERLAP(GAS_PDOS, REFERENCE_PDOS, reference_indices\
-                          , site_indices, min_occupation=1.5\
+                          , site_indices, min_occupation=0.9\
                           , upshift=0.5, energy_weight=4)
     
 #######################################################################################
@@ -66,7 +64,7 @@ CO_overlap = PDOS_OVERLAP(GAS_PDOS, REFERENCE_PDOS, reference_indices\
 # ----------------------
 #
 # We plot the projected density of the gas, adsorbate, and adsorption site.
-CO_overlap.plot_projected_density()
+CO_overlap.plot_projected_density(figure_directory='print')
 
 #######################################################################################
 # Find the optimal upshift factor
@@ -80,21 +78,6 @@ optimized_upshift = CO_overlap.optimize_energy_shift(bound=[-10,10]\
                                                      , reset=True, plot=True)
 print(optimized_upshift)
  
-#######################################################################################
-# Print orbital CO_overlap attributes
-# -----------------------------------
-#
-# Differences in features are used in computing orbital scores. 
-# Scores are used to map gas molecular orbitals ot adsorbate molecular orbitals.
-print('Print molecular gas and adsorbate orbital features, respectively.')
-print(CO_overlap.gas_features)
-print(CO_overlap.adsorbate_features)
-print('#####################################################################')
-print('Orbital matching scores')
-print(CO_overlap.orbital_scores)
-print('#####################################################################')
-print('Gas to adsorbate indices and band centers')
-print(CO_overlap.gas_2_adsorbate)
 
 #######################################################################################
 # Identify bonding orbitals
@@ -105,81 +88,81 @@ print(CO_overlap.gas_2_adsorbate)
 
 #gas
 COOPCAR_CO = os.path.join(lobster_path, gas + '/COOPCAR.lobster')
-POP_CO = OVERLAP_POPULATION(COOPCAR_CO)
-bonding_states = POP_CO.get_bonding_states(CO_overlap.gas_orbital_indices\
+POP_CO_GAS = OVERLAP_POPULATION(COOPCAR_CO)
+bonding_states = POP_CO_GAS.get_bonding_states(CO_overlap.gas_orbital_indices\
                                                , CO_overlap.GAS_PDOS.get_energies()\
-                                               , set_antibonding_zero=True)
+                                               , set_antibonding_zero=False)
 print('Gas bonding states')
 print(bonding_states)
     
 #adsorbate
 COOPCAR_CO = os.path.join(lobster_path, 'surfaces_noW/'+surface + '+'\
                           + adsorbate + '/COOPCAR.lobster')
-POP_CO = OVERLAP_POPULATION(COOPCAR_CO)
-bonding_states = POP_CO.get_bonding_states(CO_overlap.adsorbate_orbital_indices\
+POP_CO_ADSORBATE = OVERLAP_POPULATION(COOPCAR_CO)
+bonding_states = POP_CO_ADSORBATE.get_bonding_states(CO_overlap.adsorbate_orbital_indices\
                                                , CO_overlap.REFERENCE_PDOS.get_energies()\
                                                , set_antibonding_zero=True
                                                , emax = CO_overlap.REFERENCE_PDOS.e_fermi)
 print('Adsorbate bonding states')
 print(bonding_states)
 
-bonding_states = POP_CO.get_bonding_states(CO_overlap.adsorbate_orbital_indices
+bonding_states = POP_CO_ADSORBATE.get_bonding_states(CO_overlap.adsorbate_orbital_indices
                                                , CO_overlap.REFERENCE_PDOS.get_energies()
                                                , interactions = [2]
                                                , set_antibonding_zero=False
                                                , emax = CO_overlap.REFERENCE_PDOS.e_fermi)
 print('C-O bonding states')
 print(bonding_states)
-
+print(CO_overlap.adsorbate_band_centers)
+print(CO_overlap.adsorbate_occupations)
 #######################################################################################
 # Plot energy overlap
 # -------------------
 #
 # We select energy overlap histograms with the adsorbate molecular orbitals
 # that influence spectra. Gas orbitals 1,2, and 3 interact with the surface.
-# We plot the energy overlap for the 4sigma, 1pi, and 5sigma orbitals
-gas_indices = [i for i in range(6) if CO_overlap.gas_2_adsorbate[i][0] in [1,2,3]]
-adsorbate_indices = CO_overlap.gas_2_adsorbate[gas_indices,1].astype('int')
-CO_overlap.plot_energy_overlap(indices=adsorbate_indices, atomic_orbitals=['s', 'd'])
+CO_overlap.plot_energy_overlap(indices=[0,1,2,3], atomic_orbitals=['s', 'd']
+                               , figure_directory='print')
+
+
 
 #######################################################################################
-# Print orbital interactions
-# --------------------------
+# Obtain projected overlap
+# ------------------------
 #
-# Plot orbital interaction of the first gas molecular orbital with a surface
-# s, pz, and dz2 orbitals. These are identified from first figure above
-example_path = r'C:\Users\lansf\Documents\Data\PROBE_PDOS\vasp_dos_files'
-nano = 'Pt44'
-nano_DOSCAR = os.path.join(example_path, nano + '/DOSCAR')
-nano_CONTCAR = os.path.join(example_path, nano + '/CONTCAR')
-#obtain atom indices and atom type as 'surface' or 'bulk'
-nano_indices, GCNs, atom_types = get_geometric_data(nano_CONTCAR)
-#initialize a PDOS object for the nanoparticle
-nano_PDOS = VASP_DOS(nano_DOSCAR)
-#calculate orbital interactions
-BULK_DOSCAR = os.path.join(example_path,'Pt_nano/Pt147/DOSCAR')
-# VASP_DOS objects for both the gas (vacuum) and the adsorbate+surface system
-GAS_PDOS = VASP_DOS(GAS_DOSCAR)
-REFERENCE_PDOS = VASP_DOS(ADSORBATE_DOSCAR)
-BULK_PDOS = VASP_DOS(BULK_DOSCAR)
-print('Interactions with 4sigma orbital')
-orbital_interaction = CO_overlap.get_orbital_interaction(gas_indices[0]
-                    , nano_PDOS, nano_indices[atom_types[...] == 'surface'][0]
-                         , ['s','dz2'], BULK_PDOS, bulk_atom=43
-                             , sum_interaction=False, sum_spin=True
-                             , index_type='gas')
-print(orbital_interaction)
-print('Interactions with 1pi orbital')
-orbital_interaction = CO_overlap.get_orbital_interaction(gas_indices[1]
-                    , nano_PDOS, nano_indices[atom_types[...] == 'surface'][0]
-                         , ['dyz','dxz'], BULK_PDOS, bulk_atom=43
-                             , sum_interaction=False, sum_spin=True
-                             , index_type='gas')
-print(orbital_interaction)
-print('Interactions with 5sigma orbital')
-orbital_interaction = CO_overlap.get_orbital_interaction(gas_indices[2]
-                    , nano_PDOS, nano_indices[atom_types[...] == 'surface'][0]
-                         , ['s','dz2'], BULK_PDOS, bulk_atom=43
-                             , sum_interaction=False, sum_spin=True
-                             , index_type='gas')
-print(orbital_interaction)
+# We projected orbital overlap for the C-C bond and C-H bonds in C2H4
+# We group the CH bonds and ensure to sum for spins as all electrons are paired
+GAS_OVERLAP = POP_CO_GAS.get_pcoop([0], sum_pcoop=True)
+ADSORBATE_OVERLAP = POP_CO_ADSORBATE.get_pcoop(sum_pcoop=True,set_antibonding_zero=True)
+CO_OVERLAP = POP_CO_ADSORBATE.get_pcoop([2],sum_pcoop=True)
+
+#######################################################################################
+# Plot the bonding populaiton with respect to the CC and CH bonds
+# ---------------------------------------------------------------
+#
+# A positive value on the x-axis indicates are greater proportion of states in
+# in the bond than outside of the bond
+
+fig = plt.figure(figsize=(7.2,4))
+abc = ['(a)','(b)','(c)']
+axes = fig.subplots(nrows=1, ncols=3)
+axes_list = [axes[0], axes[1], axes[2]]
+#plotting function
+def plot_density(OVERLAP, energies, e_fermi, index):
+    axes_list[index].plot(OVERLAP, energies, zorder=2)
+    axes_list[index].plot([np.min(OVERLAP), np.max(OVERLAP)]
+             ,[e_fermi, e_fermi], 'k--', zorder=1, linewidth=5) 
+    axes_list[index].text(0.90,0.96,abc[index],transform=axes_list[index].transAxes)
+    
+#plot gas density
+plot_density(GAS_OVERLAP, POP_CO_GAS.get_energies(), POP_CO_GAS.e_fermi, 0)
+#plot adsorbate density
+plot_density(CO_OVERLAP, POP_CO_ADSORBATE.get_energies(), POP_CO_ADSORBATE.e_fermi, 1)
+#plot adsorption-site density
+plot_density(ADSORBATE_OVERLAP, POP_CO_ADSORBATE.get_energies(), POP_CO_ADSORBATE.e_fermi, 2)
+fig.text(0.001, 0.5, 'Energy [eV]', va='center', rotation='vertical')
+fig.text(0.5, 0.01, 'Overlap density [states/eV]', ha='center')
+figure_path = os.path.join(Downloads_folder,'pccop.jpg')
+fig.set_tight_layout({'pad':2,'w_pad':1})
+fig.show()
+plt.close()

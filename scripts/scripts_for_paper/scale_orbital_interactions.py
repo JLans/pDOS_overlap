@@ -136,7 +136,7 @@ axes[1,0].set_ylim([np.min(four_sigma_list)-0.25, np.max(four_sigma_list)+0.025]
 orbitalfit = np.polyfit(GCNList,one_pi_list[0]+one_pi_list[1], 1)
 axes[1,1].plot(np.sort(GCNList), np.poly1d(orbitalfit)(np.sort(GCNList)), 'r--')
 axes[1,1].plot(GCNList, one_pi_list[0]+one_pi_list[1], 'ro')
-axes[1,1].legend([r'${H}_{dyz,2\pi}$ + ${H}_{dxz,2\pi}$ = %.2fGCN + %.2f eV' %(orbitalfit[0], orbitalfit[1])]
+axes[1,1].legend([r'${H}_{dyz,1\pi}$ + ${H}_{dxz,1\pi}$ = %.2fGCN + %.2f eV' %(orbitalfit[0], orbitalfit[1])]
 ,loc='best',frameon=False, handlelength=1)
 axes[1,1].text(0.01,0.9,'(d)',transform=axes[1,1].transAxes)
 axes[1,1].set_ylim([2*np.min(one_pi_list)-0.05, 2*np.max(one_pi_list)+0.025])

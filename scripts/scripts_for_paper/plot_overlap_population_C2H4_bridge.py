@@ -126,8 +126,6 @@ print(CO_overlap.adsorbate_occupations)
 CO_overlap.plot_energy_overlap(indices=[0,1,2,3], atomic_orbitals=['s', 'd']
                                , figure_directory=Downloads_folder)
 
-
-
 #######################################################################################
 # Obtain projected overlap
 # ------------------------
@@ -162,8 +160,8 @@ plot_density(GAS_OVERLAP, POP_CO_GAS.get_energies(), POP_CO_GAS.e_fermi, 0)
 plot_density(CO_OVERLAP, POP_CO_ADSORBATE.get_energies(), POP_CO_ADSORBATE.e_fermi, 1)
 #plot adsorption-site density
 plot_density(ADSORBATE_OVERLAP, POP_CO_ADSORBATE.get_energies(), POP_CO_ADSORBATE.e_fermi, 2)
-fig.text(0.001, 0.5, 'Overlap density [states/eV]', va='center', rotation='vertical')
-fig.text(0.5, 0.01, 'Energy [eV]', ha='center')
+fig.text(0.001, 0.5, 'Energy [eV]', va='center', rotation='vertical')
+fig.text(0.5, 0.01, 'Overlap density [states/eV]', ha='center')
 figure_path = os.path.join(Downloads_folder,'pccop.jpg')
 fig.set_tight_layout({'pad':2,'w_pad':1})
 plt.savefig(figure_path, format='jpg')
